@@ -34,3 +34,9 @@ Paginas generadas que cruzan fuentes. Ver [`wiki/RESUMEN.md`](./wiki/RESUMEN.md)
 | Script | Proposito |
 |--------|-----------|
 | [`tools/lint-kb.sh`](./tools/lint-kb.sh) | Verificar invariantes del KB (ver CLAUDE.md) |
+
+### Subproyectos
+
+| Subproyecto | Proposito |
+|-------------|-----------|
+| [`spence-demo-electrico/`](./spence-demo-electrico/README.md) | Pipeline de scraping respetuoso CEN+CNE+Energia Abierta+Minenergia + vector store LanceDB. El output de `spence-demo-electrico/data/raw/` se ingiere posteriormente al KB padre bajo `sources/`. Estado: codigo listo, ejecucion bloqueada en sandbox actual (ver `REPORTE_INGESTA.md`). |
