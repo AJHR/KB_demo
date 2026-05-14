@@ -1,0 +1,17 @@
+# logs y datos crudos: generados, no se versionan
+logs/*.log
+logs/*.txt
+data/raw/**
+!data/raw/**/
+!data/raw/**/.gitkeep
+data/vector/lancedb/**
+data/vector/manifest.json
+
+# python
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# playwright
+ms-playwright/

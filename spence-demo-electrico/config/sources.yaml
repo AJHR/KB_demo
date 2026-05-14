@@ -1,0 +1,235 @@
+# Catalogo de URLs y selectores para scraping.
+# Cada entrada incluye: domain, url, strategy (httpx|playwright), category
+# (subcarpeta de data/raw/), file_type, selectors opcionales y notas.
+# Las URLs profundas que requieren navegacion (dashboards, formularios) estan
+# marcadas con strategy: playwright y un campo `action` describiendo los pasos.
+
+cen:
+  domain: www.coordinador.cl
+  base_url: https://www.coordinador.cl
+  pages:
+    - id: reportes_y_estadisticas
+      url: https://www.coordinador.cl/reportes-y-estadisticas/
+      strategy: httpx
+      category: cen/informes_mensuales
+      file_type: html
+      collect: links_pdf
+      selectors:
+        list: "a[href$='.pdf']"
+      notas: "Listado de reportes mensuales/anuales. Descargar PDFs linkeados."
+
+    - id: cmg_dashboard
+      url: https://www.coordinador.cl/operacion/graficos/operacion-real/costo-marginal-real/
+      strategy: playwright
+      category: cen/costos_marginales
+      file_type: csv
+      action: select_range_and_download
+      params:
+        meses_atras: 6
+        barras:
+          - Atacama
+          - Cardones
+          - Charrua
+          - Crucero
+          - Pan de Azucar
+          - Puerto Montt
+          - Quillota
+          - Tarapaca
+      notas: "Dashboard JS. Form POST devuelve CSV por barra y mes."
+
+    - id: operacion_real_graficos
+      url: https://www.coordinador.cl/operacion/graficos/
+      strategy: playwright
+      category: cen/generacion_real
+      file_type: csv
+      action: extract_charts_or_fallback_pdf
+      notas: "Dashboards interactivos. Si extraccion tabular falla, descargar PDFs de Informe Mensual del Coordinador (ultimos 6)."
+
+    - id: demanda
+      url: https://www.coordinador.cl/operacion/graficos/operacion-real/demanda-real/
+      strategy: playwright
+      category: cen/demanda
+      file_type: csv
+      action: extract_chart_csv
+      notas: "Demanda real horaria SEN."
+
+    - id: capacidad_instalada
+      url: https://www.coordinador.cl/reportes-y-estadisticas/
+      strategy: httpx
+      category: cen/capacidad_instalada
+      file_type: pdf_or_xlsx
+      collect: search_in_page
+      params:
+        match: "capacidad instalada"
+      notas: "Consolidado mas reciente. Suele estar en Informacion Tecnica o Informes Mensuales."
+
+    - id: precipitaciones
+      url: https://www.coordinador.cl/reportes-y-estadisticas/
+      strategy: httpx
+      category: cen/precipitaciones
+      file_type: pdf_or_xlsx
+      collect: search_in_page
+      params:
+        match: "precipitaciones"
+      notas: "Estadisticas de precipitaciones para gestion hidrologica."
+
+    - id: instalaciones_en_operacion
+      url: https://www.coordinador.cl/reportes-y-estadisticas/
+      strategy: httpx
+      category: cen/instalaciones
+      file_type: xlsx
+      collect: search_in_page
+      params:
+        match: "Datos de Instalaciones en Operacion"
+        categorias:
+          - "Unidades Generadoras"
+          - "Subestaciones"
+          - "Lineas-Tramos"
+          - "Transformadores 2D"
+          - "Transformadores 3D"
+      notas: "Catastro oficial. Descargar XLSX por categoria si disponible."
+
+    - id: doc_ciberseguridad_estandar
+      url: https://www.coordinador.cl/normativa-tecnica/
+      strategy: httpx
+      category: regulacion/ciberseguridad
+      file_type: pdf
+      collect: search_in_page
+      params:
+        match: "Estandar de Ciberseguridad"
+      notas: "Documento tecnico del CEN."
+
+    - id: doc_ciberseguridad_protocolo
+      url: https://www.coordinador.cl/normativa-tecnica/
+      strategy: httpx
+      category: regulacion/ciberseguridad
+      file_type: pdf
+      collect: search_in_page
+      params:
+        match: "Protocolo de Notificacion de Ciberincidentes"
+
+    - id: doc_grid_forming_bess
+      url: https://www.coordinador.cl/normativa-tecnica/
+      strategy: httpx
+      category: regulacion/grid_forming_bess
+      file_type: pdf
+      collect: search_in_page
+      params:
+        match: "Grid Forming"
+      notas: "Guia Grid Forming para BESS."
+
+    - id: reporte_anual_desempeno_sen
+      url: https://www.coordinador.cl/reportes-y-estadisticas/
+      strategy: httpx
+      category: reportes/desempeno_anual_sen
+      file_type: pdf
+      collect: search_in_page
+      params:
+        match: "Reporte Anual de Desempeno"
+
+cne:
+  domain: www.cne.cl
+  base_url: https://www.cne.cl
+  pages:
+    - id: normativa_electrica
+      url: https://www.cne.cl/normativas/electrica/sector-electrico/
+      strategy: httpx
+      category: regulacion/lge
+      file_type: pdf
+      collect: links_pdf
+      notas: "Leyes y decretos vigentes. Descargar todos los PDFs."
+
+    - id: ntsycs
+      url: https://www.cne.cl/normativas/electrica/sector-electrico/
+      strategy: httpx
+      category: regulacion/ntsycs
+      file_type: pdf
+      collect: search_in_page
+      params:
+        match: "NTSyCS"
+      notas: "Version vigente marzo 2025."
+
+    - id: anexo_tecnico_sismico
+      url: https://www.cne.cl/normativas/electrica/sector-electrico/
+      strategy: httpx
+      category: regulacion/anexo_sismico
+      file_type: pdf
+      collect: search_in_page
+      params:
+        match: "Resolucion REx CNE N.41-2025"
+      notas: "Anexo Tecnico Sismico de NTSyCS."
+
+    - id: obras_nuevas_urgentes
+      url: https://www.cne.cl/tarificacion/electrica/obras-nuevas-y-urgentes/
+      strategy: httpx
+      category: cne/decretos_tarifarios
+      file_type: pdf
+      collect: links_pdf
+      params:
+        anos: [2025, 2026]
+      notas: "Decretos de obras nuevas y urgentes."
+
+    - id: precios_nudo
+      url: https://www.cne.cl/tarificacion/electrica/precios-nudo/
+      strategy: httpx
+      category: cne/precios_nudo
+      file_type: pdf
+      collect: links_pdf
+
+    - id: informes_tecnicos_art163
+      url: https://www.cne.cl/tarificacion/electrica/precios-nudo/
+      strategy: httpx
+      category: cne/informes_tecnicos
+      file_type: pdf
+      collect: search_in_page
+      params:
+        match: "Art. 163"
+        anos: [2025]
+      notas: "Informes tecnicos Art. 163 LGSE (enero y noviembre 2025)."
+
+energia_abierta:
+  domain: energiaabierta.cl
+  base_url: http://energiaabierta.cl
+  pages:
+    - id: estadisticas_electricidad_cen
+      url: http://energiaabierta.cl/categorias-estadistica/electricidad?_sft_organismos-estadistica=coordinador-electrico-nacional
+      strategy: httpx
+      category: cen/instalaciones
+      file_type: csv_or_xlsx
+      collect: dataset_links
+      selectors:
+        dataset_card: ".dataset-card a, .estadistica-item a"
+      notas: "Filtro por Coordinador Electrico Nacional."
+
+    - id: listado_empresas
+      url: http://energiaabierta.cl/empresas/
+      strategy: httpx
+      category: cen/instalaciones
+      file_type: csv_or_html
+      collect: tables
+      params:
+        segmentos: [generacion, transmision, distribucion]
+      notas: "Listado de empresas por region y segmento."
+
+ministerio_energia:
+  domain: energia.gob.cl
+  base_url: https://energia.gob.cl
+  pages:
+    - id: reforma_2026_comunicados
+      url: https://energia.gob.cl/noticias
+      strategy: httpx
+      category: regulacion/reforma_2026
+      file_type: html_pdf
+      collect: search_in_page
+      params:
+        match: "Reforma 2026"
+        ano: 2026
+      notas: "Comunicados de prensa Comite de Expertos marzo 2026."
+
+    - id: reforma_2026_documento
+      url: https://energia.gob.cl/reforma2026
+      strategy: httpx
+      category: regulacion/reforma_2026
+      file_type: pdf
+      collect: links_pdf
+      notas: "Documento completo de propuesta si esta publicado."
