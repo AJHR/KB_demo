@@ -67,7 +67,20 @@ PAGES: list[SourcePage] = [
     SourcePage(
         topic="cne-precios-nudo",
         title="CNE - Precios de nudo (informes y decretos)",
-        url="https://www.cne.cl/tarificacion/electrica/precios-nudo/",
+        url="https://www.cne.cl/tarificacion/electrica/precios-nudo-corto-plazo/",
+        limit=40,
+    ),
+    SourcePage(
+        topic="cne-precios-nudo",
+        title="CNE - Precios de nudo (fallback /precio-nudo/)",
+        url="https://www.cne.cl/tarificacion/electrica/precio-nudo/",
+        limit=40,
+    ),
+    SourcePage(
+        topic="cne-precios-nudo",
+        title="CNE - Tarificacion electrica (fallback con filtro precio nudo)",
+        url="https://www.cne.cl/tarificacion/electrica/",
+        filter_regex=r"precio.?nudo|PNCP|art\.?\s*163",
         limit=40,
     ),
     SourcePage(
@@ -86,7 +99,19 @@ PAGES: list[SourcePage] = [
     SourcePage(
         topic="coordinador-normativa-tecnica",
         title="Coordinador - Normativa tecnica (ciberseguridad, grid forming, BESS)",
-        url="https://www.coordinador.cl/normativa/",
+        url="https://www.coordinador.cl/normativa-tecnica/",
+        limit=60,
+    ),
+    SourcePage(
+        topic="coordinador-normativa-tecnica",
+        title="Coordinador - Normativa tecnica (fallback documentos tecnicos)",
+        url="https://www.coordinador.cl/documentos-tecnicos/",
+        limit=60,
+    ),
+    SourcePage(
+        topic="coordinador-normativa-tecnica",
+        title="Coordinador - Sistema electrico / informacion tecnica (fallback)",
+        url="https://www.coordinador.cl/sistema-electrico/documentos-tecnicos/",
         limit=60,
     ),
     SourcePage(
@@ -116,10 +141,34 @@ PAGES: list[SourcePage] = [
         limit=60,
     ),
     SourcePage(
+        topic="coordinador-mercados-servicios",
+        title="Coordinador - Servicios complementarios (fallback subseccion)",
+        url="https://www.coordinador.cl/mercados/servicios-complementarios/",
+        limit=40,
+    ),
+    SourcePage(
+        topic="coordinador-mercados-servicios",
+        title="Coordinador - Transferencias economicas (fallback)",
+        url="https://www.coordinador.cl/mercados/transferencias-economicas/",
+        limit=40,
+    ),
+    SourcePage(
         topic="coordinador-operacion-sen",
         title="Coordinador - Operacion del SEN (procedimientos DO, programacion, despacho)",
         url="https://www.coordinador.cl/operacion/",
         limit=60,
+    ),
+    SourcePage(
+        topic="coordinador-operacion-sen",
+        title="Coordinador - Procedimientos DO (fallback)",
+        url="https://www.coordinador.cl/operacion/procedimientos-do/",
+        limit=40,
+    ),
+    SourcePage(
+        topic="coordinador-operacion-sen",
+        title="Coordinador - Programa de operacion (fallback)",
+        url="https://www.coordinador.cl/operacion/programacion/",
+        limit=40,
     ),
     SourcePage(
         topic="coordinador-desarrollo-transmision",
@@ -356,8 +405,8 @@ def main() -> int:
             except Exception as e:
                 log(f"  FATAL {page.topic}: {e}")
                 n = 0
-            counts[page.topic] = n
-            # generar RESUMEN.md por topic
+            counts[page.topic] = counts.get(page.topic, 0) + n
+            # generar RESUMEN.md por topic (regenera con file listing real del dest)
             dest = SOURCES_DIR / f"regulation-{page.topic}"
             files = [p for p in dest.glob("*.pdf")] if dest.exists() else []
             write_resumen(page.topic, page, files)
