@@ -40,7 +40,9 @@ RETRY_BASE = 3.0
 
 DISCOVERY_KEYWORDS = re.compile(
     r"normativ|regul|decret|reglament|tarific|norma|cibersegur|grid.?form|"
-    r"sismic|ntsy|art.?163|reforma|precios.?de.?nudo|obras",
+    r"sismic|ntsy|art.?163|reforma|precios.?de.?nudo|obras|"
+    r"mercad|servic.?complement|transferenc|pmgd|pliego|procedimient|"
+    r"operacion|programa|panel.?expert|coordin|expansion|despacho",
     re.IGNORECASE,
 )
 
@@ -98,6 +100,32 @@ PAGES: list[SourcePage] = [
         title="Ministerio de Energia - Marco regulatorio y reforma 2026",
         url="https://energia.gob.cl/",
         limit=30,
+    ),
+    # --- mercado mayorista: como funciona el mercado para generadores ---
+    SourcePage(
+        topic="cne-reglamentos-mercado",
+        title="CNE - Reglamentos de mercado (coordinacion, servicios complementarios, transferencias economicas)",
+        url="https://www.cne.cl/normativas/electrica/sector-electrico/",
+        filter_regex=r"reglament|servic.?complement|transferenc|coordin|panel.?expert|pmgd",
+        limit=40,
+    ),
+    SourcePage(
+        topic="coordinador-mercados-servicios",
+        title="Coordinador - Mercado mayorista (servicios complementarios, transferencias)",
+        url="https://www.coordinador.cl/mercados/",
+        limit=60,
+    ),
+    SourcePage(
+        topic="coordinador-operacion-sen",
+        title="Coordinador - Operacion del SEN (procedimientos DO, programacion, despacho)",
+        url="https://www.coordinador.cl/operacion/",
+        limit=60,
+    ),
+    SourcePage(
+        topic="coordinador-desarrollo-transmision",
+        title="Coordinador - Desarrollo y expansion de transmision",
+        url="https://www.coordinador.cl/desarrollo/",
+        limit=40,
     ),
 ]
 
