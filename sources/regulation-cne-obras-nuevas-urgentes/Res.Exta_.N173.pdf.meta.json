@@ -1,0 +1,12 @@
+{
+  "url": "https://www.cne.cl/wp-content/uploads/2023/05/Res.Exta_.N173.pdf",
+  "fetched_url": "https://www.cne.cl/wp-content/uploads/2023/05/Res.Exta_.N173.pdf",
+  "downloaded_at": "2026-05-15T07:23:17-0400",
+  "sha256": "acb5d9af6178316cd4d36b53ce8e17340beb649f037374f94f9187f6e94df9c8",
+  "size_bytes": 160297,
+  "content_type": "application/pdf",
+  "scraped_from": {
+    "page_url": "https://www.cne.cl/tarificacion/electrica/obras-nuevas-y-urgentes/",
+    "page_title": "CNE - Decretos obras nuevas y urgentes"
+  }
+}

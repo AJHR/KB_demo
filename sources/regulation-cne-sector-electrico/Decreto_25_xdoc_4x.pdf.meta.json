@@ -1,0 +1,12 @@
+{
+  "url": "https://www.cne.cl/wp-content/uploads/2015/06/Decreto_25_xdoc_4x.pdf",
+  "fetched_url": "https://www.cne.cl/wp-content/uploads/2015/06/Decreto_25_xdoc_4x.pdf",
+  "downloaded_at": "2026-05-15T07:19:59-0400",
+  "sha256": "ce14cd8037896e4a796ce4c622c4e133036442ec73b062e7621e39f04cc70061",
+  "size_bytes": 30528,
+  "content_type": "application/pdf",
+  "scraped_from": {
+    "page_url": "https://www.cne.cl/normativas/electrica/sector-electrico/",
+    "page_title": "CNE - Normativa sector electrico (LGE, decretos, reglamentos)"
+  }
+}

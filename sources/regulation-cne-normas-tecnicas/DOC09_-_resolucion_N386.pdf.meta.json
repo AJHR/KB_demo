@@ -1,0 +1,12 @@
+{
+  "url": "https://www.cne.cl/wp-content/uploads/2015/06/DOC09_-_resolucion_N386.pdf",
+  "fetched_url": "https://www.cne.cl/wp-content/uploads/2015/06/DOC09_-_resolucion_N386.pdf",
+  "downloaded_at": "2026-05-15T07:26:23-0400",
+  "sha256": "09761e3535828272389fd68f54f73f2e4f13ff49e20f5cc4e12dae4a2da00252",
+  "size_bytes": 188354,
+  "content_type": "application/pdf",
+  "scraped_from": {
+    "page_url": "https://www.cne.cl/normativas/electrica/normas-tecnicas/",
+    "page_title": "CNE - Normas tecnicas (NTSyCS, anexo sismico)"
+  }
+}

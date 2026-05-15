@@ -1,0 +1,12 @@
+{
+  "url": "https://www.cne.cl/wp-content/uploads/2015/06/RES-606-EXENTA_03-NOV-2017.pdf",
+  "fetched_url": "https://www.cne.cl/wp-content/uploads/2015/06/RES-606-EXENTA_03-NOV-2017.pdf",
+  "downloaded_at": "2026-05-15T07:20:45-0400",
+  "sha256": "8873642d1de7b8332e34c8f5231127470e9e8dc62be8583460fb8e13efce0740",
+  "size_bytes": 44948,
+  "content_type": "application/pdf",
+  "scraped_from": {
+    "page_url": "https://www.cne.cl/normativas/electrica/sector-electrico/",
+    "page_title": "CNE - Normativa sector electrico (LGE, decretos, reglamentos)"
+  }
+}

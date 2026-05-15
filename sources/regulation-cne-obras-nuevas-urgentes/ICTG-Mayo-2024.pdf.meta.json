@@ -1,0 +1,12 @@
+{
+  "url": "https://www.cne.cl/wp-content/uploads/2024/06/ICTG-Mayo-2024.pdf",
+  "fetched_url": "https://www.cne.cl/wp-content/uploads/2024/06/ICTG-Mayo-2024.pdf",
+  "downloaded_at": "2026-05-15T07:24:31-0400",
+  "sha256": "89d22cbf1093cae7bd2dd594a8436c39975559c7d6e69c08c873412adc8e4900",
+  "size_bytes": 878297,
+  "content_type": "application/pdf",
+  "scraped_from": {
+    "page_url": "https://www.cne.cl/tarificacion/electrica/obras-nuevas-y-urgentes/",
+    "page_title": "CNE - Decretos obras nuevas y urgentes"
+  }
+}

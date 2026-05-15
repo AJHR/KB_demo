@@ -1,0 +1,12 @@
+{
+  "url": "https://www.cne.cl/wp-content/uploads/2015/06/DS_58_2011_08_31.pdf",
+  "fetched_url": "https://www.cne.cl/wp-content/uploads/2015/06/DS_58_2011_08_31.pdf",
+  "downloaded_at": "2026-05-15T07:19:48-0400",
+  "sha256": "6c378a94fd6f153365de230b2ac6041e51f47515014a31be384524d8d2387bd7",
+  "size_bytes": 98642,
+  "content_type": "application/pdf",
+  "scraped_from": {
+    "page_url": "https://www.cne.cl/normativas/electrica/sector-electrico/",
+    "page_title": "CNE - Normativa sector electrico (LGE, decretos, reglamentos)"
+  }
+}

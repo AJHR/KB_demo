@@ -1,0 +1,12 @@
+{
+  "url": "https://www.cne.cl/wp-content/uploads/2023/07/Rex-CNE-307-indexación-precio-estabilizado.pdf",
+  "fetched_url": "https://www.cne.cl/wp-content/uploads/2023/07/Rex-CNE-307-indexacio%CC%81n-precio-estabilizado.pdf",
+  "downloaded_at": "2026-05-15T07:23:40-0400",
+  "sha256": "108564ba342f76875d06b59c7739ddcac0323164ebfa09ac5a4b73a8b5c59e71",
+  "size_bytes": 322792,
+  "content_type": "application/pdf",
+  "scraped_from": {
+    "page_url": "https://www.cne.cl/tarificacion/electrica/obras-nuevas-y-urgentes/",
+    "page_title": "CNE - Decretos obras nuevas y urgentes"
+  }
+}

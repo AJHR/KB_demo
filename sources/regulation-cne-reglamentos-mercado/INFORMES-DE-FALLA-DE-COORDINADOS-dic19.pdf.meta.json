@@ -1,0 +1,12 @@
+{
+  "url": "https://www.cne.cl/wp-content/uploads/2019/12/INFORMES-DE-FALLA-DE-COORDINADOS-dic19.pdf",
+  "fetched_url": "https://www.cne.cl/wp-content/uploads/2019/12/INFORMES-DE-FALLA-DE-COORDINADOS-dic19.pdf",
+  "downloaded_at": "2026-05-15T08:30:29-0400",
+  "sha256": "f1d4d0a989817b432e904ca6a96bdb887d7c10923043cc675b5f5583d588d820",
+  "size_bytes": 283011,
+  "content_type": "application/pdf",
+  "scraped_from": {
+    "page_url": "https://www.cne.cl/normativas/electrica/sector-electrico/",
+    "page_title": "CNE - Reglamentos de mercado (coordinacion, servicios complementarios, transferencias economicas)"
+  }
+}

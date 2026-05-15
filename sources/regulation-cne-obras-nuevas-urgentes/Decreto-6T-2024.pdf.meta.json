@@ -1,0 +1,12 @@
+{
+  "url": "https://www.cne.cl/wp-content/uploads/2024/04/Decreto-6T-2024.pdf",
+  "fetched_url": "https://www.cne.cl/wp-content/uploads/2024/04/Decreto-6T-2024.pdf",
+  "downloaded_at": "2026-05-15T07:24:17-0400",
+  "sha256": "ce08b9f93af2cb2f388d4f9411abc3e2e0a6d0b41bc2f123ecf15ad1f6264d57",
+  "size_bytes": 1211315,
+  "content_type": "application/pdf",
+  "scraped_from": {
+    "page_url": "https://www.cne.cl/tarificacion/electrica/obras-nuevas-y-urgentes/",
+    "page_title": "CNE - Decretos obras nuevas y urgentes"
+  }
+}

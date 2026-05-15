@@ -1,0 +1,12 @@
+{
+  "url": "https://energia.gob.cl/sites/default/files/documentos/agenda_energia_2022_-_2026.pdf",
+  "fetched_url": "https://energia.gob.cl/sites/default/files/documentos/agenda_energia_2022_-_2026.pdf",
+  "downloaded_at": "2026-05-15T08:29:34-0400",
+  "sha256": "62844bc9bbae95d348fc0ecc049133eb8f3b18a2a9fe5baa8b48d744efa208d7",
+  "size_bytes": 5997904,
+  "content_type": "application/pdf",
+  "scraped_from": {
+    "page_url": "https://energia.gob.cl/",
+    "page_title": "Ministerio de Energia - Marco regulatorio y reforma 2026"
+  }
+}

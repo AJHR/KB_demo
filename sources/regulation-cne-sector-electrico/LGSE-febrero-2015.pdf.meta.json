@@ -1,0 +1,12 @@
+{
+  "url": "https://www.cne.cl/wp-content/uploads/2015/06/LGSE-febrero-2015.pdf",
+  "fetched_url": "https://www.cne.cl/wp-content/uploads/2015/06/LGSE-febrero-2015.pdf",
+  "downloaded_at": "2026-05-15T07:20:17-0400",
+  "sha256": "43ca3e9480aa1aa40506955163b670791d8028110878ceda0ecbe8ac00a497f6",
+  "size_bytes": 355846,
+  "content_type": "application/pdf",
+  "scraped_from": {
+    "page_url": "https://www.cne.cl/normativas/electrica/sector-electrico/",
+    "page_title": "CNE - Normativa sector electrico (LGE, decretos, reglamentos)"
+  }
+}

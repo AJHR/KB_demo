@@ -1,0 +1,12 @@
+{
+  "url": "https://www.cne.cl/wp-content/uploads/2015/06/DOC24_-_decreto_158.pdf",
+  "fetched_url": "https://www.cne.cl/wp-content/uploads/2015/06/DOC24_-_decreto_158.pdf",
+  "downloaded_at": "2026-05-15T07:27:03-0400",
+  "sha256": "2f2c78a9292a63e119a6afd91fca75c82ffae827e00911f78675fa4c507106ab",
+  "size_bytes": 728551,
+  "content_type": "application/pdf",
+  "scraped_from": {
+    "page_url": "https://www.cne.cl/normativas/electrica/normas-tecnicas/",
+    "page_title": "CNE - Normas tecnicas (NTSyCS, anexo sismico)"
+  }
+}

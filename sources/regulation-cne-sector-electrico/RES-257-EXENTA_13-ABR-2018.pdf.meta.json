@@ -1,0 +1,12 @@
+{
+  "url": "https://www.cne.cl/wp-content/uploads/2015/06/RES-257-EXENTA_13-ABR-2018.pdf",
+  "fetched_url": "https://www.cne.cl/wp-content/uploads/2015/06/RES-257-EXENTA_13-ABR-2018.pdf",
+  "downloaded_at": "2026-05-15T07:20:43-0400",
+  "sha256": "91dfaff6839e73695bc3e175cb76dcf12f8928bc8bee06d32563feb18e5b0bf8",
+  "size_bytes": 169325,
+  "content_type": "application/pdf",
+  "scraped_from": {
+    "page_url": "https://www.cne.cl/normativas/electrica/sector-electrico/",
+    "page_title": "CNE - Normativa sector electrico (LGE, decretos, reglamentos)"
+  }
+}

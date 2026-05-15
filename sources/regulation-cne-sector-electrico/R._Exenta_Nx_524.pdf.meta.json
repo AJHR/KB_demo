@@ -1,0 +1,12 @@
+{
+  "url": "https://www.cne.cl/wp-content/uploads/2015/06/R._Exenta_Nx_524.pdf",
+  "fetched_url": "https://www.cne.cl/wp-content/uploads/2015/06/R._Exenta_Nx_524.pdf",
+  "downloaded_at": "2026-05-15T07:20:36-0400",
+  "sha256": "b05c44bbb130ac4f0bf21caebfcb5aa87c84d65601320a8531b525f9d824a335",
+  "size_bytes": 319544,
+  "content_type": "application/pdf",
+  "scraped_from": {
+    "page_url": "https://www.cne.cl/normativas/electrica/sector-electrico/",
+    "page_title": "CNE - Normativa sector electrico (LGE, decretos, reglamentos)"
+  }
+}

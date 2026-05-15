@@ -1,0 +1,12 @@
+{
+  "url": "https://www.cne.cl/wp-content/uploads/2023/04/Decreto-14T.pdf",
+  "fetched_url": "https://www.cne.cl/wp-content/uploads/2023/04/Decreto-14T.pdf",
+  "downloaded_at": "2026-05-15T07:23:02-0400",
+  "sha256": "7990fd1f071b931052026ad77410b9a764cb9b6d50534938c5179dda0fb4e76d",
+  "size_bytes": 1516503,
+  "content_type": "application/pdf",
+  "scraped_from": {
+    "page_url": "https://www.cne.cl/tarificacion/electrica/obras-nuevas-y-urgentes/",
+    "page_title": "CNE - Decretos obras nuevas y urgentes"
+  }
+}

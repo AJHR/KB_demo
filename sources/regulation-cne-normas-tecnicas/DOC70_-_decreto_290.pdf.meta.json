@@ -1,0 +1,12 @@
+{
+  "url": "https://www.cne.cl/wp-content/uploads/2015/06/DOC70_-_decreto_290.pdf",
+  "fetched_url": "https://www.cne.cl/wp-content/uploads/2015/06/DOC70_-_decreto_290.pdf",
+  "downloaded_at": "2026-05-15T07:27:31-0400",
+  "sha256": "1fdd8f1dcd4639f073ed16bac3f899da426263d607e3f2f20304e908c1da3161",
+  "size_bytes": 211330,
+  "content_type": "application/pdf",
+  "scraped_from": {
+    "page_url": "https://www.cne.cl/normativas/electrica/normas-tecnicas/",
+    "page_title": "CNE - Normas tecnicas (NTSyCS, anexo sismico)"
+  }
+}

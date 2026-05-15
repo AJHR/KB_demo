@@ -1,0 +1,12 @@
+{
+  "url": "https://www.cne.cl/wp-content/uploads/2025/05/ICTGA-2025.pdf",
+  "fetched_url": "https://www.cne.cl/wp-content/uploads/2025/05/ICTGA-2025.pdf",
+  "downloaded_at": "2026-05-15T07:25:04-0400",
+  "sha256": "82a4ebde26ce09ab8b71b32d64c7b1e10084663cf44f62156b6fe66542ae74c3",
+  "size_bytes": 817006,
+  "content_type": "application/pdf",
+  "scraped_from": {
+    "page_url": "https://www.cne.cl/tarificacion/electrica/obras-nuevas-y-urgentes/",
+    "page_title": "CNE - Decretos obras nuevas y urgentes"
+  }
+}

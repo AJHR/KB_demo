@@ -1,0 +1,12 @@
+{
+  "url": "https://www.cne.cl/wp-content/uploads/2015/06/RES-154-EXENTA_07-ABR-2017.pdf",
+  "fetched_url": "https://www.cne.cl/wp-content/uploads/2015/06/RES-154-EXENTA_07-ABR-2017.pdf",
+  "downloaded_at": "2026-05-15T07:20:39-0400",
+  "sha256": "eac1775f29be5422d870a8f6526b23a81b15d7c8e24716073af387355219eb79",
+  "size_bytes": 74762,
+  "content_type": "application/pdf",
+  "scraped_from": {
+    "page_url": "https://www.cne.cl/normativas/electrica/sector-electrico/",
+    "page_title": "CNE - Normativa sector electrico (LGE, decretos, reglamentos)"
+  }
+}

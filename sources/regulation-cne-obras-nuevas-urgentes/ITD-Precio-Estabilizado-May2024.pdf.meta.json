@@ -1,0 +1,12 @@
+{
+  "url": "https://www.cne.cl/wp-content/uploads/2024/05/ITD-Precio-Estabilizado-May2024.pdf",
+  "fetched_url": "https://www.cne.cl/wp-content/uploads/2024/05/ITD-Precio-Estabilizado-May2024.pdf",
+  "downloaded_at": "2026-05-15T07:24:22-0400",
+  "sha256": "3492ee4dd75fec569a1219e96683fa85de70a35a7c1baac45a96caf2d556f165",
+  "size_bytes": 560495,
+  "content_type": "application/pdf",
+  "scraped_from": {
+    "page_url": "https://www.cne.cl/tarificacion/electrica/obras-nuevas-y-urgentes/",
+    "page_title": "CNE - Decretos obras nuevas y urgentes"
+  }
+}

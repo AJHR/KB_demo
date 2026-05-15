@@ -1,0 +1,12 @@
+{
+  "url": "https://www.cne.cl/wp-content/uploads/2015/06/DOC72_-_decreto_N26.pdf",
+  "fetched_url": "https://www.cne.cl/wp-content/uploads/2015/06/DOC72_-_decreto_N26.pdf",
+  "downloaded_at": "2026-05-15T07:27:36-0400",
+  "sha256": "cb0198faa34edf8c8e3864338c4cf8dbec38648f4685e7464759f044ec808536",
+  "size_bytes": 48640,
+  "content_type": "application/pdf",
+  "scraped_from": {
+    "page_url": "https://www.cne.cl/normativas/electrica/normas-tecnicas/",
+    "page_title": "CNE - Normas tecnicas (NTSyCS, anexo sismico)"
+  }
+}

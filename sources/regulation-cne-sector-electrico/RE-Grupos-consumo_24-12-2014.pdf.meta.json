@@ -1,0 +1,12 @@
+{
+  "url": "https://www.cne.cl/wp-content/uploads/2015/06/RE-Grupos-consumo_24-12-2014.pdf",
+  "fetched_url": "https://www.cne.cl/wp-content/uploads/2015/06/RE-Grupos-consumo_24-12-2014.pdf",
+  "downloaded_at": "2026-05-15T07:20:37-0400",
+  "sha256": "c6f64178508a2bc39a2e37650ee6286dcd823d929183cca06ec220099b8d1581",
+  "size_bytes": 222622,
+  "content_type": "application/pdf",
+  "scraped_from": {
+    "page_url": "https://www.cne.cl/normativas/electrica/sector-electrico/",
+    "page_title": "CNE - Normativa sector electrico (LGE, decretos, reglamentos)"
+  }
+}

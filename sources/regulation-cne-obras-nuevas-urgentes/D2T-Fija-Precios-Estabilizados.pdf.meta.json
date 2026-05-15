@@ -1,0 +1,12 @@
+{
+  "url": "https://www.cne.cl/wp-content/uploads/2023/10/D2T-Fija-Precios-Estabilizados.pdf",
+  "fetched_url": "https://www.cne.cl/wp-content/uploads/2023/10/D2T-Fija-Precios-Estabilizados.pdf",
+  "downloaded_at": "2026-05-15T07:23:54-0400",
+  "sha256": "b43e3a26a5b2585a0f599169154c7bf810cbad3bb7918ec3f5f95e044c8458a2",
+  "size_bytes": 2133460,
+  "content_type": "application/pdf",
+  "scraped_from": {
+    "page_url": "https://www.cne.cl/tarificacion/electrica/obras-nuevas-y-urgentes/",
+    "page_title": "CNE - Decretos obras nuevas y urgentes"
+  }
+}

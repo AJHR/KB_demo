@@ -1,0 +1,12 @@
+{
+  "url": "https://www.cne.cl/wp-content/uploads/2023/03/Rex-CNE-828-Indexación-Precio-Estabilizado_14-11-2022.pdf",
+  "fetched_url": "https://www.cne.cl/wp-content/uploads/2023/03/Rex-CNE-828-Indexacio%CC%81n-Precio-Estabilizado_14-11-2022.pdf",
+  "downloaded_at": "2026-05-15T07:22:58-0400",
+  "sha256": "dc01de5ad871215ad5d441277cdb2a5d3668f365e76484be8433b71dc117319b",
+  "size_bytes": 244460,
+  "content_type": "application/pdf",
+  "scraped_from": {
+    "page_url": "https://www.cne.cl/tarificacion/electrica/obras-nuevas-y-urgentes/",
+    "page_title": "CNE - Decretos obras nuevas y urgentes"
+  }
+}

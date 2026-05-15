@@ -1,0 +1,12 @@
+{
+  "url": "https://www.cne.cl/wp-content/uploads/2015/06/2011_03_02-Decreto-N297-Cochamó.pdf",
+  "fetched_url": "https://www.cne.cl/wp-content/uploads/2015/06/2011_03_02-Decreto-N297-Cocham%C3%B3.pdf",
+  "downloaded_at": "2026-05-15T07:25:53-0400",
+  "sha256": "3a1e2145a024f66cda0aaa21e609927f7de4b4298e08585ea644e698d0ad6801",
+  "size_bytes": 494269,
+  "content_type": "application/pdf",
+  "scraped_from": {
+    "page_url": "https://www.cne.cl/normativas/electrica/normas-tecnicas/",
+    "page_title": "CNE - Normas tecnicas (NTSyCS, anexo sismico)"
+  }
+}

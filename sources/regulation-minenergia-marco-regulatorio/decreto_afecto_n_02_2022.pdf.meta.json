@@ -1,0 +1,12 @@
+{
+  "url": "https://energia.gob.cl/sites/default/files/decreto_afecto_n_02_2022.pdf",
+  "fetched_url": "https://energia.gob.cl/sites/default/files/decreto_afecto_n_02_2022.pdf",
+  "downloaded_at": "2026-05-15T08:25:08-0400",
+  "sha256": "7e348989dce4a64d7b3c63458bc28b4d887674c1df0e6072d1379ee9f24c5753",
+  "size_bytes": 504789,
+  "content_type": "application/pdf",
+  "scraped_from": {
+    "page_url": "https://energia.gob.cl/",
+    "page_title": "Ministerio de Energia - Marco regulatorio y reforma 2026"
+  }
+}

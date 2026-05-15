@@ -1,0 +1,12 @@
+{
+  "url": "https://www.cne.cl/wp-content/uploads/2015/06/DS_38_2012_04_25.pdf",
+  "fetched_url": "https://www.cne.cl/wp-content/uploads/2015/06/DS_38_2012_04_25.pdf",
+  "downloaded_at": "2026-05-15T07:19:39-0400",
+  "sha256": "f1dde6900256279e57dc63eb01522d7767192360d12f3f7188e93ee20c6ac9da",
+  "size_bytes": 983900,
+  "content_type": "application/pdf",
+  "scraped_from": {
+    "page_url": "https://www.cne.cl/normativas/electrica/sector-electrico/",
+    "page_title": "CNE - Normativa sector electrico (LGE, decretos, reglamentos)"
+  }
+}

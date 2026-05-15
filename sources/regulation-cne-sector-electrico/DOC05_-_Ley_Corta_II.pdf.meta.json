@@ -1,0 +1,12 @@
+{
+  "url": "https://www.cne.cl/wp-content/uploads/2015/06/DOC05_-_Ley_Corta_II.pdf",
+  "fetched_url": "https://www.cne.cl/wp-content/uploads/2015/06/DOC05_-_Ley_Corta_II.pdf",
+  "downloaded_at": "2026-05-15T07:17:54-0400",
+  "sha256": "f4c1c069067c294d886e9b22dbce1efc406bb71db5aa5dbaab5236f7b7ed9339",
+  "size_bytes": 373886,
+  "content_type": "application/pdf",
+  "scraped_from": {
+    "page_url": "https://www.cne.cl/normativas/electrica/sector-electrico/",
+    "page_title": "CNE - Normativa sector electrico (LGE, decretos, reglamentos)"
+  }
+}

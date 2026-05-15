@@ -1,0 +1,12 @@
+{
+  "url": "https://www.cne.cl/wp-content/uploads/2015/06/DOC67_-_decreto227.pdf",
+  "fetched_url": "https://www.cne.cl/wp-content/uploads/2015/06/DOC67_-_decreto227.pdf",
+  "downloaded_at": "2026-05-15T07:27:21-0400",
+  "sha256": "7769bbe85add623598deef0ae0c34d02a1d55ec24217d8198a25ff3aba3854ef",
+  "size_bytes": 138959,
+  "content_type": "application/pdf",
+  "scraped_from": {
+    "page_url": "https://www.cne.cl/normativas/electrica/normas-tecnicas/",
+    "page_title": "CNE - Normas tecnicas (NTSyCS, anexo sismico)"
+  }
+}

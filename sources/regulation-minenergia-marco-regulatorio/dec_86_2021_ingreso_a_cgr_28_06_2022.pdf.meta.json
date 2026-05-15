@@ -1,0 +1,12 @@
+{
+  "url": "https://energia.gob.cl/sites/default/files/dec_86_2021_ingreso_a_cgr_28_06_2022.pdf",
+  "fetched_url": "https://energia.gob.cl/sites/default/files/dec_86_2021_ingreso_a_cgr_28_06_2022.pdf",
+  "downloaded_at": "2026-05-15T08:24:59-0400",
+  "sha256": "d72f7581e8d25b94f454f5c04bd6dfc022ffd7cbd3fb25f8d178e1c3bb5a5713",
+  "size_bytes": 11229702,
+  "content_type": "application/pdf",
+  "scraped_from": {
+    "page_url": "https://energia.gob.cl/",
+    "page_title": "Ministerio de Energia - Marco regulatorio y reforma 2026"
+  }
+}

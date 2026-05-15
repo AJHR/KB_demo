@@ -1,0 +1,12 @@
+{
+  "url": "https://energia.gob.cl/sites/default/files/decreto_46_22-12-2025_ministerio_de_energia.pdf",
+  "fetched_url": "https://energia.gob.cl/sites/default/files/decreto_46_22-12-2025_ministerio_de_energia.pdf",
+  "downloaded_at": "2026-05-15T08:25:07-0400",
+  "sha256": "fa13ddef7d129fecf19c35c48a40bdf71978e8f45ab5a57b5a2a97212a83a7d7",
+  "size_bytes": 5466212,
+  "content_type": "application/pdf",
+  "scraped_from": {
+    "page_url": "https://energia.gob.cl/",
+    "page_title": "Ministerio de Energia - Marco regulatorio y reforma 2026"
+  }
+}

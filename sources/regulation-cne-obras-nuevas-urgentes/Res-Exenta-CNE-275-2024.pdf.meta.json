@@ -1,0 +1,12 @@
+{
+  "url": "https://www.cne.cl/wp-content/uploads/2024/05/Res-Exenta-CNE-275-2024.pdf",
+  "fetched_url": "https://www.cne.cl/wp-content/uploads/2024/05/Res-Exenta-CNE-275-2024.pdf",
+  "downloaded_at": "2026-05-15T07:24:24-0400",
+  "sha256": "229ac2d878cef52540fab11724e37c4128485815666d148052620af621a7f46a",
+  "size_bytes": 239661,
+  "content_type": "application/pdf",
+  "scraped_from": {
+    "page_url": "https://www.cne.cl/tarificacion/electrica/obras-nuevas-y-urgentes/",
+    "page_title": "CNE - Decretos obras nuevas y urgentes"
+  }
+}

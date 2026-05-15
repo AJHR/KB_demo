@@ -1,0 +1,12 @@
+{
+  "url": "https://www.cne.cl/wp-content/uploads/2015/06/RE_178.pdf",
+  "fetched_url": "https://www.cne.cl/wp-content/uploads/2015/06/RE_178.pdf",
+  "downloaded_at": "2026-05-15T07:21:57-0400",
+  "sha256": "28656d92ac8223a06ab77dcc90669d50e171e37728eaf8d7d5c6701dff53472c",
+  "size_bytes": 388655,
+  "content_type": "application/pdf",
+  "scraped_from": {
+    "page_url": "https://www.cne.cl/normativas/electrica/sector-electrico/",
+    "page_title": "CNE - Normativa sector electrico (LGE, decretos, reglamentos)"
+  }
+}

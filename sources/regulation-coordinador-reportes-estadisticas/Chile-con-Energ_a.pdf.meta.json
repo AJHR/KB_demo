@@ -1,0 +1,12 @@
+{
+  "url": "https://www.coordinador.cl/wp-content/uploads/2020/11/Chile-con-Energía.pdf",
+  "fetched_url": "https://www.coordinador.cl/wp-content/uploads/2020/11/Chile-con-Energ%C3%ADa.pdf",
+  "downloaded_at": "2026-05-15T07:29:55-0400",
+  "sha256": "a3420e6cda37d8dbada8a1a9917daa1d3bf9b4c1a01b52d660de62b46c190723",
+  "size_bytes": 67790034,
+  "content_type": "application/pdf",
+  "scraped_from": {
+    "page_url": "https://www.coordinador.cl/reportes-y-estadisticas/",
+    "page_title": "Coordinador - Reportes anuales y desempeno SEN"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "url": "https://www.cne.cl/wp-content/uploads/2015/06/Decreto_79_2009.pdf",
+  "fetched_url": "https://www.cne.cl/wp-content/uploads/2015/06/Decreto_79_2009.pdf",
+  "downloaded_at": "2026-05-15T07:20:11-0400",
+  "sha256": "035d3e776b2760b6e2e8e7250dc8f0e6f668fe097fd6d283114d231c6f8559d3",
+  "size_bytes": 618305,
+  "content_type": "application/pdf",
+  "scraped_from": {
+    "page_url": "https://www.cne.cl/normativas/electrica/sector-electrico/",
+    "page_title": "CNE - Normativa sector electrico (LGE, decretos, reglamentos)"
+  }
+}

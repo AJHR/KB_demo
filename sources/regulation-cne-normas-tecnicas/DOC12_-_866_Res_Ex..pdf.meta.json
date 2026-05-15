@@ -1,0 +1,12 @@
+{
+  "url": "https://www.cne.cl/wp-content/uploads/2015/06/DOC12_-_866_Res_Ex..pdf",
+  "fetched_url": "https://www.cne.cl/wp-content/uploads/2015/06/DOC12_-_866_Res_Ex..pdf",
+  "downloaded_at": "2026-05-15T07:26:31-0400",
+  "sha256": "09b2a3b2d9c517b5bd7d9d6583ea097ead3a6c4a50d28b123d229317e96d1ebd",
+  "size_bytes": 206413,
+  "content_type": "application/pdf",
+  "scraped_from": {
+    "page_url": "https://www.cne.cl/normativas/electrica/normas-tecnicas/",
+    "page_title": "CNE - Normas tecnicas (NTSyCS, anexo sismico)"
+  }
+}

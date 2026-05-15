@@ -1,0 +1,12 @@
+{
+  "url": "https://www.cne.cl/wp-content/uploads/2026/02/2026.02.19_NTCO-PMGD-2026.pdf",
+  "fetched_url": "https://www.cne.cl/wp-content/uploads/2026/02/2026.02.19_NTCO-PMGD-2026.pdf",
+  "downloaded_at": "2026-05-15T08:30:40-0400",
+  "sha256": "31268c455d9e7aee832ce035eb353cf629b5696892051ebfa9c6559c44f4115b",
+  "size_bytes": 1523828,
+  "content_type": "application/pdf",
+  "scraped_from": {
+    "page_url": "https://www.cne.cl/normativas/electrica/sector-electrico/",
+    "page_title": "CNE - Reglamentos de mercado (coordinacion, servicios complementarios, transferencias economicas)"
+  }
+}

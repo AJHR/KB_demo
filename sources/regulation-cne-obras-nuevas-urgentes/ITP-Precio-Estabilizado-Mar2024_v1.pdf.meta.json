@@ -1,0 +1,12 @@
+{
+  "url": "https://www.cne.cl/wp-content/uploads/2024/03/ITP-Precio-Estabilizado-Mar2024_v1.pdf",
+  "fetched_url": "https://www.cne.cl/wp-content/uploads/2024/03/ITP-Precio-Estabilizado-Mar2024_v1.pdf",
+  "downloaded_at": "2026-05-15T07:24:09-0400",
+  "sha256": "d2c10fbe81cb4ae7d15ad7877523eecd866efadce025da61e20eaf3bf6c09cfc",
+  "size_bytes": 556055,
+  "content_type": "application/pdf",
+  "scraped_from": {
+    "page_url": "https://www.cne.cl/tarificacion/electrica/obras-nuevas-y-urgentes/",
+    "page_title": "CNE - Decretos obras nuevas y urgentes"
+  }
+}
