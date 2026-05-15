@@ -1,0 +1,12 @@
+{
+  "url": "https://www.cne.cl/wp-content/uploads/2018/02/RES-385-EXENTA_27-JUL-2017.pdf",
+  "fetched_url": "https://www.cne.cl/wp-content/uploads/2018/02/RES-385-EXENTA_27-JUL-2017.pdf",
+  "downloaded_at": "2026-05-15T12:03:07-0400",
+  "sha256": "bee441b193727d8ca0b0f0ed7b5332638e9c5ac2c83d96e2db1eec3c160e1555",
+  "size_bytes": 55795,
+  "content_type": "application/pdf",
+  "scraped_from": {
+    "page_url": "https://www.cne.cl/tarificacion/electrica/precio-nudo/",
+    "page_title": "CNE - Precios de nudo (fallback /precio-nudo/)"
+  }
+}

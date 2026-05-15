@@ -1,0 +1,12 @@
+{
+  "url": "https://www.cne.cl/wp-content/uploads/2017/10/Resolución-Exenta-N°627_05-09-2018.pdf",
+  "fetched_url": "https://www.cne.cl/wp-content/uploads/2017/10/Resoluci%C3%B3n-Exenta-N%C2%B0627_05-09-2018.pdf",
+  "downloaded_at": "2026-05-15T12:03:01-0400",
+  "sha256": "4d91f55a50fcc0447fb6f8d5cf98156b412a321eb279d54f3ba61684357f8b2a",
+  "size_bytes": 565367,
+  "content_type": "application/pdf",
+  "scraped_from": {
+    "page_url": "https://www.cne.cl/tarificacion/electrica/precio-nudo/",
+    "page_title": "CNE - Precios de nudo (fallback /precio-nudo/)"
+  }
+}

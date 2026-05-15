@@ -1,0 +1,12 @@
+{
+  "url": "https://www.cne.cl/wp-content/uploads/2018/07/rex-fija-procedimiento-para-el-cambio-de-distribuidora-jun_2017.pdf",
+  "fetched_url": "https://www.cne.cl/wp-content/uploads/2018/07/rex-fija-procedimiento-para-el-cambio-de-distribuidora-jun_2017.pdf",
+  "downloaded_at": "2026-05-15T12:03:28-0400",
+  "sha256": "87ff3d9548cb404c093a083a2b7c6301f549092fac259943d889bcd14b647d9b",
+  "size_bytes": 3620836,
+  "content_type": "application/pdf",
+  "scraped_from": {
+    "page_url": "https://www.cne.cl/tarificacion/electrica/precio-nudo/",
+    "page_title": "CNE - Precios de nudo (fallback /precio-nudo/)"
+  }
+}

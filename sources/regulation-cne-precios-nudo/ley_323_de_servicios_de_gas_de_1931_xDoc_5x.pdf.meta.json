@@ -1,0 +1,12 @@
+{
+  "url": "https://www.cne.cl/wp-content/uploads/2015/07/ley_323_de_servicios_de_gas_de_1931_xDoc_5x.pdf",
+  "fetched_url": "https://www.cne.cl/wp-content/uploads/2015/07/ley_323_de_servicios_de_gas_de_1931_xDoc_5x.pdf",
+  "downloaded_at": "2026-05-15T12:02:16-0400",
+  "sha256": "440c63bffd35a238d93a38bfbf5235a40f6524abdddd547eeaa906e38793304b",
+  "size_bytes": 65034,
+  "content_type": "application/pdf",
+  "scraped_from": {
+    "page_url": "https://www.cne.cl/tarificacion/electrica/precio-nudo/",
+    "page_title": "CNE - Precios de nudo (fallback /precio-nudo/)"
+  }
+}

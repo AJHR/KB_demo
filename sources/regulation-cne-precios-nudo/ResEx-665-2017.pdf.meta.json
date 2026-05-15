@@ -1,0 +1,12 @@
+{
+  "url": "https://www.cne.cl/wp-content/uploads/2019/08/ResEx-665-2017.pdf",
+  "fetched_url": "https://www.cne.cl/wp-content/uploads/2019/08/ResEx-665-2017.pdf",
+  "downloaded_at": "2026-05-15T12:03:52-0400",
+  "sha256": "9d6c95e9844b245d5ed09f19d53609af9ae1c47cc6de53c33f311ad635bc6bce",
+  "size_bytes": 537073,
+  "content_type": "application/pdf",
+  "scraped_from": {
+    "page_url": "https://www.cne.cl/tarificacion/electrica/precio-nudo/",
+    "page_title": "CNE - Precios de nudo (fallback /precio-nudo/)"
+  }
+}

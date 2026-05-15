@@ -1,0 +1,12 @@
+{
+  "url": "https://www.cne.cl/wp-content/uploads/2015/06/Res.-Ex.-703-modifica-RE-778-y-fija-texto-refundido_30.10.18.pdf",
+  "fetched_url": "https://www.cne.cl/wp-content/uploads/2015/06/Res.-Ex.-703-modifica-RE-778-y-fija-texto-refundido_30.10.18.pdf",
+  "downloaded_at": "2026-05-15T12:01:09-0400",
+  "sha256": "cc7c5313d373fd22bee4a2d01d10a3bd24eba23024478eb3cf6a7a081be2a521",
+  "size_bytes": 3051285,
+  "content_type": "application/pdf",
+  "scraped_from": {
+    "page_url": "https://www.cne.cl/tarificacion/electrica/precio-nudo/",
+    "page_title": "CNE - Precios de nudo (fallback /precio-nudo/)"
+  }
+}

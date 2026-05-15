@@ -1,7 +1,7 @@
 # regulation-coordinador-operacion-sen
 
 ## Que contiene
-Coordinador - Operacion del SEN (procedimientos DO, programacion, despacho). Material descargado automaticamente desde `https://www.coordinador.cl/operacion/`. INMUTABLE (no editar).
+Coordinador - Programa de operacion (fallback). Material descargado automaticamente desde `https://www.coordinador.cl/operacion/programacion/`. INMUTABLE (no editar).
 
 ## Archivos clave
 | Archivo | Tamano | Origen |

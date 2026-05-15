@@ -1,0 +1,12 @@
+{
+  "url": "https://www.cne.cl/wp-content/uploads/2015/07/DFL_2_Plantas_CNE.pdf",
+  "fetched_url": "https://www.cne.cl/wp-content/uploads/2015/07/DFL_2_Plantas_CNE.pdf",
+  "downloaded_at": "2026-05-15T12:01:22-0400",
+  "sha256": "4a3bb7e9011999d29a9bbc65df3773564924c3af114c5f84ebe946cec69a2bfc",
+  "size_bytes": 36763,
+  "content_type": "application/pdf",
+  "scraped_from": {
+    "page_url": "https://www.cne.cl/tarificacion/electrica/precio-nudo/",
+    "page_title": "CNE - Precios de nudo (fallback /precio-nudo/)"
+  }
+}

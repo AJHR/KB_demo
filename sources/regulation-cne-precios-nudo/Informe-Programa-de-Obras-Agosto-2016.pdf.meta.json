@@ -1,0 +1,12 @@
+{
+  "url": "https://www.cne.cl/wp-content/uploads/2016/08/Informe-Programa-de-Obras-Agosto-2016.pdf",
+  "fetched_url": "https://www.cne.cl/wp-content/uploads/2016/08/Informe-Programa-de-Obras-Agosto-2016.pdf",
+  "downloaded_at": "2026-05-15T12:02:39-0400",
+  "sha256": "6d6b3574b0088fd56781f03b44426601624ec46ef25dab7e196486b4c7ace797",
+  "size_bytes": 1147409,
+  "content_type": "application/pdf",
+  "scraped_from": {
+    "page_url": "https://www.cne.cl/tarificacion/electrica/precio-nudo/",
+    "page_title": "CNE - Precios de nudo (fallback /precio-nudo/)"
+  }
+}

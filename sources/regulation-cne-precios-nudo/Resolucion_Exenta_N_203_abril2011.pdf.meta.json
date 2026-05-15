@@ -1,0 +1,12 @@
+{
+  "url": "https://www.cne.cl/wp-content/uploads/2015/07/Resolucion_Exenta_N_203_abril2011.pdf",
+  "fetched_url": "https://www.cne.cl/wp-content/uploads/2015/07/Resolucion_Exenta_N_203_abril2011.pdf",
+  "downloaded_at": "2026-05-15T12:02:04-0400",
+  "sha256": "20044b5f049dbfbd1d9764fe2479d7926d022c1c0f0da3af4e8b0359844d23f2",
+  "size_bytes": 177805,
+  "content_type": "application/pdf",
+  "scraped_from": {
+    "page_url": "https://www.cne.cl/tarificacion/electrica/precio-nudo/",
+    "page_title": "CNE - Precios de nudo (fallback /precio-nudo/)"
+  }
+}

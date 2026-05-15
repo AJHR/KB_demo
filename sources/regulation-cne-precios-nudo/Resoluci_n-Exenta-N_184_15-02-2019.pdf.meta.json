@@ -1,0 +1,12 @@
+{
+  "url": "https://www.cne.cl/wp-content/uploads/2019/02/Resolución-Exenta-N°184_15-02-2019.pdf",
+  "fetched_url": "https://www.cne.cl/wp-content/uploads/2019/02/Resoluci%C3%B3n-Exenta-N%C2%B0184_15-02-2019.pdf",
+  "downloaded_at": "2026-05-15T12:03:30-0400",
+  "sha256": "c852d58df11e796048f8995c1a33c740ee03a2c6179cd763b64c0a6b0685dcd5",
+  "size_bytes": 201455,
+  "content_type": "application/pdf",
+  "scraped_from": {
+    "page_url": "https://www.cne.cl/tarificacion/electrica/precio-nudo/",
+    "page_title": "CNE - Precios de nudo (fallback /precio-nudo/)"
+  }
+}

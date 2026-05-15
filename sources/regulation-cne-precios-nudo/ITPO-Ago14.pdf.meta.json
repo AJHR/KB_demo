@@ -1,0 +1,12 @@
+{
+  "url": "https://www.cne.cl/wp-content/uploads/2015/07/ITPO-Ago14.pdf",
+  "fetched_url": "https://www.cne.cl/wp-content/uploads/2015/07/ITPO-Ago14.pdf",
+  "downloaded_at": "2026-05-15T12:01:44-0400",
+  "sha256": "43695ea6974b4e1e183e74c25036a3628d13216aa579fd6a93c486c89f38354b",
+  "size_bytes": 9760791,
+  "content_type": "application/pdf",
+  "scraped_from": {
+    "page_url": "https://www.cne.cl/tarificacion/electrica/precio-nudo/",
+    "page_title": "CNE - Precios de nudo (fallback /precio-nudo/)"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "url": "https://energia.gob.cl/sites/default/files/dec_32_2025_reingreso_07_04_2026.pdf",
+  "fetched_url": "https://energia.gob.cl/sites/default/files/dec_32_2025_reingreso_07_04_2026.pdf",
+  "downloaded_at": "2026-05-15T12:07:59-0400",
+  "sha256": "c506067f64be350da85a852da2f5fd1fcc957bf9b1fe55ae437c40be30e75407",
+  "size_bytes": 14622273,
+  "content_type": "application/pdf",
+  "scraped_from": {
+    "page_url": "https://energia.gob.cl/",
+    "page_title": "Ministerio de Energia - Marco regulatorio y reforma 2026"
+  }
+}

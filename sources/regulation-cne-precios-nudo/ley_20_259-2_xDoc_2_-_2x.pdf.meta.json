@@ -1,0 +1,12 @@
+{
+  "url": "https://www.cne.cl/wp-content/uploads/2015/07/ley_20_259-2_xDoc_2_-_2x.pdf",
+  "fetched_url": "https://www.cne.cl/wp-content/uploads/2015/07/ley_20_259-2_xDoc_2_-_2x.pdf",
+  "downloaded_at": "2026-05-15T12:02:16-0400",
+  "sha256": "871ee04589d67963ffa2e3d43970ee337c69bc067a9445ec1bbd657e1e86c326",
+  "size_bytes": 411950,
+  "content_type": "application/pdf",
+  "scraped_from": {
+    "page_url": "https://www.cne.cl/tarificacion/electrica/precio-nudo/",
+    "page_title": "CNE - Precios de nudo (fallback /precio-nudo/)"
+  }
+}

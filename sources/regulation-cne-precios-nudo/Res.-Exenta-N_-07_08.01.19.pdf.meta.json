@@ -1,0 +1,12 @@
+{
+  "url": "https://www.cne.cl/wp-content/uploads/2017/10/Res.-Exenta-N°-07_08.01.19.pdf",
+  "fetched_url": "https://www.cne.cl/wp-content/uploads/2017/10/Res.-Exenta-N%C2%B0-07_08.01.19.pdf",
+  "downloaded_at": "2026-05-15T12:02:55-0400",
+  "sha256": "8a44c93d8f292e9813c89e455664a3e36650137aeb0acd4c1b2319873eec3e35",
+  "size_bytes": 829231,
+  "content_type": "application/pdf",
+  "scraped_from": {
+    "page_url": "https://www.cne.cl/tarificacion/electrica/precio-nudo/",
+    "page_title": "CNE - Precios de nudo (fallback /precio-nudo/)"
+  }
+}

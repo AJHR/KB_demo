@@ -24,6 +24,11 @@ Ministerio de Energia - Marco regulatorio y reforma 2026. Material descargado au
 | `dec_13_2022.pdf` | 221 KB | https://energia.gob.cl/sites/default/files/dec_13_2022.pdf |
 | `dec_14_2022_publicado_do.pdf` | 383 KB | https://energia.gob.cl/sites/default/files/dec_14_2022_publicado_do.pdf |
 | `dec_1_2026_reingreso_07_04_2026.pdf` | 20054 KB | https://energia.gob.cl/sites/default/files/dec_1_2026_reingreso_07_04_2026.pdf |
+| `dec_32_2025_reingreso_07_04_2026.pdf` | 14279 KB | https://energia.gob.cl/sites/default/files/dec_32_2025_reingreso_07_04_2026.pdf |
+| `dec_51_2024_publicado_en_do_03_06_2025.pdf` | 173 KB | https://energia.gob.cl/sites/default/files/dec_51_2024_publicado_en_do_03_06_2025.pdf |
+| `dec_53_2025_reingreso_07_04_2026.pdf` | 36105 KB | https://energia.gob.cl/sites/default/files/dec_53_2025_reingreso_07_04_2026.pdf |
+| `dec_54_2025_ingresado_a_cgr.pdf` | 10626 KB | https://energia.gob.cl/sites/default/files/dec_54_2025_ingresado_a_cgr.pdf |
+| `dec_70_2023.pdf` | 291 KB | https://energia.gob.cl/sites/default/files/dec_70_2023.pdf |
 | `dec_86_2021_ingreso_a_cgr_28_06_2022.pdf` | 10966 KB | https://energia.gob.cl/sites/default/files/dec_86_2021_ingreso_a_cgr_28_06_2022.pdf |
 | `dec_96_2024_publicado_do_23_04_2025.pdf` | 165 KB | https://energia.gob.cl/sites/default/files/dec_96_2024_publicado_do_23_04_2025.pdf |
 | `decreto_19_2025_publicado.pdf` | 170 KB | https://energia.gob.cl/sites/default/files/decreto_19_2025_publicado.pdf |

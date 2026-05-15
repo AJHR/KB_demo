@@ -1,0 +1,12 @@
+{
+  "url": "https://www.cne.cl/wp-content/uploads/2015/07/normaparticipacionciudadanaCNE2011.pdf",
+  "fetched_url": "https://www.cne.cl/wp-content/uploads/2015/07/normaparticipacionciudadanaCNE2011.pdf",
+  "downloaded_at": "2026-05-15T12:02:24-0400",
+  "sha256": "8094c04f06d755f2d29edc241b7ab045ad8a71b491ac4f81ad9e14c039c6bcdc",
+  "size_bytes": 234761,
+  "content_type": "application/pdf",
+  "scraped_from": {
+    "page_url": "https://www.cne.cl/tarificacion/electrica/precio-nudo/",
+    "page_title": "CNE - Precios de nudo (fallback /precio-nudo/)"
+  }
+}
