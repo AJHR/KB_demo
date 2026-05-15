@@ -40,9 +40,20 @@ git pull --ff-only origin "$BRANCH" || true
 
 # 3. venv ligero (sin Playwright, sin sentence-transformers)
 VENV="$ROOT/spence-demo-electrico/.venv-reg"
-if [ ! -d "$VENV" ]; then
+# Detecta venv corrupto (dir existe pero sin bin/activate, p.ej. si un intento
+# previo de python -m venv reventó a la mitad) y lo recrea.
+if [ ! -f "$VENV/bin/activate" ]; then
+  if [ -d "$VENV" ]; then
+    log "Venv incompleto en $VENV (falta bin/activate). Limpiando..."
+    rm -rf "$VENV"
+  fi
   log "Creando venv ligero en $VENV..."
   python3.11 -m venv "$VENV"
+  if [ ! -f "$VENV/bin/activate" ]; then
+    echo "ERROR: python3.11 -m venv no creo $VENV/bin/activate." >&2
+    echo "Probá manualmente: python3.11 -m venv \"$VENV\"" >&2
+    exit 1
+  fi
 fi
 # shellcheck disable=SC1091
 source "$VENV/bin/activate"
