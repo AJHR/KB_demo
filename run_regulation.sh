@@ -18,16 +18,25 @@ PUSH="${PUSH:-1}"
 
 log() { printf "\n==> %s\n" "$*"; }
 
-# 1. Python 3.11
-if ! command -v python3.11 >/dev/null 2>&1; then
+# 1. Python: probamos en orden hasta encontrar uno que ande
+PYBIN=""
+for cand in python3.11 python3.12 python3.10 python3.13 python3; do
+  if command -v "$cand" >/dev/null 2>&1; then
+    PYBIN="$cand"
+    break
+  fi
+done
+if [ -z "$PYBIN" ]; then
   if command -v brew >/dev/null 2>&1; then
     log "Instalando python@3.11 (brew)..."
     brew install python@3.11
+    PYBIN="python3.11"
   else
-    echo "ERROR: necesito python3.11. Instalalo con: brew install python@3.11" >&2
+    echo "ERROR: no encuentro python3.x. Instalalo con: brew install python@3.11" >&2
     exit 1
   fi
 fi
+log "Usando: $PYBIN ($($PYBIN --version 2>&1))"
 
 # 2. Branch correcta (no falla si ya estamos ahi)
 CURRENT_BRANCH="$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo '')"
@@ -40,14 +49,31 @@ git pull --ff-only origin "$BRANCH" || true
 
 # 3. venv ligero (sin Playwright, sin sentence-transformers)
 VENV="$ROOT/spence-demo-electrico/.venv-reg"
-if [ ! -d "$VENV" ]; then
-  log "Creando venv ligero en $VENV..."
-  python3.11 -m venv "$VENV"
+# Verificamos que el venv este COMPLETO (no solo que exista el directorio)
+if [ ! -f "$VENV/bin/activate" ]; then
+  if [ -d "$VENV" ]; then
+    log "venv anterior incompleto; lo borro y recreo..."
+    rm -rf "$VENV"
+  fi
+  log "Creando venv ligero con $PYBIN en $VENV..."
+  if ! "$PYBIN" -m venv "$VENV"; then
+    log "venv standard fallo; reintento con --without-pip y bootstrap manual..."
+    "$PYBIN" -m venv --without-pip "$VENV"
+    # bootstrap pip via get-pip
+    "$VENV/bin/python" -m ensurepip --upgrade 2>/dev/null || {
+      curl -sSL https://bootstrap.pypa.io/get-pip.py | "$VENV/bin/python"
+    }
+  fi
+  if [ ! -f "$VENV/bin/activate" ]; then
+    echo "ERROR: no pude crear el venv en $VENV. Probemos manualmente:" >&2
+    echo "  rm -rf $VENV && $PYBIN -m venv $VENV" >&2
+    exit 1
+  fi
 fi
 # shellcheck disable=SC1091
 source "$VENV/bin/activate"
-pip install --quiet --upgrade pip
-pip install --quiet httpx beautifulsoup4 lxml
+python -m pip install --quiet --upgrade pip
+python -m pip install --quiet httpx beautifulsoup4 lxml
 
 # 4. Scrapear
 log "Ejecutando regulation_only.py (10-30 min esperados)..."
