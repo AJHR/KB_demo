@@ -21,11 +21,35 @@ if [ "$CURRENT_BRANCH" != "$BRANCH" ]; then
 fi
 git pull --ff-only origin "$BRANCH" || true
 
-# Reusa el mismo venv que regulation_only (.venv-reg), instalando lo extra
+# Reusa el mismo venv que regulation_only (.venv-reg), o lo crea si no existe
 VENV="$ROOT/generador-demo-electrico/.venv-reg"
 if [ ! -f "$VENV/bin/activate" ]; then
-  echo "ERROR: el venv $VENV no existe. Corre primero run_regulation.sh." >&2
-  exit 1
+  if [ -d "$VENV" ]; then
+    log "venv anterior incompleto; lo borro y recreo..."
+    rm -rf "$VENV"
+  fi
+  # Buscar un python disponible (mismo orden que run_regulation.sh)
+  PYBIN=""
+  for cand in python3.11 python3.12 python3.10 python3.13 python3; do
+    if command -v "$cand" >/dev/null 2>&1; then
+      PYBIN="$cand"; break
+    fi
+  done
+  if [ -z "$PYBIN" ]; then
+    echo "ERROR: no encuentro python3.x. Instala con: brew install python@3.11" >&2
+    exit 1
+  fi
+  log "Creando venv en $VENV con $PYBIN ($($PYBIN --version 2>&1))..."
+  if ! "$PYBIN" -m venv "$VENV"; then
+    log "venv standard fallo; reintento con --without-pip + get-pip..."
+    "$PYBIN" -m venv --without-pip "$VENV"
+    curl -sSL https://bootstrap.pypa.io/get-pip.py | "$VENV/bin/python"
+  fi
+  if [ ! -f "$VENV/bin/activate" ]; then
+    echo "ERROR: no pude crear el venv. Pruebalo manual:" >&2
+    echo "  rm -rf $VENV && $PYBIN -m venv $VENV" >&2
+    exit 1
+  fi
 fi
 # shellcheck disable=SC1091
 source "$VENV/bin/activate"
