@@ -21,22 +21,39 @@ if [ "$CURRENT_BRANCH" != "$BRANCH" ]; then
 fi
 git pull --ff-only origin "$BRANCH" || true
 
-# Reusa el mismo venv que regulation_only (.venv-reg), o lo crea si no existe
+# Smoke test: verifica que un python tenga stdlib completo (pyexpat, ssl, etc).
+# Hay versiones de brew python@3.11 con libexpat roto que cascadea en pip.
+python_works() {
+  "$1" -c "import xml.parsers.expat, ssl, ctypes, zlib, hashlib, sqlite3" 2>/dev/null
+}
+
 VENV="$ROOT/generador-demo-electrico/.venv-reg"
+
+# Si el venv existe pero su python esta roto, lo nukeamos
+if [ -f "$VENV/bin/python" ] && ! python_works "$VENV/bin/python"; then
+  log "venv existente tiene stdlib roto (libexpat/pyexpat); recreando..."
+  rm -rf "$VENV"
+fi
+
 if [ ! -f "$VENV/bin/activate" ]; then
   if [ -d "$VENV" ]; then
     log "venv anterior incompleto; lo borro y recreo..."
     rm -rf "$VENV"
   fi
-  # Buscar un python disponible (mismo orden que run_regulation.sh)
+  # Buscar un python disponible Y funcional (salteamos los con stdlib roto)
   PYBIN=""
-  for cand in python3.11 python3.12 python3.10 python3.13 python3; do
+  for cand in python3.12 python3.13 python3.11 python3.10 python3; do
     if command -v "$cand" >/dev/null 2>&1; then
-      PYBIN="$cand"; break
+      if python_works "$cand"; then
+        PYBIN="$cand"; break
+      else
+        log "  $cand: stdlib roto (pyexpat), saltando"
+      fi
     fi
   done
   if [ -z "$PYBIN" ]; then
-    echo "ERROR: no encuentro python3.x. Instala con: brew install python@3.11" >&2
+    echo "ERROR: no encuentro un python3.x funcional. Probar:" >&2
+    echo "  brew reinstall expat python@3.11" >&2
     exit 1
   fi
   log "Creando venv en $VENV con $PYBIN ($($PYBIN --version 2>&1))..."
@@ -45,14 +62,15 @@ if [ ! -f "$VENV/bin/activate" ]; then
     "$PYBIN" -m venv --without-pip "$VENV"
     curl -sSL https://bootstrap.pypa.io/get-pip.py | "$VENV/bin/python"
   fi
-  if [ ! -f "$VENV/bin/activate" ]; then
-    echo "ERROR: no pude crear el venv. Pruebalo manual:" >&2
-    echo "  rm -rf $VENV && $PYBIN -m venv $VENV" >&2
+  if [ ! -f "$VENV/bin/activate" ] || ! python_works "$VENV/bin/python"; then
+    echo "ERROR: el venv no quedo funcional. Pruebalo manual:" >&2
+    echo "  rm -rf $VENV && /usr/bin/python3 -m venv $VENV" >&2
     exit 1
   fi
 fi
 # shellcheck disable=SC1091
 source "$VENV/bin/activate"
+log "venv listo: $(python --version 2>&1)"
 
 log "Instalando deps de vector store (~1GB total con torch)..."
 python -m pip install --quiet --upgrade pip
