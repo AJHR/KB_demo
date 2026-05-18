@@ -7,7 +7,7 @@ Sin Playwright. Sin login. Sin embeddings. Solo PDFs publicos.
 Output:
   <repo>/sources/regulation-<topic>/<archivo>.pdf
   <repo>/sources/regulation-<topic>/<archivo>.pdf.meta.json
-  <repo>/spence-demo-electrico/logs/regulation.log
+  <repo>/generador-demo-electrico/logs/regulation.log
 """
 from __future__ import annotations
 
@@ -26,12 +26,12 @@ import httpx
 from bs4 import BeautifulSoup
 
 SCRIPT = Path(__file__).resolve()
-KB_ROOT = SCRIPT.parent.parent.parent   # spence-demo-electrico/scripts/ -> KB root
+KB_ROOT = SCRIPT.parent.parent.parent   # generador-demo-electrico/scripts/ -> KB root
 SOURCES_DIR = KB_ROOT / "sources"
 LOG_DIR = SCRIPT.parent.parent / "logs"
 LOG_PATH = LOG_DIR / "regulation.log"
 
-UA = "SpenceKBDemo/1.0 (research; contacto: demo@spence.local)"
+UA = "GeneradorKBDemo/1.0 (research; contacto: demo@generador.local)"
 MIN_DELAY = 3.0
 JITTER = 1.0
 TIMEOUT = 30.0

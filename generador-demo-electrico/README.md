@@ -1,4 +1,4 @@
-# spence-demo-electrico
+# generador-demo-electrico
 
 KB de demo para el sector electrico chileno: scraping respetuoso de fuentes publicas (CEN, CNE, Energia Abierta, Ministerio de Energia) + vector store local con embeddings multilingues.
 
@@ -14,7 +14,7 @@ KB de demo para el sector electrico chileno: scraping respetuoso de fuentes publ
 ## Setup
 
 ```bash
-cd spence-demo-electrico
+cd generador-demo-electrico
 python -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
 playwright install chromium
@@ -23,7 +23,7 @@ playwright install chromium
 ## Reglas de scraping (no negociable)
 
 - Rate limit: 3s + jitter +-1s entre requests al mismo dominio. 429/503 dobla el delay.
-- User-Agent: `SpenceKBDemo/1.0 (research; contacto: demo@spence.local)`. No mentir.
+- User-Agent: `GeneradorKBDemo/1.0 (research; contacto: demo@generador.local)`. No mentir.
 - robots.txt: chequear al inicio, registrar Disallow en `logs/skipped_by_robots.txt`.
 - Reintentos: 3 maximo, backoff exponencial 3s/9s/27s.
 - Concurrencia: 1 request simultaneo por dominio.
@@ -42,7 +42,7 @@ python scripts/update_weekly.py       # normativa + informe mensual (lun 07:00 C
 ## Estructura
 
 ```
-spence-demo-electrico/
+generador-demo-electrico/
 ├── config/{sources.yaml, settings.py}
 ├── scrapers/{base_scraper, cen_scraper, cne_scraper, energia_abierta, regulation_scraper}.py
 ├── scripts/{initial_load, process_to_vector, update_daily, update_weekly}.py

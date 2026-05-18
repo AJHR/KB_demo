@@ -48,7 +48,7 @@ fi
 git pull --ff-only origin "$BRANCH" || true
 
 # 3. venv ligero (sin Playwright, sin sentence-transformers)
-VENV="$ROOT/spence-demo-electrico/.venv-reg"
+VENV="$ROOT/generador-demo-electrico/.venv-reg"
 # Verificamos que el venv este COMPLETO (no solo que exista el directorio)
 if [ ! -f "$VENV/bin/activate" ]; then
   if [ -d "$VENV" ]; then
@@ -77,7 +77,7 @@ python -m pip install --quiet httpx beautifulsoup4 lxml
 
 # 4. Scrapear
 log "Ejecutando regulation_only.py (10-30 min esperados)..."
-python spence-demo-electrico/scripts/regulation_only.py
+python generador-demo-electrico/scripts/regulation_only.py
 
 # 5. Commit + push (opcional)
 if [ "$PUSH" = "1" ]; then

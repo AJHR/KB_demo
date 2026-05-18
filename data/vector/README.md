@@ -7,7 +7,7 @@ Vector store del KB para busqueda semantica sobre `sources/`.
 | Archivo | Versionado | Que es |
 |---------|------------|--------|
 | `manifest.json` | Si | Inventario JSON: doc_id, file_path, hash, chunks, indexed_at por PDF indexado. Util para humanos y para procesos delta. |
-| `lancedb/` | **No** (gitignored) | Base vectorial binaria LanceDB. Se regenera localmente con `python spence-demo-electrico/scripts/process_sources.py`. |
+| `lancedb/` | **No** (gitignored) | Base vectorial binaria LanceDB. Se regenera localmente con `python generador-demo-electrico/scripts/process_sources.py`. |
 | `README.md` | Si | Este archivo. |
 
 ## Como se genera
@@ -21,17 +21,17 @@ bash run_vector.sh
 O manualmente:
 
 ```bash
-source spence-demo-electrico/.venv-reg/bin/activate
+source generador-demo-electrico/.venv-reg/bin/activate
 pip install pypdf sentence-transformers lancedb pyarrow tiktoken
-python spence-demo-electrico/scripts/process_sources.py
+python generador-demo-electrico/scripts/process_sources.py
 ```
 
 ## Como se consulta
 
 ```bash
-python spence-demo-electrico/scripts/query_kb.py "tu pregunta"
-python spence-demo-electrico/scripts/query_kb.py --topic regulation-cne-reglamentos-mercado "potencia firme"
-python spence-demo-electrico/scripts/query_kb.py --topk 10 "bess y grid forming"
+python generador-demo-electrico/scripts/query_kb.py "tu pregunta"
+python generador-demo-electrico/scripts/query_kb.py --topic regulation-cne-reglamentos-mercado "potencia firme"
+python generador-demo-electrico/scripts/query_kb.py --topk 10 "bess y grid forming"
 ```
 
 ## Schema de la tabla `chunks`

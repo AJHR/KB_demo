@@ -287,7 +287,7 @@ def main() -> int:
     print(f"  Errores:                 {skipped['errors']}")
     print(f"  Manifest: {MANIFEST.relative_to(REPO)}")
     print(f"  LanceDB:  {LANCEDB_DIR.relative_to(REPO)}")
-    print(f"\nProba el RAG: python spence-demo-electrico/scripts/query_kb.py 'tu pregunta'")
+    print(f"\nProba el RAG: python generador-demo-electrico/scripts/query_kb.py 'tu pregunta'")
     return 0
 
 

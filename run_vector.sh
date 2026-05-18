@@ -22,7 +22,7 @@ fi
 git pull --ff-only origin "$BRANCH" || true
 
 # Reusa el mismo venv que regulation_only (.venv-reg), instalando lo extra
-VENV="$ROOT/spence-demo-electrico/.venv-reg"
+VENV="$ROOT/generador-demo-electrico/.venv-reg"
 if [ ! -f "$VENV/bin/activate" ]; then
   echo "ERROR: el venv $VENV no existe. Corre primero run_regulation.sh." >&2
   exit 1
@@ -35,7 +35,7 @@ python -m pip install --quiet --upgrade pip
 python -m pip install --quiet pypdf tiktoken sentence-transformers lancedb pyarrow
 
 log "Procesando sources/ a vector store (puede tardar)..."
-python spence-demo-electrico/scripts/process_sources.py
+python generador-demo-electrico/scripts/process_sources.py
 
 log "Commit + push del manifest.json (no se commitea LanceDB, es binario)"
 git add data/vector/manifest.json data/vector/README.md 2>/dev/null || true
@@ -50,13 +50,13 @@ cat <<'EOF'
 
 LISTO. Proba el RAG con preguntas en lenguaje natural:
 
-  source spence-demo-electrico/.venv-reg/bin/activate
-  python spence-demo-electrico/scripts/query_kb.py "como se calcula la potencia firme"
-  python spence-demo-electrico/scripts/query_kb.py "bloques horarios pmgd con bess"
-  python spence-demo-electrico/scripts/query_kb.py "panel de expertos"
-  python spence-demo-electrico/scripts/query_kb.py --topk 10 "ciberseguridad sistema electrico"
+  source generador-demo-electrico/.venv-reg/bin/activate
+  python generador-demo-electrico/scripts/query_kb.py "como se calcula la potencia firme"
+  python generador-demo-electrico/scripts/query_kb.py "bloques horarios pmgd con bess"
+  python generador-demo-electrico/scripts/query_kb.py "panel de expertos"
+  python generador-demo-electrico/scripts/query_kb.py --topk 10 "ciberseguridad sistema electrico"
 
 Para limitar a un topic:
-  python spence-demo-electrico/scripts/query_kb.py --topic regulation-cne-reglamentos-mercado "transferencias economicas"
+  python generador-demo-electrico/scripts/query_kb.py --topic regulation-cne-reglamentos-mercado "transferencias economicas"
 
 EOF

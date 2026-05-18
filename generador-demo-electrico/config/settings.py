@@ -9,7 +9,7 @@ MANIFEST_PATH = DATA_VECTOR / "manifest.json"
 LOGS = ROOT / "logs"
 SOURCES_YAML = ROOT / "config" / "sources.yaml"
 
-USER_AGENT = "SpenceKBDemo/1.0 (research; contacto: demo@spence.local)"
+USER_AGENT = "GeneradorKBDemo/1.0 (research; contacto: demo@generador.local)"
 
 # Rate limiting
 MIN_DELAY_SECONDS = 3.0

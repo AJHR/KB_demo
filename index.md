@@ -57,13 +57,13 @@ Indice vectorial sobre `sources/regulation-*/*.pdf`. Ver [`data/vector/README.md
 - Modelo: `paraphrase-multilingual-MiniLM-L12-v2` (gratis, multilingue, dim=384)
 - Chunking: 800 tokens, overlap 150
 
-Generar: `bash run_vector.sh`. Consultar: `python spence-demo-electrico/scripts/query_kb.py "tu pregunta"`.
+Generar: `bash run_vector.sh`. Consultar: `python generador-demo-electrico/scripts/query_kb.py "tu pregunta"`.
 
 ### Subproyectos
 
 | Subproyecto | Proposito |
 |-------------|-----------|
-| [`spence-demo-electrico/`](./spence-demo-electrico/README.md) | Pipeline de scraping respetuoso. Estado actual: corrida de regulacion completada (commit `093393b`), ingestio operacional CEN/CNE/Energia Abierta pendiente (requiere red sin allowlist restringida). |
+| [`generador-demo-electrico/`](./generador-demo-electrico/README.md) | Pipeline de scraping respetuoso. Estado actual: corrida de regulacion completada (commit `093393b`), ingestio operacional CEN/CNE/Energia Abierta pendiente (requiere red sin allowlist restringida). |
 
 ## Glossario rapido para no-electricistas
 
