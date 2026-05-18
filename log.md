@@ -11,6 +11,10 @@ Formato:
 
 ---
 
+## 2026-05-18
+- [ingesta] Corrida `d8789d3` de fill_gaps.py: 3 PDFs nuevos. `Estandar-Ciberseguridad-SEN-Octubre-2022.pdf` (100 pp.) y `Protocolo-de-Notificacion-de-Incidentes-de-Ciberseguridad.pdf` (7 pp.) en `regulation-coordinador-normativa-tecnica/`. `DESEMPE_O-DEL-CONTROL-DE-FRECUENCIA-dic19.pdf` (6 pp., anexo NT) en `regulation-cne-reglamentos-mercado/`. Total ahora: 316 archivos, 256 unicos. Gaps `modelos-dinamicos` y `pliego-tecnico` no encontraron nada — probable que requieran login (REUC) o esten en sub-portales no indexados desde las paginas raiz que probamos.
+- [wiki] Nueva pagina `wiki/ciberseguridad-sen.md` con frontmatter completo: estructura CIP-002 a CIP-011 del estandar CEN, niveles de impacto, definicion de ICR (Incidentes Ciberseguridad Reportables), cadena CEN -> SEC. `wiki/servicios-complementarios-y-transferencias.md` actualizada para citar el anexo Desempeno Control de Frecuencia (FECF, calculo horario, publicacion mensual del CEN).
+
 ## 2026-05-15
 - [vector] Agregado pipeline RAG: `generador-demo-electrico/scripts/process_sources.py` (sources/*.pdf -> chunks -> embeddings -> LanceDB), `query_kb.py` (CLI de busqueda semantica), `run_vector.sh` (wrapper Mac). Modelo `paraphrase-multilingual-MiniLM-L12-v2` (384d). `data/vector/lancedb/` gitignored, `manifest.json` y `README.md` versionados. Pendiente ejecucion en Mac.
 - [gitignore] Anadido `.gitignore` raiz: data/vector/lancedb/, __pycache__, .venv*/, .DS_Store.

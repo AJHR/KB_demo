@@ -16,16 +16,17 @@ PDFs de regulacion electrica chilena (CNE, Coordinador, Minenergia) descargados 
 | [`regulation-cne-normas-tecnicas`](./sources/regulation-cne-normas-tecnicas/RESUMEN.md) | ResEx ERNC, decretos por sistema mediano | 40 |
 | [`regulation-coordinador-reportes-estadisticas`](./sources/regulation-coordinador-reportes-estadisticas/RESUMEN.md) | Guias de usuario CEN (IT, Gescal, Licitaciones, RENOVA) | 40 |
 | [`regulation-minenergia-marco-regulatorio`](./sources/regulation-minenergia-marco-regulatorio/RESUMEN.md) | Decretos exentos, instructivos, IIR (informes impacto regulatorio) | 30 |
-| [`regulation-cne-reglamentos-mercado`](./sources/regulation-cne-reglamentos-mercado/RESUMEN.md) | NT Coordinacion y Operacion, NTCO-PMGD 2026, DS 144, DS 48, Panel de Expertos, sistemas de medidas | 11 |
+| [`regulation-cne-reglamentos-mercado`](./sources/regulation-cne-reglamentos-mercado/RESUMEN.md) | NT Coordinacion y Operacion, NTCO-PMGD 2026, DS 144, DS 48, Panel de Expertos, sistemas de medidas, desempeno control de frecuencia | 12 |
 | [`regulation-coordinador-mercados-servicios`](./sources/regulation-coordinador-mercados-servicios/RESUMEN.md) | Servicios complementarios, transferencias economicas | 9 |
 | [`regulation-coordinador-desarrollo-transmision`](./sources/regulation-coordinador-desarrollo-transmision/RESUMEN.md) | Jornadas tecnicas 2026: BESS, control de tension, monitoreo | 8 |
+| [`regulation-coordinador-normativa-tecnica`](./sources/regulation-coordinador-normativa-tecnica/RESUMEN.md) | **Estandar Ciberseguridad SEN + Protocolo Notificacion Ciberincidentes** | 2 |
 | [`regulation-coordinador-operacion-sen`](./sources/regulation-coordinador-operacion-sen/RESUMEN.md) | ⚠️ Solo 1 archivo — URL del Coordinador sigue sin entregar | 1 |
 
-**Carpetas pendientes** (URLs no alcanzan a poblarlas — pueden necesitar Playwright o cambio manual):
-- `regulation-coordinador-normativa-tecnica` (PTN, ciberseguridad, grid forming)
-- `regulation-coordinador-operacion-sen` (Procedimientos DO, programa de operacion)
+**Carpetas todavia incompletas**:
+- `regulation-coordinador-normativa-tecnica` — falta Guia Grid Forming + Pliego Tecnico Normalizado (PTN)
+- `regulation-coordinador-operacion-sen` — Procedimientos DO + Programa de Operacion (probablemente requieren login en REUC)
 
-**Total actual: 313 archivos, 253 unicos, ~527 MB.**
+**Total actual: 316 archivos, 256 unicos, ~528 MB.**
 
 ### `work/` — Documentos vivos
 
@@ -41,6 +42,7 @@ Paginas escritas para entender el mercado desde la posicion de un generador. Ver
 | [`wiki/servicios-complementarios-y-transferencias.md`](./wiki/servicios-complementarios-y-transferencias.md) | Como se cobra por mantener el sistema operando (SSCC, transferencias mensuales, fallas) | 2026-05-15 |
 | [`wiki/conexion-y-transmision.md`](./wiki/conexion-y-transmision.md) | Conectar una central nueva, segmentos de transmision, BESS, costo de falla | 2026-05-15 |
 | [`wiki/marco-pmgd-y-distribuida.md`](./wiki/marco-pmgd-y-distribuida.md) | PMGD <=9 MW, NTCO-PMGD 2026 con BESS, sistemas medianos, estabilizacion tarifaria | 2026-05-15 |
+| [`wiki/ciberseguridad-sen.md`](./wiki/ciberseguridad-sen.md) | Estandar CIP del CEN + protocolo de notificacion de incidentes (CIP-002 a CIP-011) | 2026-05-18 |
 
 ### `tools/` — Mantenimiento
 

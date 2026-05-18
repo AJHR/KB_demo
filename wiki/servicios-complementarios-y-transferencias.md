@@ -4,10 +4,11 @@ sources:
   - sources/regulation-cne-reglamentos-mercado/NT-de-Coordinacion-y-Operacion-del-SEN.pdf
   - sources/regulation-cne-reglamentos-mercado/SISTEMAS-DE-MEDIDAS-PARA-TRANSFERENCIAS-ECON_MICAS.pdf
   - sources/regulation-cne-reglamentos-mercado/INFORMES-DE-FALLA-DE-COORDINADOS-dic19.pdf
+  - sources/regulation-cne-reglamentos-mercado/DESEMPE_O-DEL-CONTROL-DE-FRECUENCIA-dic19.pdf
   - sources/regulation-cne-reglamentos-mercado/Norma-Tecnica-de-Coordinacion-y-Operacion-Capitulo-sobre-la-Declaracion-de-Costos-Variables-2.pdf
   - sources/regulation-minenergia-marco-regulatorio/2._iir_decreto_que_modifica_reglamento_de_transferencias_de_potencia_entre_empresas.pdf
   - sources/regulation-minenergia-marco-regulatorio/8._iir_ds_125.pdf
-last_synthesized: 2026-05-15
+last_synthesized: 2026-05-18
 ---
 
 # Servicios complementarios y transferencias economicas en el SEN
@@ -40,6 +41,20 @@ Resultado: un balance por coordinado que se traduce en **facturas entre empresas
 La **potencia** se remunera aparte de la energia. Cada central tiene una potencia firme reconocida segun su disponibilidad estadistica en horas de demanda maxima. La modificacion vigente al regimen de transferencias de potencia esta en `2._iir_decreto_que_modifica_reglamento_de_transferencias_de_potencia_entre_empresas.pdf` (informe de impacto regulatorio del decreto del Minenergia).
 
 Para hidro, eolico y solar el calculo es no trivial — depende de la **definicion de potencia firme** vigente (hay debate regulatorio constante sobre como reconocer aporte de renovables variables con / sin BESS).
+
+## 3.bis Como se mide el desempeno del Control de Frecuencia
+
+Anexo Tecnico CNE: **Desempeno del Control de Frecuencia** (dic 2019, 6 pp.). Define el **Factor de Eficiencia del Control de Frecuencia (FECF)** que el CEN debe calcular **hora a hora** y publicar en su sitio web **antes del dia 10 de cada mes** (`sources/regulation-cne-reglamentos-mercado/DESEMPE_O-DEL-CONTROL-DE-FRECUENCIA-dic19.pdf`, Art. 1-4).
+
+> "El objetivo del presente Anexo Tecnico es definir la metodologia para calcular el Factor de Eficiencia del Control de Frecuencia (FECF) que permite evaluar el desempeno del Control de Frecuencia del SI." — Art. 1
+
+Componentes del calculo (Art. 5-6):
+
+- **CPF**: Control Primario de Frecuencia (respuesta automatica de gobernadores de turbinas).
+- **CRF**: Control Rapido de Frecuencia (respuesta de BESS y otros inversores).
+- **FECF** = 1 si la desviacion filtrada de frecuencia coincide con la nominal; 0 si se agota la reserva CPF+CRF.
+
+Las medidas de frecuencia vienen del **Sistema de Informacion en Tiempo Real (SITR)** del CEN, con muestreo cada 10 segundos. Si tu central provee CPF/CRF, este factor monitorea si **efectivamente cumples** lo declarado — y se usa para auditoria y eventual sancion.
 
 ## 4. Informes de falla
 
