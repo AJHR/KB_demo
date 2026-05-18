@@ -12,19 +12,20 @@ PDFs de regulacion electrica chilena (CNE, Coordinador, Minenergia) descargados 
 |---------|------|---------:|
 | [`regulation-cne-sector-electrico`](./sources/regulation-cne-sector-electrico/RESUMEN.md) | LGE, decretos historicos, normativa base | 80 |
 | [`regulation-cne-obras-nuevas-urgentes`](./sources/regulation-cne-obras-nuevas-urgentes/RESUMEN.md) | Decretos 6T/14T, costo de falla, precios estabilizados | 48 |
+| [`regulation-cne-precios-nudo`](./sources/regulation-cne-precios-nudo/RESUMEN.md) | **Informes y decretos de precios de nudo** (semestrales, Art. 163 LGSE) | 46 |
 | [`regulation-cne-normas-tecnicas`](./sources/regulation-cne-normas-tecnicas/RESUMEN.md) | ResEx ERNC, decretos por sistema mediano | 40 |
-| [`regulation-cne-reglamentos-mercado`](./sources/regulation-cne-reglamentos-mercado/RESUMEN.md) | NT Coordinacion y Operacion, NTCO-PMGD 2026, DS 144, DS 48, Panel de Expertos, sistemas de medidas | 11 |
 | [`regulation-coordinador-reportes-estadisticas`](./sources/regulation-coordinador-reportes-estadisticas/RESUMEN.md) | Guias de usuario CEN (IT, Gescal, Licitaciones, RENOVA) | 40 |
+| [`regulation-minenergia-marco-regulatorio`](./sources/regulation-minenergia-marco-regulatorio/RESUMEN.md) | Decretos exentos, instructivos, IIR (informes impacto regulatorio) | 30 |
+| [`regulation-cne-reglamentos-mercado`](./sources/regulation-cne-reglamentos-mercado/RESUMEN.md) | NT Coordinacion y Operacion, NTCO-PMGD 2026, DS 144, DS 48, Panel de Expertos, sistemas de medidas | 11 |
+| [`regulation-coordinador-mercados-servicios`](./sources/regulation-coordinador-mercados-servicios/RESUMEN.md) | Servicios complementarios, transferencias economicas | 9 |
 | [`regulation-coordinador-desarrollo-transmision`](./sources/regulation-coordinador-desarrollo-transmision/RESUMEN.md) | Jornadas tecnicas 2026: BESS, control de tension, monitoreo | 8 |
-| [`regulation-coordinador-mercados-servicios`](./sources/regulation-coordinador-mercados-servicios/RESUMEN.md) | ⚠️ Solo 1 archivo — pendiente reintento | 1 |
-| [`regulation-coordinador-operacion-sen`](./sources/regulation-coordinador-operacion-sen/RESUMEN.md) | ⚠️ Solo 1 archivo — pendiente reintento | 1 |
-| [`regulation-minenergia-marco-regulatorio`](./sources/regulation-minenergia-marco-regulatorio/RESUMEN.md) | Decretos exentos, instructivos, IIR (informes impacto regulatorio) | 25 |
+| [`regulation-coordinador-operacion-sen`](./sources/regulation-coordinador-operacion-sen/RESUMEN.md) | ⚠️ Solo 1 archivo — URL del Coordinador sigue sin entregar | 1 |
 
-**Carpetas pendientes de scrapeo** (URLs erradas en la corrida inicial — ver `log.md` y proximo run de `regulation_only.py`):
-- `regulation-cne-precios-nudo`
-- `regulation-coordinador-normativa-tecnica`
+**Carpetas pendientes** (URLs no alcanzan a poblarlas — pueden necesitar Playwright o cambio manual):
+- `regulation-coordinador-normativa-tecnica` (PTN, ciberseguridad, grid forming)
+- `regulation-coordinador-operacion-sen` (Procedimientos DO, programa de operacion)
 
-**Total actual: 254 archivos, 207 unicos, ~390 MB.**
+**Total actual: 313 archivos, 253 unicos, ~527 MB.**
 
 ### `work/` — Documentos vivos
 
