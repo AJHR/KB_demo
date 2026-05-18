@@ -47,6 +47,17 @@ Paginas escritas para entender el mercado desde la posicion de un generador. Ver
 |--------|-----------|
 | [`tools/lint-kb.sh`](./tools/lint-kb.sh) | Verificar invariantes del KB (ver CLAUDE.md) |
 
+### `data/vector/` — Vector store (busqueda semantica)
+
+Indice vectorial sobre `sources/regulation-*/*.pdf`. Ver [`data/vector/README.md`](./data/vector/README.md).
+
+- `manifest.json` — inventario de PDFs indexados (versionado)
+- `lancedb/` — base binaria (gitignored, se regenera local)
+- Modelo: `paraphrase-multilingual-MiniLM-L12-v2` (gratis, multilingue, dim=384)
+- Chunking: 800 tokens, overlap 150
+
+Generar: `bash run_vector.sh`. Consultar: `python spence-demo-electrico/scripts/query_kb.py "tu pregunta"`.
+
 ### Subproyectos
 
 | Subproyecto | Proposito |

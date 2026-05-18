@@ -1,0 +1,14 @@
+# Vector store binario (regenerable desde sources/)
+data/vector/lancedb/
+
+# Python
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# venvs locales
+.venv*/
+
+# Editor / OS
+.DS_Store
+*.swp
