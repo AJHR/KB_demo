@@ -76,15 +76,18 @@ log "Instalando deps de vector store (~1GB total con torch)..."
 python -m pip install --quiet --upgrade pip
 python -m pip install --quiet pypdf tiktoken sentence-transformers lancedb pyarrow
 
+log "Generando .md companions de PDFs nuevos (pdf_to_md, idempotente)..."
+python generador-demo-electrico/scripts/pdf_to_md.py || log "WARN: pdf_to_md fallo; sigo"
+
 log "Procesando sources/ a vector store (puede tardar)..."
 python generador-demo-electrico/scripts/process_sources.py
 
-log "Commit + push del manifest.json (no se commitea LanceDB, es binario)"
-git add data/vector/manifest.json data/vector/README.md 2>/dev/null || true
+log "Commit + push del manifest.json y .md companions (LanceDB queda local)"
+git add data/vector/manifest.json data/vector/README.md sources/regulation-*/*.md 2>/dev/null || true
 if git diff --cached --quiet; then
   log "Nada nuevo en manifest."
 else
-  git commit -m "vector: indexar sources/ a LanceDB ($(date +%F))"
+  git commit -m "vector: indexar sources/ a LanceDB + md companions ($(date +%F))"
   git push origin "$BRANCH"
 fi
 

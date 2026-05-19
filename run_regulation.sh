@@ -73,11 +73,15 @@ fi
 # shellcheck disable=SC1091
 source "$VENV/bin/activate"
 python -m pip install --quiet --upgrade pip
-python -m pip install --quiet httpx beautifulsoup4 lxml
+python -m pip install --quiet httpx beautifulsoup4 lxml pypdf
 
 # 4. Scrapear
 log "Ejecutando regulation_only.py (10-30 min esperados)..."
 python generador-demo-electrico/scripts/regulation_only.py
+
+# 4.5 Generar .md companions de los PDFs (incrementales — solo los nuevos)
+log "Generando .md companions (pdf_to_md, idempotente)..."
+python generador-demo-electrico/scripts/pdf_to_md.py || log "WARN: pdf_to_md fallo; sigo con commit igual"
 
 # 5. Commit + push (opcional)
 if [ "$PUSH" = "1" ]; then
@@ -86,7 +90,7 @@ if [ "$PUSH" = "1" ]; then
     log "Nada nuevo para commitear."
   else
     log "Commiteando + pusheando a $BRANCH..."
-    git commit -m "ingesta: regulacion electrica chilena ($(date +%F))"
+    git commit -m "ingesta: regulacion electrica chilena + md companions ($(date +%F))"
     git push -u origin "$BRANCH"
     log "PUSH OK. Avisame en el chat y desde mi sandbox sintetizo wiki/ + RESUMEN.md."
   fi

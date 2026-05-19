@@ -57,17 +57,20 @@ source "$VENV/bin/activate"
 
 log "Instalando deps (idempotente)..."
 python -m pip install --quiet --upgrade pip
-python -m pip install --quiet httpx beautifulsoup4 lxml
+python -m pip install --quiet httpx beautifulsoup4 lxml pypdf
 
 log "Ejecutando fill_gaps.py (10-20 min esperados)..."
 python generador-demo-electrico/scripts/fill_gaps.py "$@"
+
+log "Generando .md companions (pdf_to_md, idempotente)..."
+python generador-demo-electrico/scripts/pdf_to_md.py || log "WARN: pdf_to_md fallo; sigo con commit igual"
 
 if [ "$PUSH" = "1" ]; then
   git add sources/regulation-* 2>/dev/null || true
   if git diff --cached --quiet; then
     log "Nada nuevo para commitear."
   else
-    git commit -m "ingesta: fill_gaps (SSCC/grid forming/modelos dinamicos/PTN) $(date +%F)"
+    git commit -m "ingesta: fill_gaps + md companions ($(date +%F))"
     git push origin "$BRANCH"
     log "PUSH OK. Avisame para re-sintetizar wiki/ con los nuevos PDFs."
   fi

@@ -50,13 +50,27 @@ else
   "$PYBIN" generador-demo-electrico/scripts/ingest_manual.py "$@"
 fi
 
+# Generar .md companions de los PDFs nuevos. Usa .venv-reg si esta (tiene pypdf).
+log "Generando .md companions (pdf_to_md, idempotente)..."
+VENV="$ROOT/generador-demo-electrico/.venv-reg"
+if [ -f "$VENV/bin/python" ] && "$VENV/bin/python" -c "import pypdf" 2>/dev/null; then
+  "$VENV/bin/python" generador-demo-electrico/scripts/pdf_to_md.py \
+    || log "WARN: pdf_to_md fallo; sigo con commit igual"
+elif "$PYBIN" -c "import pypdf" 2>/dev/null; then
+  "$PYBIN" generador-demo-electrico/scripts/pdf_to_md.py \
+    || log "WARN: pdf_to_md fallo; sigo con commit igual"
+else
+  log "SKIP pdf_to_md: pypdf no instalado. Para activarlo:"
+  log "  $VENV/bin/pip install pypdf  (o)  $PYBIN -m pip install --user pypdf"
+fi
+
 # Commit + push si PUSH=1 y hubo cambios
 if [ "$PUSH" = "1" ]; then
   git add sources/regulation-* 2>/dev/null || true
   if git diff --cached --quiet; then
     log "Nada nuevo para commitear."
   else
-    git commit -m "ingesta manual: $(date +%F)"
+    git commit -m "ingesta manual + md companions ($(date +%F))"
     git push origin "$BRANCH"
     log "PUSH OK. Avisame para re-sintetizar wiki/ con los nuevos PDFs."
   fi
