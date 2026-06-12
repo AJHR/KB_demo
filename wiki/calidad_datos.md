@@ -14,7 +14,7 @@ last_synthesized: 2026-06-12
 
 | fuente | fecha_min | fecha_max | dias_presentes | dias_esperados | pct_completitud | n_huecos | huecos |
 |---|---|---|---|---|---|---|---|
-| calendario | 2020-01-01 | 2026-12-31 | 2557 | 2557 | 100.0 | 0 |  |
+| calendario | 2020-01-01 | 2026-12-31 | 2533 | 2557 | 99.1 | 2 | 2026-06-01..2026-06-06; 2026-06-13..2026-06-30 |
 
 ## Outliers (|x - mediana| > 4 · MAD escalado)
 

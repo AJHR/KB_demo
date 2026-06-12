@@ -116,6 +116,11 @@ def main() -> int:
     hoy = date.today()
     if a.modo == "incremental":
         inicio = a.inicio or (hoy - timedelta(days=a.ventana_dias))
+        # las particiones son mensuales: anclar al dia 1 del mes para que la
+        # re-escritura del mes corriente siempre contenga el mes completo
+        # (una ventana a mitad de mes sobreescribiria la particion con solo
+        # los dias de la ventana — bug detectado en el dry-run local)
+        inicio = inicio.replace(day=1)
         fin = a.fin or hoy
     else:
         inicio = a.inicio or date(2019, 1, 1)
