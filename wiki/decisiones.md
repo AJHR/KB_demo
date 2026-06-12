@@ -44,3 +44,18 @@ Cada decisión: contexto, alternativas, decisión, justificación.
 ## D-006 — Regla anti-fuga de las 20:00, implementación
 
 - Toda columna de la tabla maestra lleva metadato `disponible_a_las` (hora Chile del día D en que el dato queda públicamente disponible). El chequeo automático (`models/evaluacion.py::verificar_antifuga`) rechaza cualquier feature cuya disponibilidad declarada sea posterior a las 20:00 del día D o cuyo timestamp de dato sea posterior al día D. Los pronósticos de clima usan la **Historical Forecast API** de Open-Meteo (pronóstico emitido el día D para D+1), nunca el clima observado de D+1.
+
+## D-007 — Stack de combustibles sin credenciales por defecto
+
+- **Contexto:** las series spot oficiales (EIA) y FRED requieren API key (gratuita pero exige registro del usuario); bloquear el backfill en eso violaría las reglas de autonomía.
+- **Decisión:** el extractor de combustibles funciona sin credenciales vía stooq.com (CSV directo) con yfinance de respaldo (futuros front-month Brent/HH/HO/API2) y mindicador.cl para USD/CLP. Si `EIA_API_KEY` existe en el entorno, agrega además las series spot oficiales (lag 7 por rezago de publicación). JKM y carbón spot no tienen fuente gratuita (Platts/Argus de pago): proxy documentado en el catálogo, anexo combustibles.
+- **Trade-off aceptado:** futuros ≠ spot (base risk); para el MVP la señal direccional es suficiente y el settlement de 14:28-14:30 ET cumple la regla 20:00 con holgura.
+
+## D-008 — Nombre de carpeta `sources/costos_sen` (no kebab-case)
+
+- La misión especifica literalmente `sources/costos_sen/`; la convención del repo (CLAUDE.md) pide kebab-case y `tools/lint-kb.sh` lo marca. Se respeta el nombre de la misión; la advertencia del linter para esta carpeta queda aceptada y documentada aquí.
+
+## D-009 — Datos sintéticos etiquetados como puente hasta el primer backfill real
+
+- **Contexto:** sin red en el sandbox, las fases 3-4 no podían validarse de extremo a extremo con datos reales en esta sesión.
+- **Decisión:** `tools/etl/generar_sintetico.py` (seed=42, física plausible: duck curve, años secos/húmedos, spike de combustibles 2022, quiebre 2024-07-15) puebla `data/raw_sintetico/` con los mismos esquemas del pipeline real; la tabla maestra y todos los reportes marcan `origen_datos=sintetico` de forma prominente. **Ningún MAPE sobre datos sintéticos es una métrica del problema real** y los reportes lo declaran. El workflow `backfill.yml` reemplaza esto con datos reales al correr con `COORDINADOR_USER_KEY` configurada; las fuentes sin credenciales (clima, combustibles, calendario) se llenan con datos reales desde la primera corrida.
