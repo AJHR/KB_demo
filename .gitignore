@@ -1,6 +1,10 @@
 # Vector store binario (regenerable desde sources/)
 data/vector/lancedb/
 
+# Datos sinteticos regenerables (tools/etl/generar_sintetico.py, seed fija).
+# El marcador SINTETICO.md y la tabla maestra procesada SI se versionan.
+data/raw_sintetico/*/
+
 # Python
 __pycache__/
 *.pyc

@@ -11,6 +11,9 @@ Formato:
 
 ---
 
+## 2026-06-12
+- [wiki] Nueva carpeta `wiki/referencias/` con `ia-en-sistemas-electricos.md`: nota de referencia de la fase 4 de la mision de prediccion de costos SEN. Reconstruida (el doc original no existe en el repo, ver `wiki/decisiones.md` D-003) con investigacion web (11 busquedas: surveys ML-power-systems, EPF/Weron/Lago, hibridos fisico-ML/merit order, concept drift, TSA, Safe RL, gradient boosting vs deep learning en muestras chicas) + ancla in-repo: PPT CEN-Ministerio de Ciencias 2026-04-21 (AI-assisted operations p.13, AI-enabled decision support + HPC p.16, solar ~11% 2018 p.6 vs ERNC 44% 2025 p.5). Incluye RESUMEN.md de la carpeta y link en index.md.
+
 ## 2026-05-18
 - [ingesta] Corrida `d8789d3` de fill_gaps.py: 3 PDFs nuevos. `Estandar-Ciberseguridad-SEN-Octubre-2022.pdf` (100 pp.) y `Protocolo-de-Notificacion-de-Incidentes-de-Ciberseguridad.pdf` (7 pp.) en `regulation-coordinador-normativa-tecnica/`. `DESEMPE_O-DEL-CONTROL-DE-FRECUENCIA-dic19.pdf` (6 pp., anexo NT) en `regulation-cne-reglamentos-mercado/`. Total ahora: 316 archivos, 256 unicos. Gaps `modelos-dinamicos` y `pliego-tecnico` no encontraron nada — probable que requieran login (REUC) o esten en sub-portales no indexados desde las paginas raiz que probamos.
 - [wiki] Nueva pagina `wiki/ciberseguridad-sen.md` con frontmatter completo: estructura CIP-002 a CIP-011 del estandar CEN, niveles de impacto, definicion de ICR (Incidentes Ciberseguridad Reportables), cadena CEN -> SEC. `wiki/servicios-complementarios-y-transferencias.md` actualizada para citar el anexo Desempeno Control de Frecuencia (FECF, calculo horario, publicacion mensual del CEN).
