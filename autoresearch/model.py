@@ -11,8 +11,9 @@ Interfaz exigida por el harness (autoresearch/harness.py):
       columnas conformes (transformaciones sin mirar el futuro).
   crear_modelo(columnas) -> objeto con .fit(X, y) y .predict(X)
 
-Base vigente: exp001_objetivo_l1 (LightGBM objetivo L1). Este experimento
-agrega SOLO features derivadas fisicas, sin tocar el modelo.
+Base vigente: exp002_features_fisicas (LightGBM L1 + 3 derivadas fisicas).
+Este experimento cambia SOLO el predictor: mediana de 3 LightGBM L1 con
+seeds distintos, sin tocar features ni hiperparametros.
 """
 
 from __future__ import annotations
@@ -25,18 +26,45 @@ import pandas as pd
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "models"))
 from baselines import ModeloLightGBM  # noqa: E402
 
-NOMBRE_EXPERIMENTO = "exp002_features_fisicas"
-HIPOTESIS = ("El costo sale de un despacho por orden de merito: sequia "
-             "encarece el GNL marginal (interaccion precip_hidro_90d x "
-             "henry hub), la demanda neta de solar pronosticada define que "
-             "tecnologia margina, y el spread brent-carbon mueve el stack. "
-             "Tres derivadas fila-a-fila de columnas conformes (sin estado, "
-             "invariantes a truncamiento) deberian bajar el MAPE de la base "
-             "L1 sin riesgo de fuga.")
+NOMBRE_EXPERIMENTO = "exp005_ensamble_seeds"
+HIPOTESIS = ("Parte del error del LightGBM L1 es varianza del muestreo "
+             "interno (subsample/colsample por seed). La mediana de 3 "
+             "modelos identicos con seeds 42/43/44 promedia esa varianza "
+             "sin tocar el sesgo del modelo, y deberia bajar el MAPE de la "
+             "base vigente a costo 3x de entrenamiento (cabe en "
+             "presupuesto).")
 
 
 class ModeloLGBM_L1(ModeloLightGBM):
     PARAMS = {**ModeloLightGBM.PARAMS, "objective": "regression_l1"}
+
+
+class EnsambleMedianaSeeds:
+    """Mediana de 3 LightGBM L1 identicos salvo random_state (42/43/44)."""
+
+    SEEDS = (42, 43, 44)
+
+    def __init__(self, columnas: list[str]):
+        self.columnas = columnas
+        self._modelos: list = []
+
+    def fit(self, X, y):
+        import lightgbm as lgb
+
+        self._modelos = []
+        for seed in self.SEEDS:
+            params = {**ModeloLGBM_L1.PARAMS, "random_state": seed}
+            m = lgb.LGBMRegressor(**params)
+            m.fit(X[self.columnas].astype(float), y)
+            self._modelos.append(m)
+
+    def predict(self, X):
+        import numpy as np
+
+        preds = np.column_stack(
+            [m.predict(X[self.columnas].astype(float))
+             for m in self._modelos])
+        return np.median(preds, axis=1)
 
 
 _RAD_SOLAR = ["pron_radiacion_media_solar_diego_almagro",
@@ -69,4 +97,4 @@ def seleccionar_features(columnas_conformes: list[str],
 
 
 def crear_modelo(columnas: list[str]):
-    return ModeloLGBM_L1(columnas)
+    return EnsambleMedianaSeeds(columnas)
