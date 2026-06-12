@@ -52,9 +52,10 @@ Cada decisión: contexto, alternativas, decisión, justificación.
 - **Decisión:** el extractor de combustibles funciona sin credenciales vía stooq.com (CSV directo) con yfinance de respaldo (futuros front-month Brent/HH/HO/API2) y mindicador.cl para USD/CLP. Si `EIA_API_KEY` existe en el entorno, agrega además las series spot oficiales (lag 7 por rezago de publicación). JKM y carbón spot no tienen fuente gratuita (Platts/Argus de pago): proxy documentado en el catálogo, anexo combustibles.
 - **Trade-off aceptado:** futuros ≠ spot (base risk); para el MVP la señal direccional es suficiente y el settlement de 14:28-14:30 ET cumple la regla 20:00 con holgura.
 
-## D-008 — Nombre de carpeta `sources/costos_sen` (no kebab-case)
+## D-008 — Carpeta `sources/costos_sen`: nombre e inmutabilidad
 
-- La misión especifica literalmente `sources/costos_sen/`; la convención del repo (CLAUDE.md) pide kebab-case y `tools/lint-kb.sh` lo marca. Se respeta el nombre de la misión; la advertencia del linter para esta carpeta queda aceptada y documentada aquí.
+- La misión especifica literalmente `sources/costos_sen/` como ubicación del catálogo; la convención del repo (CLAUDE.md) pide kebab-case y `tools/lint-kb.sh` lo marca. Se respeta el nombre de la misión.
+- El catálogo además es un documento de trabajo (se corrigió tras la revisión adversarial), lo que dispara el check de inmutabilidad de `sources/`. Ambas advertencias del linter para esta carpeta quedan aceptadas y documentadas aquí; el resto de los errores de inmutabilidad del linter son falsos positivos de mtime por el clone fresco del contenedor (preexistentes a esta misión).
 
 ## D-009 — Datos sintéticos etiquetados como puente hasta el primer backfill real
 
