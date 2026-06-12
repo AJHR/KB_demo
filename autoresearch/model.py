@@ -25,9 +25,14 @@ import pandas as pd
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "models"))
 from baselines import ModeloLightGBM  # noqa: E402
 
-NOMBRE_EXPERIMENTO = "exp000_baseline_lgbm"
-HIPOTESIS = ("Punto de partida: LightGBM baseline de fase 3 sin cambios. "
-             "Establece la marca a batir.")
+NOMBRE_EXPERIMENTO = "exp001_objetivo_l1"
+HIPOTESIS = ("El costo diario tiene spikes de escasez; el objetivo L2 del "
+             "baseline persigue esos outliers. Cambiar a objetivo L1 "
+             "(regression_l1) deberia bajar el MAPE mediano sin tocar nada mas.")
+
+
+class ModeloLGBM_L1(ModeloLightGBM):
+    PARAMS = {**ModeloLightGBM.PARAMS, "objective": "regression_l1"}
 
 
 def seleccionar_features(columnas_conformes: list[str],
@@ -36,4 +41,4 @@ def seleccionar_features(columnas_conformes: list[str],
 
 
 def crear_modelo(columnas: list[str]):
-    return ModeloLightGBM(columnas)
+    return ModeloLGBM_L1(columnas)
