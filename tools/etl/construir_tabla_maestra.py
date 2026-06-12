@@ -84,6 +84,20 @@ def _pivot_diario(df: pd.DataFrame, col_grupo: str, col_valor: str,
     return d.reset_index()
 
 
+def _a_calendario(df_diario: pd.DataFrame) -> pd.DataFrame:
+    """Reindexa un agregado diario a calendario continuo ANTES de aplicar
+    shift. Sin esto, shift(k) es posicional: con un hueco de fechas trae el
+    dato de k+1 dias atras (hallazgo H6 de la auditoria — el error era
+    conservador, nunca fuga, pero es incorrecto con datos reales del CEN
+    que si tienen huecos)."""
+    d = df_diario.set_index("fecha")
+    d.index = pd.to_datetime(d.index)
+    d = d.asfreq("D")
+    d = d.reset_index()
+    d["fecha"] = d["fecha"].dt.date
+    return d
+
+
 def construir(dir_raw: Path | None = None, dir_salida: Path | None = None,
               origen_datos: str = "real") -> Path:
     dir_raw = dir_raw or DIR_RAW
@@ -128,10 +142,13 @@ def construir(dir_raw: Path | None = None, dir_salida: Path | None = None,
         base[f"costo_lag{lag}"] = base.costo_op_usd.shift(lag)
     base["costo_ma7"] = base.costo_op_usd.shift(2).rolling(7).mean()
     base["costo_ma28"] = base.costo_op_usd.shift(2).rolling(28).mean()
-    declarar([f"costo_lag{lag}" for lag in (2, 3, 7, 14, 21, 28)] +
-             ["costo_ma7", "costo_ma28"],
-             "derivada_objetivo", 2, "20:00 de T-1 (lag>=2)",
-             nota="proxy de costo usa demanda+CMg que cierran el dia previo")
+    for lag in (2, 3, 7, 14, 21, 28):
+        declarar([f"costo_lag{lag}"], "derivada_objetivo", lag,
+                 "20:00 de T-1 (lag>=2)",
+                 nota="proxy de costo usa demanda+CMg que cierran el dia previo")
+    declarar(["costo_ma7", "costo_ma28"], "derivada_objetivo", 2,
+             "20:00 de T-1 (lag>=2)",
+             nota="rolling sobre shift(2): solo usa <= T-2")
     # lag1 = "costo de hoy" al predecir manana: el dia T-1 NO esta cerrado a
     # las 20:00 de T-1 -> NO conforme. Existe solo para el baseline teorico
     # de persistencia de la mision; evaluacion.py lo rechaza para modelos.
@@ -143,6 +160,7 @@ def construir(dir_raw: Path | None = None, dir_salida: Path | None = None,
     dem_d = demanda.groupby("fecha", as_index=False).agg(
         demanda_total_mwh=("demanda_mwh", "sum"),
         demanda_max_mwh=("demanda_mwh", "max"))
+    dem_d = _a_calendario(dem_d)
     dem_d[["demanda_total_mwh", "demanda_max_mwh"]] = \
         dem_d[["demanda_total_mwh", "demanda_max_mwh"]].shift(LAG_CEN)
     base = base.merge(dem_d, on="fecha", how="left")
@@ -151,7 +169,8 @@ def construir(dir_raw: Path | None = None, dir_salida: Path | None = None,
 
     gen = _leer_fuente(dir_raw, "cen_generacion")
     if gen is not None:
-        gen_d = _pivot_diario(gen, "tecnologia", "generacion_mwh", "gen_")
+        gen_d = _a_calendario(
+            _pivot_diario(gen, "tecnologia", "generacion_mwh", "gen_"))
         cols_gen = [c for c in gen_d.columns if c != "fecha"]
         total = gen_d[cols_gen].sum(axis=1)
         for c in cols_gen:
@@ -164,7 +183,8 @@ def construir(dir_raw: Path | None = None, dir_salida: Path | None = None,
     # ---- embalses (lag 2) ------------------------------------------------
     emb = _leer_fuente(dir_raw, "cen_embalses")
     if emb is not None:
-        emb_d = _pivot_diario(emb, "embalse", "cota_msnm", "cota_", agg="mean")
+        emb_d = _a_calendario(
+            _pivot_diario(emb, "embalse", "cota_msnm", "cota_", agg="mean"))
         cols_e = [c for c in emb_d.columns if c != "fecha"]
         emb_d[cols_e] = emb_d[cols_e].shift(LAG_CEN)
         base = base.merge(emb_d, on="fecha", how="left")
@@ -174,6 +194,7 @@ def construir(dir_raw: Path | None = None, dir_salida: Path | None = None,
     cmg_d = (cmg.groupby("fecha", as_index=False)
                 .agg(cmg_medio=("cmg_usd_mwh", "mean"),
                      cmg_max=("cmg_usd_mwh", "max")))
+    cmg_d = _a_calendario(cmg_d)
     cmg_d[["cmg_medio", "cmg_max"]] = cmg_d[["cmg_medio", "cmg_max"]].shift(LAG_CMG)
     base = base.merge(cmg_d, on="fecha", how="left")
     declarar(["cmg_medio", "cmg_max"], "cen_cmg_real", LAG_CMG,
@@ -233,7 +254,7 @@ def construir(dir_raw: Path | None = None, dir_salida: Path | None = None,
     # ---- CMg programado: capturado pero BLOQUEADO como feature -----------
     declarar(["cmg_programado_d1"], "cen_cmg_programado", 0,
              "SIN CONFIRMAR (hora publicacion PO)", cumple=False,
-             nota="riesgo nº1 del catalogo: no usar hasta verificar "
+             nota="columna AUN NO MATERIALIZADA (pre-registro). riesgo nº1 del catalogo: no usar hasta verificar "
                   "empiricamente que el PO de D+1 se publica antes de las "
                   "20:00; evaluacion.py lo rechaza automaticamente")
 

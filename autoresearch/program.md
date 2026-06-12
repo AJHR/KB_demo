@@ -52,6 +52,13 @@ Loop de trabajo del agente, por experimento:
   prohibido usar `saltar_antifuga=True`, `costo_lag1`, `cmg_programado_d1`
   (mientras esté marcada no conforme) o construir features nuevas a partir de
   la columna objetivo sin lag >= 2.
+- **Defensas automáticas del harness** (no intentes rodearlas; tras la
+  auditoría de fase 3 están testeadas): `seleccionar_features` recibe la tabla
+  SIN la columna objetivo y en copia; las columnas conformes deben volver
+  intactas; toda feature nueva pasa un test de invarianza a truncamiento —
+  shift negativo, rolling centrado o normalización con estadísticas de la
+  muestra completa la rechazan. Si necesitas normalizar, usa estadísticas
+  expansivas del pasado (`expanding()`), no globales.
 - **Todo experimento queda en el log**, también (especialmente) los fallidos.
 - Semillas fijas (`random_state=42`) — resultados reproducibles o no cuentan.
 

@@ -99,35 +99,35 @@
   },
   "costo_lag3": {
     "fuente": "derivada_objetivo",
-    "lag_dias": 2,
+    "lag_dias": 3,
     "disponible_a_las": "20:00 de T-1 (lag>=2)",
     "cumple_regla_2000": true,
     "nota": "proxy de costo usa demanda+CMg que cierran el dia previo"
   },
   "costo_lag7": {
     "fuente": "derivada_objetivo",
-    "lag_dias": 2,
+    "lag_dias": 7,
     "disponible_a_las": "20:00 de T-1 (lag>=2)",
     "cumple_regla_2000": true,
     "nota": "proxy de costo usa demanda+CMg que cierran el dia previo"
   },
   "costo_lag14": {
     "fuente": "derivada_objetivo",
-    "lag_dias": 2,
+    "lag_dias": 14,
     "disponible_a_las": "20:00 de T-1 (lag>=2)",
     "cumple_regla_2000": true,
     "nota": "proxy de costo usa demanda+CMg que cierran el dia previo"
   },
   "costo_lag21": {
     "fuente": "derivada_objetivo",
-    "lag_dias": 2,
+    "lag_dias": 21,
     "disponible_a_las": "20:00 de T-1 (lag>=2)",
     "cumple_regla_2000": true,
     "nota": "proxy de costo usa demanda+CMg que cierran el dia previo"
   },
   "costo_lag28": {
     "fuente": "derivada_objetivo",
-    "lag_dias": 2,
+    "lag_dias": 28,
     "disponible_a_las": "20:00 de T-1 (lag>=2)",
     "cumple_regla_2000": true,
     "nota": "proxy de costo usa demanda+CMg que cierran el dia previo"
@@ -137,14 +137,14 @@
     "lag_dias": 2,
     "disponible_a_las": "20:00 de T-1 (lag>=2)",
     "cumple_regla_2000": true,
-    "nota": "proxy de costo usa demanda+CMg que cierran el dia previo"
+    "nota": "rolling sobre shift(2): solo usa <= T-2"
   },
   "costo_ma28": {
     "fuente": "derivada_objetivo",
     "lag_dias": 2,
     "disponible_a_las": "20:00 de T-1 (lag>=2)",
     "cumple_regla_2000": true,
-    "nota": "proxy de costo usa demanda+CMg que cierran el dia previo"
+    "nota": "rolling sobre shift(2): solo usa <= T-2"
   },
   "costo_lag1": {
     "fuente": "derivada_objetivo",
@@ -865,10 +865,10 @@
     "lag_dias": 0,
     "disponible_a_las": "SIN CONFIRMAR (hora publicacion PO)",
     "cumple_regla_2000": false,
-    "nota": "riesgo nº1 del catalogo: no usar hasta verificar empiricamente que el PO de D+1 se publica antes de las 20:00; evaluacion.py lo rechaza automaticamente"
+    "nota": "columna AUN NO MATERIALIZADA (pre-registro). riesgo nº1 del catalogo: no usar hasta verificar empiricamente que el PO de D+1 se publica antes de las 20:00; evaluacion.py lo rechaza automaticamente"
   },
   "_meta": {
-    "generado": "2026-06-12T14:06:16.843807Z",
+    "generado": "2026-06-12T18:27:15.149558Z",
     "origen_datos": "sintetico",
     "filas": 2718,
     "rango": [

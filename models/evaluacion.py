@@ -69,8 +69,18 @@ class ResultadoEvaluacion:
 
 
 def _metricas(real: np.ndarray, pred: np.ndarray) -> dict:
+    """MAPE excluye dias con real == 0 (indefinido); MAE/RMSE/sesgo usan
+    todos los dias. Si la exclusion no es marginal (hallazgo H4 de la
+    auditoria: el proxy real puede acercarse a 0 en vertimiento solar), se
+    advierte — las poblaciones de MAPE y MAE dejan de ser comparables."""
     err = pred - real
     con_base = real != 0
+    n_excluidos = int((~con_base).sum())
+    if n_excluidos:
+        import logging
+        logging.getLogger("evaluacion").warning(
+            "MAPE excluye %d dias con objetivo == 0 (de %d); MAE/RMSE los "
+            "incluyen", n_excluidos, len(real))
     return {
         "mape": float(np.mean(np.abs(err[con_base] / real[con_base])) * 100),
         "mae": float(np.mean(np.abs(err))),
@@ -123,10 +133,19 @@ def evaluar_walk_forward(
 
     `saltar_antifuga` existe SOLO para los baselines de persistencia y
     estacional, cuyas unicas "features" son la propia serie objetivo con lag
-    >= 1 dia (conformidad trivial). Cualquier otro uso esta prohibido.
+    >= 1 dia (conformidad trivial). Restriccion dura (hallazgo H3 de la
+    auditoria): con el flag activo solo se aceptan columnas de lag puro del
+    objetivo — cualquier otra columna lanza ValueError.
     """
     if not saltar_antifuga:
         verificar_antifuga(columnas_features, ruta_metadatos)
+    else:
+        permitidas = {f"costo_lag{k}" for k in (1, 2, 3, 7, 14, 21, 28)}
+        fuera = set(columnas_features) - permitidas
+        if fuera:
+            raise ValueError(
+                f"saltar_antifuga solo admite lags puros del objetivo "
+                f"({sorted(permitidas)}); rechazadas: {sorted(fuera)}")
 
     df = df.sort_values(col_fecha).reset_index(drop=True)
     df = df.dropna(subset=[col_objetivo])
