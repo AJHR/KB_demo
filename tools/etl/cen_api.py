@@ -33,7 +33,7 @@ from urllib.parse import urljoin
 
 import pandas as pd
 
-from comun import log
+from comun import ErrorCredencial, log
 
 # ---------------------------------------------------------------------------
 # Rate limiting conservador.
@@ -68,7 +68,7 @@ def user_key() -> str:
     """user_key de la API SIP desde el entorno; falla con mensaje accionable."""
     key = os.environ.get("COORDINADOR_USER_KEY", "").strip()
     if not key:
-        raise RuntimeError(
+        raise ErrorCredencial(
             "Falta la variable de entorno COORDINADOR_USER_KEY: registrar un "
             "usuario en portal.api.coordinador.cl (plan Consulta de Datos), "
             "obtener el user_key y configurar el secret COORDINADOR_USER_KEY "

@@ -52,12 +52,24 @@ def sesion_http():
     return s
 
 
+class ErrorCredencial(RuntimeError):
+    """Falta una credencial obligatoria. NO es un error de red: no tiene
+    sentido reintentar ni cuenta como fallo del ETL (el orquestador la marca
+    como 'omitida_sin_credencial')."""
+
+
 def con_reintentos(fn: Callable, intentos: int = 4, base_seg: float = 2.0):
-    """Ejecuta fn() con reintentos y backoff exponencial (2s, 4s, 8s, 16s)."""
+    """Ejecuta fn() con reintentos y backoff exponencial (2s, 4s, 8s, 16s).
+
+    Una ErrorCredencial se propaga de inmediato (sin reintentos ni envoltura)
+    para que el orquestador la reconozca: de lo contrario el marcador se
+    perderia tras 4 reintentos y la fuente contaria como fallo real."""
     ultimo_error = None
     for i in range(intentos):
         try:
             return fn()
+        except ErrorCredencial:
+            raise
         except Exception as e:  # noqa: BLE001 - reintento generico de red
             ultimo_error = e
             espera = base_seg * (2 ** i)

@@ -51,6 +51,7 @@ jobs:
           - cen_generacion
           - cen_embalses
           - cen_po
+          - cen_web
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
