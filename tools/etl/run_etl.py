@@ -27,7 +27,7 @@ import traceback
 from datetime import date, datetime, timedelta
 from pathlib import Path
 
-from comun import DIR_RAW, log
+from comun import DIR_RAW, ErrorCredencial, log
 
 # fuente -> modulo extractor. El orden importa solo por cortesia de logs.
 FUENTES = {
@@ -75,9 +75,19 @@ def ejecutar(fuentes: list[str], inicio: date, fin: date,
             log.info("fuente %s OK (%d particiones)", fuente, len(rutas))
         except Exception as e:  # noqa: BLE001 - aislar fallos por fuente
             mensaje = f"{type(e).__name__}: {e}"
-            if MARCADOR_CREDENCIAL in str(e):
+            # ErrorCredencial por tipo (robusto) o el marcador en cualquier
+            # punto de la cadena de excepciones (defensa extra por si una capa
+            # la envuelve sin preservar el tipo).
+            cadena = []
+            cur = e
+            while cur is not None:
+                cadena.append(str(cur))
+                cur = cur.__cause__ or cur.__context__
+            es_credencial = isinstance(e, ErrorCredencial) or any(
+                MARCADOR_CREDENCIAL in s for s in cadena)
+            if es_credencial:
                 registro.update(estado="omitida_sin_credencial",
-                                ultimo_error=mensaje)
+                                ultimo_error=mensaje, fallos_consecutivos=0)
                 log.warning("fuente %s omitida: falta credencial", fuente)
             else:
                 registro["fallos_consecutivos"] = \
