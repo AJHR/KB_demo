@@ -41,6 +41,7 @@ FUENTES = {
     "cen_generacion": "extractor_cen_generacion",
     "cen_embalses": "extractor_cen_embalses",
     "cen_po": "extractor_cen_po",
+    "cen_web": "extractor_cen_web",
 }
 
 MARCADOR_CREDENCIAL = "COORDINADOR_USER_KEY"
