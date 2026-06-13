@@ -52,6 +52,12 @@ Paginas escritas para entender el mercado desde la posicion de un generador. Ver
 
 ### Mision: prediccion de costos de operacion del SEN (D+1)
 
+> **Estado operativo: MODO KEYLESS** (decision del usuario 2026-06-13, ver `wiki/decisiones.md` D-011).
+> El ETL nocturno (`etl_nocturno.yml`, 02:00 Chile) mantiene frescas las fuentes **sin credencial**, con backfill real 2019-2026 ya en el repo:
+> calendario (2.904 filas), combustibles (8.997: brent/carbon API2/diesel/Henry Hub/USD-CLP), clima observado (29.931, 11 puntos ERA5) y pronostico (29.931).
+> Las fuentes de **API CEN** (CMg real, demanda, generacion, embalses, CMg programado) estan **dormidas**: se auto-omiten sin `COORDINADOR_USER_KEY`. Como el target depende del CEN, la tabla maestra real no se construye y baselines/autoresearch corren sobre el **dataset sintetico etiquetado** (sustrato de demostracion, no metricas reales).
+> **Activar el CEN cuando se quiera:** crear el secret `COORDINADOR_USER_KEY` y disparar `backfill.yml` — sin cambios de codigo.
+
 | Componente | Proposito |
 |------------|-----------|
 | [`sources/costos_sen/`](./sources/costos_sen/RESUMEN.md) | Catalogo de 22 fuentes publicas verificado adversarialmente (fase 1) |
