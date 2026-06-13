@@ -5,5 +5,12 @@
     "ultimo_error": null,
     "estado": "ok",
     "particiones": 1
+  },
+  "clima_pronostico": {
+    "fallos_consecutivos": 0,
+    "ultima_corrida": "2026-06-13T02:16:19.759149Z",
+    "ultimo_error": null,
+    "estado": "ok",
+    "particiones": 90
   }
 }
