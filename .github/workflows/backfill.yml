@@ -1,0 +1,137 @@
+# Backfill historico de todas las fuentes — se lanza manualmente
+# (workflow_dispatch). Corre en runners de GitHub porque el sandbox de las
+# sesiones de Claude Code no tiene salida a internet (wiki/decisiones.md D-002).
+#
+# Estrategia: un job por fuente en paralelo; cada job sube su data/raw parcial
+# como artifact; el job final consolida, construye la tabla maestra, corre los
+# validadores y commitea todo de una vez (evita carreras de push).
+#
+# Secrets opcionales:
+#   COORDINADOR_USER_KEY — API SIP del Coordinador (las fuentes cen_* se
+#                          omiten con aviso si falta; registro gratuito en
+#                          portal.api.coordinador.cl)
+#   EIA_API_KEY          — series spot oficiales EIA (opcional)
+
+name: backfill-historico
+
+on:
+  workflow_dispatch:
+    inputs:
+      inicio:
+        description: "Fecha inicio (YYYY-MM-DD)"
+        default: "2019-01-01"
+      fin:
+        description: "Fecha fin (YYYY-MM-DD; vacio = hoy)"
+        default: ""
+      fuentes:
+        description: "Fuentes (separadas por coma) o 'todas'"
+        default: "todas"
+
+permissions:
+  contents: write
+
+env:
+  PYTHONUNBUFFERED: "1"
+
+jobs:
+  extraer:
+    runs-on: ubuntu-latest
+    timeout-minutes: 350
+    strategy:
+      fail-fast: false
+      matrix:
+        fuente:
+          - calendario
+          - clima_observado
+          - clima_pronostico
+          - combustibles
+          - cen_cmg_real
+          - cen_cmg_programado
+          - cen_demanda
+          - cen_generacion
+          - cen_embalses
+          - cen_po
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Instalar dependencias
+        run: pip install --quiet pandas pyarrow requests holidays yfinance
+      - name: Filtrar fuente segun input
+        id: filtro
+        run: |
+          FUENTES="${{ github.event.inputs.fuentes }}"
+          if [ "$FUENTES" = "todas" ] || echo ",$FUENTES," | grep -q ",${{ matrix.fuente }},"; then
+            echo "correr=si" >> "$GITHUB_OUTPUT"
+          else
+            echo "correr=no" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Backfill ${{ matrix.fuente }}
+        if: steps.filtro.outputs.correr == 'si'
+        working-directory: tools/etl
+        env:
+          COORDINADOR_USER_KEY: ${{ secrets.COORDINADOR_USER_KEY }}
+          EIA_API_KEY: ${{ secrets.EIA_API_KEY }}
+        run: |
+          FIN="${{ github.event.inputs.fin }}"
+          [ -z "$FIN" ] && FIN=$(date -u +%F)
+          python3 run_etl.py --modo backfill \
+            --fuentes "${{ matrix.fuente }}" \
+            --inicio "${{ github.event.inputs.inicio }}" --fin "$FIN"
+      - name: Subir datos como artifact
+        if: steps.filtro.outputs.correr == 'si'
+        uses: actions/upload-artifact@v4
+        with:
+          name: raw-${{ matrix.fuente }}
+          path: data/raw/
+          if-no-files-found: warn
+          retention-days: 7
+
+  consolidar:
+    needs: extraer
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Instalar dependencias
+        run: pip install --quiet pandas pyarrow duckdb requests holidays
+      - name: Descargar artifacts de todas las fuentes
+        uses: actions/download-artifact@v4
+        with:
+          pattern: raw-*
+          path: /tmp/artifacts
+          merge-multiple: true
+      - name: Fusionar en data/raw
+        run: |
+          mkdir -p data/raw
+          cp -r /tmp/artifacts/* data/raw/ 2>/dev/null || true
+          find data/raw -name "*.parquet" | head -50
+          echo "total parquet: $(find data/raw -name '*.parquet' | wc -l)"
+      - name: Construir tabla maestra (si hay datos CEN reales)
+        working-directory: tools/etl
+        run: |
+          if ls ../../data/raw/cen_demanda/*/*.parquet >/dev/null 2>&1 \
+             && ls ../../data/raw/cen_cmg_real/*/*.parquet >/dev/null 2>&1; then
+            python3 construir_tabla_maestra.py --origen real
+          else
+            echo "::warning::sin datos CEN (falta COORDINADOR_USER_KEY?); tabla maestra no reconstruida"
+          fi
+      - name: Validadores de calidad
+        working-directory: tools/etl
+        run: python3 validadores.py --reporte || echo "::warning::validadores reportaron problemas"
+      - name: Commit de datos
+        run: |
+          git config user.name "etl-backfill[bot]"
+          git config user.email "etl@users.noreply.github.com"
+          git add data/raw data/processed wiki/calidad_datos.md 2>/dev/null || true
+          if git diff --cached --quiet; then
+            echo "sin cambios que commitear"
+          else
+            git commit -m "backfill: datos historicos ${{ github.event.inputs.inicio }}..${{ github.event.inputs.fin || 'hoy' }} (run ${{ github.run_id }})"
+            git pull --rebase origin "${GITHUB_REF_NAME}"
+            git push origin "HEAD:${GITHUB_REF_NAME}"
+          fi

@@ -43,12 +43,31 @@ Paginas escritas para entender el mercado desde la posicion de un generador. Ver
 | [`wiki/conexion-y-transmision.md`](./wiki/conexion-y-transmision.md) | Conectar una central nueva, segmentos de transmision, BESS, costo de falla | 2026-05-15 |
 | [`wiki/marco-pmgd-y-distribuida.md`](./wiki/marco-pmgd-y-distribuida.md) | PMGD <=9 MW, NTCO-PMGD 2026 con BESS, sistemas medianos, estabilizacion tarifaria | 2026-05-15 |
 | [`wiki/ciberseguridad-sen.md`](./wiki/ciberseguridad-sen.md) | Estandar CIP del CEN + protocolo de notificacion de incidentes (CIP-002 a CIP-011) | 2026-05-18 |
+| [`wiki/referencias/ia-en-sistemas-electricos.md`](./wiki/referencias/ia-en-sistemas-electricos.md) | Nota de referencia: IA en sistemas electricos aplicada al forecasting de costos del SEN (hibridos fisico-ML, drift, arquitecturas; que queda fuera de alcance) | 2026-06-12 |
+| [`wiki/decisiones.md`](./wiki/decisiones.md) | Registro de decisiones de la mision de prediccion de costos (rama, red, objetivo, anti-fuga) | 2026-06-12 |
+| [`wiki/features.md`](./wiki/features.md) | Features de la tabla maestra con verificacion anti-fuga por columna | 2026-06-12 |
+| [`wiki/resultados_baselines.md`](./wiki/resultados_baselines.md) | MAPE walk-forward de los 3 baselines obligatorios + analisis de errores | 2026-06-12 |
+| [`wiki/calidad_datos.md`](./wiki/calidad_datos.md) | Reporte de validadores: completitud, outliers, consistencia cruzada | 2026-06-12 |
+| [`wiki/plan_operacion.md`](./wiki/plan_operacion.md) | Fase 5: operacionalizacion, monitoreo de error/drift, politica de reentrenamiento | 2026-06-12 |
+
+### Mision: prediccion de costos de operacion del SEN (D+1)
+
+| Componente | Proposito |
+|------------|-----------|
+| [`sources/costos_sen/`](./sources/costos_sen/RESUMEN.md) | Catalogo de 22 fuentes publicas verificado adversarialmente (fase 1) |
+| [`tools/etl/`](./tools/etl/) | Extractores por fuente (interfaz comun, idempotentes, reintentos) + tabla maestra + validadores |
+| [`data/raw/`, `data/processed/`](./data/) | Parquet particionado por fuente/fecha; tabla maestra diaria consultable con DuckDB |
+| [`models/`](./models/) | `evaluacion.py` (protocolo canonico walk-forward, UNICA via de comparacion) + 3 baselines |
+| [`autoresearch/`](./autoresearch/program.md) | Loop de experimentacion autonoma (patron karpathy/autoresearch): `program.md` + `model.py` + presupuesto + log |
+| [`.github/workflows/backfill.yml`](./.github/workflows/backfill.yml) | Backfill historico en runners de GitHub (el sandbox no tiene red) |
+| [`.github/workflows/etl_nocturno.yml`](./.github/workflows/etl_nocturno.yml) | Incremento diario 02:00 Chile, deterministico, con issue automatico tras 2 fallos |
 
 ### `tools/` — Mantenimiento
 
 | Script | Proposito |
 |--------|-----------|
 | [`tools/lint-kb.sh`](./tools/lint-kb.sh) | Verificar invariantes del KB (ver CLAUDE.md) |
+| [`tools/etl/run_etl.py`](./tools/etl/run_etl.py) | Orquestador ETL (backfill / incremental) de la mision de costos |
 
 ### `data/vector/` — Vector store (busqueda semantica)
 

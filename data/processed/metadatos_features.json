@@ -1,0 +1,879 @@
+{
+  "dia_semana": {
+    "fuente": "calendario",
+    "lag_dias": 0,
+    "disponible_a_las": "siempre",
+    "cumple_regla_2000": true,
+    "nota": "determinista, conocido con anticipacion"
+  },
+  "mes": {
+    "fuente": "calendario",
+    "lag_dias": 0,
+    "disponible_a_las": "siempre",
+    "cumple_regla_2000": true,
+    "nota": "determinista, conocido con anticipacion"
+  },
+  "es_finde": {
+    "fuente": "calendario",
+    "lag_dias": 0,
+    "disponible_a_las": "siempre",
+    "cumple_regla_2000": true,
+    "nota": "determinista, conocido con anticipacion"
+  },
+  "es_feriado": {
+    "fuente": "calendario",
+    "lag_dias": 0,
+    "disponible_a_las": "siempre",
+    "cumple_regla_2000": true,
+    "nota": "determinista, conocido con anticipacion"
+  },
+  "es_irrenunciable": {
+    "fuente": "calendario",
+    "lag_dias": 0,
+    "disponible_a_las": "siempre",
+    "cumple_regla_2000": true,
+    "nota": "determinista, conocido con anticipacion"
+  },
+  "es_vispera_feriado": {
+    "fuente": "calendario",
+    "lag_dias": 0,
+    "disponible_a_las": "siempre",
+    "cumple_regla_2000": true,
+    "nota": "determinista, conocido con anticipacion"
+  },
+  "es_sandwich": {
+    "fuente": "calendario",
+    "lag_dias": 0,
+    "disponible_a_las": "siempre",
+    "cumple_regla_2000": true,
+    "nota": "determinista, conocido con anticipacion"
+  },
+  "semana_18sept": {
+    "fuente": "calendario",
+    "lag_dias": 0,
+    "disponible_a_las": "siempre",
+    "cumple_regla_2000": true,
+    "nota": "determinista, conocido con anticipacion"
+  },
+  "vacaciones_verano": {
+    "fuente": "calendario",
+    "lag_dias": 0,
+    "disponible_a_las": "siempre",
+    "cumple_regla_2000": true,
+    "nota": "determinista, conocido con anticipacion"
+  },
+  "vacaciones_invierno": {
+    "fuente": "calendario",
+    "lag_dias": 0,
+    "disponible_a_las": "siempre",
+    "cumple_regla_2000": true,
+    "nota": "determinista, conocido con anticipacion"
+  },
+  "es_eleccion": {
+    "fuente": "calendario",
+    "lag_dias": 0,
+    "disponible_a_las": "siempre",
+    "cumple_regla_2000": true,
+    "nota": "determinista, conocido con anticipacion"
+  },
+  "es_vispera_eleccion": {
+    "fuente": "calendario",
+    "lag_dias": 0,
+    "disponible_a_las": "siempre",
+    "cumple_regla_2000": true,
+    "nota": "determinista, conocido con anticipacion"
+  },
+  "es_dst": {
+    "fuente": "calendario",
+    "lag_dias": 0,
+    "disponible_a_las": "siempre",
+    "cumple_regla_2000": true,
+    "nota": "determinista, conocido con anticipacion"
+  },
+  "costo_lag2": {
+    "fuente": "derivada_objetivo",
+    "lag_dias": 2,
+    "disponible_a_las": "20:00 de T-1 (lag>=2)",
+    "cumple_regla_2000": true,
+    "nota": "proxy de costo usa demanda+CMg que cierran el dia previo"
+  },
+  "costo_lag3": {
+    "fuente": "derivada_objetivo",
+    "lag_dias": 3,
+    "disponible_a_las": "20:00 de T-1 (lag>=2)",
+    "cumple_regla_2000": true,
+    "nota": "proxy de costo usa demanda+CMg que cierran el dia previo"
+  },
+  "costo_lag7": {
+    "fuente": "derivada_objetivo",
+    "lag_dias": 7,
+    "disponible_a_las": "20:00 de T-1 (lag>=2)",
+    "cumple_regla_2000": true,
+    "nota": "proxy de costo usa demanda+CMg que cierran el dia previo"
+  },
+  "costo_lag14": {
+    "fuente": "derivada_objetivo",
+    "lag_dias": 14,
+    "disponible_a_las": "20:00 de T-1 (lag>=2)",
+    "cumple_regla_2000": true,
+    "nota": "proxy de costo usa demanda+CMg que cierran el dia previo"
+  },
+  "costo_lag21": {
+    "fuente": "derivada_objetivo",
+    "lag_dias": 21,
+    "disponible_a_las": "20:00 de T-1 (lag>=2)",
+    "cumple_regla_2000": true,
+    "nota": "proxy de costo usa demanda+CMg que cierran el dia previo"
+  },
+  "costo_lag28": {
+    "fuente": "derivada_objetivo",
+    "lag_dias": 28,
+    "disponible_a_las": "20:00 de T-1 (lag>=2)",
+    "cumple_regla_2000": true,
+    "nota": "proxy de costo usa demanda+CMg que cierran el dia previo"
+  },
+  "costo_ma7": {
+    "fuente": "derivada_objetivo",
+    "lag_dias": 2,
+    "disponible_a_las": "20:00 de T-1 (lag>=2)",
+    "cumple_regla_2000": true,
+    "nota": "rolling sobre shift(2): solo usa <= T-2"
+  },
+  "costo_ma28": {
+    "fuente": "derivada_objetivo",
+    "lag_dias": 2,
+    "disponible_a_las": "20:00 de T-1 (lag>=2)",
+    "cumple_regla_2000": true,
+    "nota": "rolling sobre shift(2): solo usa <= T-2"
+  },
+  "costo_lag1": {
+    "fuente": "derivada_objetivo",
+    "lag_dias": 1,
+    "disponible_a_las": "ex-post (el dia no cierra hasta las 24:00)",
+    "cumple_regla_2000": false,
+    "nota": "solo baseline teorico de persistencia (saltar_antifuga)"
+  },
+  "demanda_total_mwh": {
+    "fuente": "cen_demanda",
+    "lag_dias": 2,
+    "disponible_a_las": "manana de T (dato de T-2)",
+    "cumple_regla_2000": true,
+    "nota": ""
+  },
+  "demanda_max_mwh": {
+    "fuente": "cen_demanda",
+    "lag_dias": 2,
+    "disponible_a_las": "manana de T (dato de T-2)",
+    "cumple_regla_2000": true,
+    "nota": ""
+  },
+  "gen_bess": {
+    "fuente": "cen_generacion",
+    "lag_dias": 2,
+    "disponible_a_las": "manana de T (dato de T-2)",
+    "cumple_regla_2000": true,
+    "nota": ""
+  },
+  "gen_eolica": {
+    "fuente": "cen_generacion",
+    "lag_dias": 2,
+    "disponible_a_las": "manana de T (dato de T-2)",
+    "cumple_regla_2000": true,
+    "nota": ""
+  },
+  "gen_geotermia": {
+    "fuente": "cen_generacion",
+    "lag_dias": 2,
+    "disponible_a_las": "manana de T (dato de T-2)",
+    "cumple_regla_2000": true,
+    "nota": ""
+  },
+  "gen_hidroembalse": {
+    "fuente": "cen_generacion",
+    "lag_dias": 2,
+    "disponible_a_las": "manana de T (dato de T-2)",
+    "cumple_regla_2000": true,
+    "nota": ""
+  },
+  "gen_hidropasada": {
+    "fuente": "cen_generacion",
+    "lag_dias": 2,
+    "disponible_a_las": "manana de T (dato de T-2)",
+    "cumple_regla_2000": true,
+    "nota": ""
+  },
+  "gen_solar": {
+    "fuente": "cen_generacion",
+    "lag_dias": 2,
+    "disponible_a_las": "manana de T (dato de T-2)",
+    "cumple_regla_2000": true,
+    "nota": ""
+  },
+  "gen_termica_carbon": {
+    "fuente": "cen_generacion",
+    "lag_dias": 2,
+    "disponible_a_las": "manana de T (dato de T-2)",
+    "cumple_regla_2000": true,
+    "nota": ""
+  },
+  "gen_termica_diesel": {
+    "fuente": "cen_generacion",
+    "lag_dias": 2,
+    "disponible_a_las": "manana de T (dato de T-2)",
+    "cumple_regla_2000": true,
+    "nota": ""
+  },
+  "gen_termica_gnl": {
+    "fuente": "cen_generacion",
+    "lag_dias": 2,
+    "disponible_a_las": "manana de T (dato de T-2)",
+    "cumple_regla_2000": true,
+    "nota": ""
+  },
+  "share_bess": {
+    "fuente": "cen_generacion",
+    "lag_dias": 2,
+    "disponible_a_las": "manana de T (dato de T-2)",
+    "cumple_regla_2000": true,
+    "nota": ""
+  },
+  "share_eolica": {
+    "fuente": "cen_generacion",
+    "lag_dias": 2,
+    "disponible_a_las": "manana de T (dato de T-2)",
+    "cumple_regla_2000": true,
+    "nota": ""
+  },
+  "share_geotermia": {
+    "fuente": "cen_generacion",
+    "lag_dias": 2,
+    "disponible_a_las": "manana de T (dato de T-2)",
+    "cumple_regla_2000": true,
+    "nota": ""
+  },
+  "share_hidroembalse": {
+    "fuente": "cen_generacion",
+    "lag_dias": 2,
+    "disponible_a_las": "manana de T (dato de T-2)",
+    "cumple_regla_2000": true,
+    "nota": ""
+  },
+  "share_hidropasada": {
+    "fuente": "cen_generacion",
+    "lag_dias": 2,
+    "disponible_a_las": "manana de T (dato de T-2)",
+    "cumple_regla_2000": true,
+    "nota": ""
+  },
+  "share_solar": {
+    "fuente": "cen_generacion",
+    "lag_dias": 2,
+    "disponible_a_las": "manana de T (dato de T-2)",
+    "cumple_regla_2000": true,
+    "nota": ""
+  },
+  "share_termica_carbon": {
+    "fuente": "cen_generacion",
+    "lag_dias": 2,
+    "disponible_a_las": "manana de T (dato de T-2)",
+    "cumple_regla_2000": true,
+    "nota": ""
+  },
+  "share_termica_diesel": {
+    "fuente": "cen_generacion",
+    "lag_dias": 2,
+    "disponible_a_las": "manana de T (dato de T-2)",
+    "cumple_regla_2000": true,
+    "nota": ""
+  },
+  "share_termica_gnl": {
+    "fuente": "cen_generacion",
+    "lag_dias": 2,
+    "disponible_a_las": "manana de T (dato de T-2)",
+    "cumple_regla_2000": true,
+    "nota": ""
+  },
+  "cota_colbun": {
+    "fuente": "cen_embalses",
+    "lag_dias": 2,
+    "disponible_a_las": "manana de T (dato de T-2)",
+    "cumple_regla_2000": true,
+    "nota": ""
+  },
+  "cota_invernada": {
+    "fuente": "cen_embalses",
+    "lag_dias": 2,
+    "disponible_a_las": "manana de T (dato de T-2)",
+    "cumple_regla_2000": true,
+    "nota": ""
+  },
+  "cota_lago_laja": {
+    "fuente": "cen_embalses",
+    "lag_dias": 2,
+    "disponible_a_las": "manana de T (dato de T-2)",
+    "cumple_regla_2000": true,
+    "nota": ""
+  },
+  "cota_ralco": {
+    "fuente": "cen_embalses",
+    "lag_dias": 2,
+    "disponible_a_las": "manana de T (dato de T-2)",
+    "cumple_regla_2000": true,
+    "nota": ""
+  },
+  "cota_rapel": {
+    "fuente": "cen_embalses",
+    "lag_dias": 2,
+    "disponible_a_las": "manana de T (dato de T-2)",
+    "cumple_regla_2000": true,
+    "nota": ""
+  },
+  "cmg_medio": {
+    "fuente": "cen_cmg_real",
+    "lag_dias": 3,
+    "disponible_a_las": "rezago publicacion CMg preliminar",
+    "cumple_regla_2000": true,
+    "nota": ""
+  },
+  "cmg_max": {
+    "fuente": "cen_cmg_real",
+    "lag_dias": 3,
+    "disponible_a_las": "rezago publicacion CMg preliminar",
+    "cumple_regla_2000": true,
+    "nota": ""
+  },
+  "fx_brent_usd_bbl": {
+    "fuente": "combustibles",
+    "lag_dias": 1,
+    "disponible_a_las": "cierre 18-19h Chile de T-1 (< 20:00)",
+    "cumple_regla_2000": true,
+    "nota": ""
+  },
+  "fx_carbon_api2_usd_t": {
+    "fuente": "combustibles",
+    "lag_dias": 1,
+    "disponible_a_las": "cierre 18-19h Chile de T-1 (< 20:00)",
+    "cumple_regla_2000": true,
+    "nota": ""
+  },
+  "fx_diesel_ho_usd_gal": {
+    "fuente": "combustibles",
+    "lag_dias": 1,
+    "disponible_a_las": "cierre 18-19h Chile de T-1 (< 20:00)",
+    "cumple_regla_2000": true,
+    "nota": ""
+  },
+  "fx_henry_hub_usd_mmbtu": {
+    "fuente": "combustibles",
+    "lag_dias": 1,
+    "disponible_a_las": "cierre 18-19h Chile de T-1 (< 20:00)",
+    "cumple_regla_2000": true,
+    "nota": ""
+  },
+  "fx_usd_clp": {
+    "fuente": "combustibles",
+    "lag_dias": 1,
+    "disponible_a_las": "cierre 18-19h Chile de T-1 (< 20:00)",
+    "cumple_regla_2000": true,
+    "nota": ""
+  },
+  "pron_temp_media_demanda_antofagasta": {
+    "fuente": "clima_pronostico",
+    "lag_dias": 0,
+    "disponible_a_las": "corrida 12z de T-2/T-1 (previous_day2)",
+    "cumple_regla_2000": true,
+    "nota": "pronostico emitido antes del corte, no clima observado"
+  },
+  "pron_temp_media_demanda_concepcion": {
+    "fuente": "clima_pronostico",
+    "lag_dias": 0,
+    "disponible_a_las": "corrida 12z de T-2/T-1 (previous_day2)",
+    "cumple_regla_2000": true,
+    "nota": "pronostico emitido antes del corte, no clima observado"
+  },
+  "pron_temp_media_demanda_santiago": {
+    "fuente": "clima_pronostico",
+    "lag_dias": 0,
+    "disponible_a_las": "corrida 12z de T-2/T-1 (previous_day2)",
+    "cumple_regla_2000": true,
+    "nota": "pronostico emitido antes del corte, no clima observado"
+  },
+  "pron_temp_media_eolica_chiloe": {
+    "fuente": "clima_pronostico",
+    "lag_dias": 0,
+    "disponible_a_las": "corrida 12z de T-2/T-1 (previous_day2)",
+    "cumple_regla_2000": true,
+    "nota": "pronostico emitido antes del corte, no clima observado"
+  },
+  "pron_temp_media_eolica_renaico": {
+    "fuente": "clima_pronostico",
+    "lag_dias": 0,
+    "disponible_a_las": "corrida 12z de T-2/T-1 (previous_day2)",
+    "cumple_regla_2000": true,
+    "nota": "pronostico emitido antes del corte, no clima observado"
+  },
+  "pron_temp_media_eolica_taltal": {
+    "fuente": "clima_pronostico",
+    "lag_dias": 0,
+    "disponible_a_las": "corrida 12z de T-2/T-1 (previous_day2)",
+    "cumple_regla_2000": true,
+    "nota": "pronostico emitido antes del corte, no clima observado"
+  },
+  "pron_temp_media_hidro_biobio_laja": {
+    "fuente": "clima_pronostico",
+    "lag_dias": 0,
+    "disponible_a_las": "corrida 12z de T-2/T-1 (previous_day2)",
+    "cumple_regla_2000": true,
+    "nota": "pronostico emitido antes del corte, no clima observado"
+  },
+  "pron_temp_media_hidro_maule": {
+    "fuente": "clima_pronostico",
+    "lag_dias": 0,
+    "disponible_a_las": "corrida 12z de T-2/T-1 (previous_day2)",
+    "cumple_regla_2000": true,
+    "nota": "pronostico emitido antes del corte, no clima observado"
+  },
+  "pron_temp_media_hidro_rapel": {
+    "fuente": "clima_pronostico",
+    "lag_dias": 0,
+    "disponible_a_las": "corrida 12z de T-2/T-1 (previous_day2)",
+    "cumple_regla_2000": true,
+    "nota": "pronostico emitido antes del corte, no clima observado"
+  },
+  "pron_temp_media_solar_diego_almagro": {
+    "fuente": "clima_pronostico",
+    "lag_dias": 0,
+    "disponible_a_las": "corrida 12z de T-2/T-1 (previous_day2)",
+    "cumple_regla_2000": true,
+    "nota": "pronostico emitido antes del corte, no clima observado"
+  },
+  "pron_temp_media_solar_maria_elena": {
+    "fuente": "clima_pronostico",
+    "lag_dias": 0,
+    "disponible_a_las": "corrida 12z de T-2/T-1 (previous_day2)",
+    "cumple_regla_2000": true,
+    "nota": "pronostico emitido antes del corte, no clima observado"
+  },
+  "pron_radiacion_media_demanda_antofagasta": {
+    "fuente": "clima_pronostico",
+    "lag_dias": 0,
+    "disponible_a_las": "corrida 12z de T-2/T-1 (previous_day2)",
+    "cumple_regla_2000": true,
+    "nota": "pronostico emitido antes del corte, no clima observado"
+  },
+  "pron_radiacion_media_demanda_concepcion": {
+    "fuente": "clima_pronostico",
+    "lag_dias": 0,
+    "disponible_a_las": "corrida 12z de T-2/T-1 (previous_day2)",
+    "cumple_regla_2000": true,
+    "nota": "pronostico emitido antes del corte, no clima observado"
+  },
+  "pron_radiacion_media_demanda_santiago": {
+    "fuente": "clima_pronostico",
+    "lag_dias": 0,
+    "disponible_a_las": "corrida 12z de T-2/T-1 (previous_day2)",
+    "cumple_regla_2000": true,
+    "nota": "pronostico emitido antes del corte, no clima observado"
+  },
+  "pron_radiacion_media_eolica_chiloe": {
+    "fuente": "clima_pronostico",
+    "lag_dias": 0,
+    "disponible_a_las": "corrida 12z de T-2/T-1 (previous_day2)",
+    "cumple_regla_2000": true,
+    "nota": "pronostico emitido antes del corte, no clima observado"
+  },
+  "pron_radiacion_media_eolica_renaico": {
+    "fuente": "clima_pronostico",
+    "lag_dias": 0,
+    "disponible_a_las": "corrida 12z de T-2/T-1 (previous_day2)",
+    "cumple_regla_2000": true,
+    "nota": "pronostico emitido antes del corte, no clima observado"
+  },
+  "pron_radiacion_media_eolica_taltal": {
+    "fuente": "clima_pronostico",
+    "lag_dias": 0,
+    "disponible_a_las": "corrida 12z de T-2/T-1 (previous_day2)",
+    "cumple_regla_2000": true,
+    "nota": "pronostico emitido antes del corte, no clima observado"
+  },
+  "pron_radiacion_media_hidro_biobio_laja": {
+    "fuente": "clima_pronostico",
+    "lag_dias": 0,
+    "disponible_a_las": "corrida 12z de T-2/T-1 (previous_day2)",
+    "cumple_regla_2000": true,
+    "nota": "pronostico emitido antes del corte, no clima observado"
+  },
+  "pron_radiacion_media_hidro_maule": {
+    "fuente": "clima_pronostico",
+    "lag_dias": 0,
+    "disponible_a_las": "corrida 12z de T-2/T-1 (previous_day2)",
+    "cumple_regla_2000": true,
+    "nota": "pronostico emitido antes del corte, no clima observado"
+  },
+  "pron_radiacion_media_hidro_rapel": {
+    "fuente": "clima_pronostico",
+    "lag_dias": 0,
+    "disponible_a_las": "corrida 12z de T-2/T-1 (previous_day2)",
+    "cumple_regla_2000": true,
+    "nota": "pronostico emitido antes del corte, no clima observado"
+  },
+  "pron_radiacion_media_solar_diego_almagro": {
+    "fuente": "clima_pronostico",
+    "lag_dias": 0,
+    "disponible_a_las": "corrida 12z de T-2/T-1 (previous_day2)",
+    "cumple_regla_2000": true,
+    "nota": "pronostico emitido antes del corte, no clima observado"
+  },
+  "pron_radiacion_media_solar_maria_elena": {
+    "fuente": "clima_pronostico",
+    "lag_dias": 0,
+    "disponible_a_las": "corrida 12z de T-2/T-1 (previous_day2)",
+    "cumple_regla_2000": true,
+    "nota": "pronostico emitido antes del corte, no clima observado"
+  },
+  "pron_viento100m_medio_demanda_antofagasta": {
+    "fuente": "clima_pronostico",
+    "lag_dias": 0,
+    "disponible_a_las": "corrida 12z de T-2/T-1 (previous_day2)",
+    "cumple_regla_2000": true,
+    "nota": "pronostico emitido antes del corte, no clima observado"
+  },
+  "pron_viento100m_medio_demanda_concepcion": {
+    "fuente": "clima_pronostico",
+    "lag_dias": 0,
+    "disponible_a_las": "corrida 12z de T-2/T-1 (previous_day2)",
+    "cumple_regla_2000": true,
+    "nota": "pronostico emitido antes del corte, no clima observado"
+  },
+  "pron_viento100m_medio_demanda_santiago": {
+    "fuente": "clima_pronostico",
+    "lag_dias": 0,
+    "disponible_a_las": "corrida 12z de T-2/T-1 (previous_day2)",
+    "cumple_regla_2000": true,
+    "nota": "pronostico emitido antes del corte, no clima observado"
+  },
+  "pron_viento100m_medio_eolica_chiloe": {
+    "fuente": "clima_pronostico",
+    "lag_dias": 0,
+    "disponible_a_las": "corrida 12z de T-2/T-1 (previous_day2)",
+    "cumple_regla_2000": true,
+    "nota": "pronostico emitido antes del corte, no clima observado"
+  },
+  "pron_viento100m_medio_eolica_renaico": {
+    "fuente": "clima_pronostico",
+    "lag_dias": 0,
+    "disponible_a_las": "corrida 12z de T-2/T-1 (previous_day2)",
+    "cumple_regla_2000": true,
+    "nota": "pronostico emitido antes del corte, no clima observado"
+  },
+  "pron_viento100m_medio_eolica_taltal": {
+    "fuente": "clima_pronostico",
+    "lag_dias": 0,
+    "disponible_a_las": "corrida 12z de T-2/T-1 (previous_day2)",
+    "cumple_regla_2000": true,
+    "nota": "pronostico emitido antes del corte, no clima observado"
+  },
+  "pron_viento100m_medio_hidro_biobio_laja": {
+    "fuente": "clima_pronostico",
+    "lag_dias": 0,
+    "disponible_a_las": "corrida 12z de T-2/T-1 (previous_day2)",
+    "cumple_regla_2000": true,
+    "nota": "pronostico emitido antes del corte, no clima observado"
+  },
+  "pron_viento100m_medio_hidro_maule": {
+    "fuente": "clima_pronostico",
+    "lag_dias": 0,
+    "disponible_a_las": "corrida 12z de T-2/T-1 (previous_day2)",
+    "cumple_regla_2000": true,
+    "nota": "pronostico emitido antes del corte, no clima observado"
+  },
+  "pron_viento100m_medio_hidro_rapel": {
+    "fuente": "clima_pronostico",
+    "lag_dias": 0,
+    "disponible_a_las": "corrida 12z de T-2/T-1 (previous_day2)",
+    "cumple_regla_2000": true,
+    "nota": "pronostico emitido antes del corte, no clima observado"
+  },
+  "pron_viento100m_medio_solar_diego_almagro": {
+    "fuente": "clima_pronostico",
+    "lag_dias": 0,
+    "disponible_a_las": "corrida 12z de T-2/T-1 (previous_day2)",
+    "cumple_regla_2000": true,
+    "nota": "pronostico emitido antes del corte, no clima observado"
+  },
+  "pron_viento100m_medio_solar_maria_elena": {
+    "fuente": "clima_pronostico",
+    "lag_dias": 0,
+    "disponible_a_las": "corrida 12z de T-2/T-1 (previous_day2)",
+    "cumple_regla_2000": true,
+    "nota": "pronostico emitido antes del corte, no clima observado"
+  },
+  "pron_precipitacion_total_demanda_antofagasta": {
+    "fuente": "clima_pronostico",
+    "lag_dias": 0,
+    "disponible_a_las": "corrida 12z de T-2/T-1 (previous_day2)",
+    "cumple_regla_2000": true,
+    "nota": "pronostico emitido antes del corte, no clima observado"
+  },
+  "pron_precipitacion_total_demanda_concepcion": {
+    "fuente": "clima_pronostico",
+    "lag_dias": 0,
+    "disponible_a_las": "corrida 12z de T-2/T-1 (previous_day2)",
+    "cumple_regla_2000": true,
+    "nota": "pronostico emitido antes del corte, no clima observado"
+  },
+  "pron_precipitacion_total_demanda_santiago": {
+    "fuente": "clima_pronostico",
+    "lag_dias": 0,
+    "disponible_a_las": "corrida 12z de T-2/T-1 (previous_day2)",
+    "cumple_regla_2000": true,
+    "nota": "pronostico emitido antes del corte, no clima observado"
+  },
+  "pron_precipitacion_total_eolica_chiloe": {
+    "fuente": "clima_pronostico",
+    "lag_dias": 0,
+    "disponible_a_las": "corrida 12z de T-2/T-1 (previous_day2)",
+    "cumple_regla_2000": true,
+    "nota": "pronostico emitido antes del corte, no clima observado"
+  },
+  "pron_precipitacion_total_eolica_renaico": {
+    "fuente": "clima_pronostico",
+    "lag_dias": 0,
+    "disponible_a_las": "corrida 12z de T-2/T-1 (previous_day2)",
+    "cumple_regla_2000": true,
+    "nota": "pronostico emitido antes del corte, no clima observado"
+  },
+  "pron_precipitacion_total_eolica_taltal": {
+    "fuente": "clima_pronostico",
+    "lag_dias": 0,
+    "disponible_a_las": "corrida 12z de T-2/T-1 (previous_day2)",
+    "cumple_regla_2000": true,
+    "nota": "pronostico emitido antes del corte, no clima observado"
+  },
+  "pron_precipitacion_total_hidro_biobio_laja": {
+    "fuente": "clima_pronostico",
+    "lag_dias": 0,
+    "disponible_a_las": "corrida 12z de T-2/T-1 (previous_day2)",
+    "cumple_regla_2000": true,
+    "nota": "pronostico emitido antes del corte, no clima observado"
+  },
+  "pron_precipitacion_total_hidro_maule": {
+    "fuente": "clima_pronostico",
+    "lag_dias": 0,
+    "disponible_a_las": "corrida 12z de T-2/T-1 (previous_day2)",
+    "cumple_regla_2000": true,
+    "nota": "pronostico emitido antes del corte, no clima observado"
+  },
+  "pron_precipitacion_total_hidro_rapel": {
+    "fuente": "clima_pronostico",
+    "lag_dias": 0,
+    "disponible_a_las": "corrida 12z de T-2/T-1 (previous_day2)",
+    "cumple_regla_2000": true,
+    "nota": "pronostico emitido antes del corte, no clima observado"
+  },
+  "pron_precipitacion_total_solar_diego_almagro": {
+    "fuente": "clima_pronostico",
+    "lag_dias": 0,
+    "disponible_a_las": "corrida 12z de T-2/T-1 (previous_day2)",
+    "cumple_regla_2000": true,
+    "nota": "pronostico emitido antes del corte, no clima observado"
+  },
+  "pron_precipitacion_total_solar_maria_elena": {
+    "fuente": "clima_pronostico",
+    "lag_dias": 0,
+    "disponible_a_las": "corrida 12z de T-2/T-1 (previous_day2)",
+    "cumple_regla_2000": true,
+    "nota": "pronostico emitido antes del corte, no clima observado"
+  },
+  "pron_temp_max_demanda_antofagasta": {
+    "fuente": "clima_pronostico",
+    "lag_dias": 0,
+    "disponible_a_las": "corrida 12z de T-2/T-1 (previous_day2)",
+    "cumple_regla_2000": true,
+    "nota": "pronostico emitido antes del corte, no clima observado"
+  },
+  "pron_temp_max_demanda_concepcion": {
+    "fuente": "clima_pronostico",
+    "lag_dias": 0,
+    "disponible_a_las": "corrida 12z de T-2/T-1 (previous_day2)",
+    "cumple_regla_2000": true,
+    "nota": "pronostico emitido antes del corte, no clima observado"
+  },
+  "pron_temp_max_demanda_santiago": {
+    "fuente": "clima_pronostico",
+    "lag_dias": 0,
+    "disponible_a_las": "corrida 12z de T-2/T-1 (previous_day2)",
+    "cumple_regla_2000": true,
+    "nota": "pronostico emitido antes del corte, no clima observado"
+  },
+  "pron_temp_max_eolica_chiloe": {
+    "fuente": "clima_pronostico",
+    "lag_dias": 0,
+    "disponible_a_las": "corrida 12z de T-2/T-1 (previous_day2)",
+    "cumple_regla_2000": true,
+    "nota": "pronostico emitido antes del corte, no clima observado"
+  },
+  "pron_temp_max_eolica_renaico": {
+    "fuente": "clima_pronostico",
+    "lag_dias": 0,
+    "disponible_a_las": "corrida 12z de T-2/T-1 (previous_day2)",
+    "cumple_regla_2000": true,
+    "nota": "pronostico emitido antes del corte, no clima observado"
+  },
+  "pron_temp_max_eolica_taltal": {
+    "fuente": "clima_pronostico",
+    "lag_dias": 0,
+    "disponible_a_las": "corrida 12z de T-2/T-1 (previous_day2)",
+    "cumple_regla_2000": true,
+    "nota": "pronostico emitido antes del corte, no clima observado"
+  },
+  "pron_temp_max_hidro_biobio_laja": {
+    "fuente": "clima_pronostico",
+    "lag_dias": 0,
+    "disponible_a_las": "corrida 12z de T-2/T-1 (previous_day2)",
+    "cumple_regla_2000": true,
+    "nota": "pronostico emitido antes del corte, no clima observado"
+  },
+  "pron_temp_max_hidro_maule": {
+    "fuente": "clima_pronostico",
+    "lag_dias": 0,
+    "disponible_a_las": "corrida 12z de T-2/T-1 (previous_day2)",
+    "cumple_regla_2000": true,
+    "nota": "pronostico emitido antes del corte, no clima observado"
+  },
+  "pron_temp_max_hidro_rapel": {
+    "fuente": "clima_pronostico",
+    "lag_dias": 0,
+    "disponible_a_las": "corrida 12z de T-2/T-1 (previous_day2)",
+    "cumple_regla_2000": true,
+    "nota": "pronostico emitido antes del corte, no clima observado"
+  },
+  "pron_temp_max_solar_diego_almagro": {
+    "fuente": "clima_pronostico",
+    "lag_dias": 0,
+    "disponible_a_las": "corrida 12z de T-2/T-1 (previous_day2)",
+    "cumple_regla_2000": true,
+    "nota": "pronostico emitido antes del corte, no clima observado"
+  },
+  "pron_temp_max_solar_maria_elena": {
+    "fuente": "clima_pronostico",
+    "lag_dias": 0,
+    "disponible_a_las": "corrida 12z de T-2/T-1 (previous_day2)",
+    "cumple_regla_2000": true,
+    "nota": "pronostico emitido antes del corte, no clima observado"
+  },
+  "pron_viento100m_max_demanda_antofagasta": {
+    "fuente": "clima_pronostico",
+    "lag_dias": 0,
+    "disponible_a_las": "corrida 12z de T-2/T-1 (previous_day2)",
+    "cumple_regla_2000": true,
+    "nota": "pronostico emitido antes del corte, no clima observado"
+  },
+  "pron_viento100m_max_demanda_concepcion": {
+    "fuente": "clima_pronostico",
+    "lag_dias": 0,
+    "disponible_a_las": "corrida 12z de T-2/T-1 (previous_day2)",
+    "cumple_regla_2000": true,
+    "nota": "pronostico emitido antes del corte, no clima observado"
+  },
+  "pron_viento100m_max_demanda_santiago": {
+    "fuente": "clima_pronostico",
+    "lag_dias": 0,
+    "disponible_a_las": "corrida 12z de T-2/T-1 (previous_day2)",
+    "cumple_regla_2000": true,
+    "nota": "pronostico emitido antes del corte, no clima observado"
+  },
+  "pron_viento100m_max_eolica_chiloe": {
+    "fuente": "clima_pronostico",
+    "lag_dias": 0,
+    "disponible_a_las": "corrida 12z de T-2/T-1 (previous_day2)",
+    "cumple_regla_2000": true,
+    "nota": "pronostico emitido antes del corte, no clima observado"
+  },
+  "pron_viento100m_max_eolica_renaico": {
+    "fuente": "clima_pronostico",
+    "lag_dias": 0,
+    "disponible_a_las": "corrida 12z de T-2/T-1 (previous_day2)",
+    "cumple_regla_2000": true,
+    "nota": "pronostico emitido antes del corte, no clima observado"
+  },
+  "pron_viento100m_max_eolica_taltal": {
+    "fuente": "clima_pronostico",
+    "lag_dias": 0,
+    "disponible_a_las": "corrida 12z de T-2/T-1 (previous_day2)",
+    "cumple_regla_2000": true,
+    "nota": "pronostico emitido antes del corte, no clima observado"
+  },
+  "pron_viento100m_max_hidro_biobio_laja": {
+    "fuente": "clima_pronostico",
+    "lag_dias": 0,
+    "disponible_a_las": "corrida 12z de T-2/T-1 (previous_day2)",
+    "cumple_regla_2000": true,
+    "nota": "pronostico emitido antes del corte, no clima observado"
+  },
+  "pron_viento100m_max_hidro_maule": {
+    "fuente": "clima_pronostico",
+    "lag_dias": 0,
+    "disponible_a_las": "corrida 12z de T-2/T-1 (previous_day2)",
+    "cumple_regla_2000": true,
+    "nota": "pronostico emitido antes del corte, no clima observado"
+  },
+  "pron_viento100m_max_hidro_rapel": {
+    "fuente": "clima_pronostico",
+    "lag_dias": 0,
+    "disponible_a_las": "corrida 12z de T-2/T-1 (previous_day2)",
+    "cumple_regla_2000": true,
+    "nota": "pronostico emitido antes del corte, no clima observado"
+  },
+  "pron_viento100m_max_solar_diego_almagro": {
+    "fuente": "clima_pronostico",
+    "lag_dias": 0,
+    "disponible_a_las": "corrida 12z de T-2/T-1 (previous_day2)",
+    "cumple_regla_2000": true,
+    "nota": "pronostico emitido antes del corte, no clima observado"
+  },
+  "pron_viento100m_max_solar_maria_elena": {
+    "fuente": "clima_pronostico",
+    "lag_dias": 0,
+    "disponible_a_las": "corrida 12z de T-2/T-1 (previous_day2)",
+    "cumple_regla_2000": true,
+    "nota": "pronostico emitido antes del corte, no clima observado"
+  },
+  "precip_hidro_30d": {
+    "fuente": "clima_observado",
+    "lag_dias": 5,
+    "disponible_a_las": "consolidacion ERA5 (2-5 dias)",
+    "cumple_regla_2000": true,
+    "nota": ""
+  },
+  "precip_hidro_90d": {
+    "fuente": "clima_observado",
+    "lag_dias": 5,
+    "disponible_a_las": "consolidacion ERA5 (2-5 dias)",
+    "cumple_regla_2000": true,
+    "nota": ""
+  },
+  "temp_hidro": {
+    "fuente": "clima_observado",
+    "lag_dias": 5,
+    "disponible_a_las": "consolidacion ERA5 (2-5 dias)",
+    "cumple_regla_2000": true,
+    "nota": ""
+  },
+  "cmg_programado_d1": {
+    "fuente": "cen_cmg_programado",
+    "lag_dias": 0,
+    "disponible_a_las": "SIN CONFIRMAR (hora publicacion PO)",
+    "cumple_regla_2000": false,
+    "nota": "columna AUN NO MATERIALIZADA (pre-registro). riesgo nº1 del catalogo: no usar hasta verificar empiricamente que el PO de D+1 se publica antes de las 20:00; evaluacion.py lo rechaza automaticamente"
+  },
+  "_meta": {
+    "generado": "2026-06-12T18:27:15.149558Z",
+    "origen_datos": "sintetico",
+    "filas": 2718,
+    "rango": [
+      "2019-01-01",
+      "2026-06-10"
+    ]
+  }
+}

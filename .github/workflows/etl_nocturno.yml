@@ -1,0 +1,134 @@
+# ETL incremental nocturno — 02:00 hora Chile, todas las noches.
+#
+# Chile alterna UTC-4 (invierno, ~abril-septiembre) y UTC-3 (verano).
+# GitHub Actions solo acepta cron en UTC, asi que se programan AMBAS horas
+# candidatas (05:00 y 06:00 UTC) y un guard step verifica con la tz IANA
+# America/Santiago que la hora local sea exactamente 02; la corrida que no
+# corresponde termina en no-op. Asi el cambio de hora chileno (que ha
+# cambiado por decreto varias veces) nunca requiere tocar este archivo.
+#
+# Camino critico 100 % deterministico: sin agentes ni LLMs (mision, fase 2.6).
+# Si una fuente falla 2 noches seguidas se abre un issue automaticamente.
+
+name: etl-nocturno
+
+on:
+  schedule:
+    - cron: "0 5 * * *"   # 02:00 Chile cuando rige UTC-3 (verano)
+    - cron: "0 6 * * *"   # 02:00 Chile cuando rige UTC-4 (invierno)
+  workflow_dispatch:
+    inputs:
+      ventana_dias:
+        description: "Dias hacia atras a re-extraer"
+        default: "7"
+
+permissions:
+  contents: write
+  issues: write
+
+env:
+  PYTHONUNBUFFERED: "1"
+
+jobs:
+  etl:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - name: Guard de hora local Chile (solo corre a las 02 local)
+        id: guard
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "correr=si" >> "$GITHUB_OUTPUT"; exit 0
+          fi
+          HORA_LOCAL=$(TZ=America/Santiago date +%H)
+          echo "hora local Chile: $HORA_LOCAL"
+          if [ "$HORA_LOCAL" = "02" ]; then
+            echo "correr=si" >> "$GITHUB_OUTPUT"
+          else
+            echo "correr=no" >> "$GITHUB_OUTPUT"
+          fi
+
+      - uses: actions/checkout@v4
+        if: steps.guard.outputs.correr == 'si'
+
+      - uses: actions/setup-python@v5
+        if: steps.guard.outputs.correr == 'si'
+        with:
+          python-version: "3.11"
+
+      - name: Instalar dependencias
+        if: steps.guard.outputs.correr == 'si'
+        run: pip install --quiet pandas pyarrow duckdb requests holidays yfinance
+
+      - name: Incremento diario de todas las fuentes
+        if: steps.guard.outputs.correr == 'si'
+        working-directory: tools/etl
+        env:
+          COORDINADOR_USER_KEY: ${{ secrets.COORDINADOR_USER_KEY }}
+          EIA_API_KEY: ${{ secrets.EIA_API_KEY }}
+        # el exit code de run_etl.py NO corta el job: el tracking de fallos
+        # consecutivos y el commit de lo que si funciono deben ejecutarse
+        run: |
+          python3 run_etl.py --modo incremental \
+            --ventana-dias "${{ github.event.inputs.ventana_dias || '7' }}" \
+            || echo "FALLOS=1" >> "$GITHUB_ENV"
+
+      - name: Reconstruir tabla maestra (si hay datos CEN reales)
+        if: steps.guard.outputs.correr == 'si'
+        working-directory: tools/etl
+        run: |
+          if ls ../../data/raw/cen_demanda/*/*.parquet >/dev/null 2>&1 \
+             && ls ../../data/raw/cen_cmg_real/*/*.parquet >/dev/null 2>&1; then
+            python3 construir_tabla_maestra.py --origen real
+          else
+            echo "::warning::sin datos CEN; tabla maestra no reconstruida"
+          fi
+
+      - name: Validadores de calidad
+        if: steps.guard.outputs.correr == 'si'
+        working-directory: tools/etl
+        run: python3 validadores.py --reporte || echo "::warning::validadores reportaron problemas"
+
+      - name: Commit incremental
+        if: steps.guard.outputs.correr == 'si'
+        run: |
+          git config user.name "etl-nocturno[bot]"
+          git config user.email "etl@users.noreply.github.com"
+          git add data/raw data/processed wiki/calidad_datos.md 2>/dev/null || true
+          if git diff --cached --quiet; then
+            echo "sin cambios"
+          else
+            git commit -m "etl nocturno: incremento $(TZ=America/Santiago date +%F)"
+            git pull --rebase origin "${GITHUB_REF_NAME}"
+            git push origin "HEAD:${GITHUB_REF_NAME}"
+          fi
+
+      - name: Issue automatico si una fuente fallo 2+ noches seguidas
+        if: steps.guard.outputs.correr == 'si'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          [ -f data/raw/estado_etl.json ] || exit 0
+          FUENTES_MAL=$(python3 -c "
+          import json
+          e = json.load(open('data/raw/estado_etl.json'))
+          print(' '.join(f for f, v in e.items()
+                         if isinstance(v, dict) and v.get('fallos_consecutivos', 0) >= 2))")
+          for F in $FUENTES_MAL; do
+            TITULO="ETL nocturno: fuente $F fallo 2+ noches seguidas"
+            EXISTE=$(gh issue list --state open --search "in:title \"$TITULO\"" --json number --jq length)
+            if [ "$EXISTE" = "0" ]; then
+              ERROR=$(python3 -c "
+          import json
+          print(json.load(open('data/raw/estado_etl.json'))['$F'].get('ultimo_error', '?'))")
+              gh issue create --title "$TITULO" \
+                --body "Deteccion automatica del workflow etl-nocturno (run ${{ github.run_id }}).
+
+          Ultimo error:
+          \`\`\`
+          $ERROR
+          \`\`\`
+
+          Ver data/raw/estado_etl.json y los logs del workflow. Este issue no se re-abre mientras exista uno abierto con el mismo titulo."
+            fi
+          done

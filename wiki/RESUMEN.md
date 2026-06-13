@@ -11,6 +11,12 @@ Paginas de sintesis cross-fuente sobre el mercado electrico chileno, escritas pa
 | [conexion-y-transmision.md](./conexion-y-transmision.md) | Como conectar una central nueva, regimen de transmision (troncal/zonal/distribucion), expansion, BESS | DS 144 (subtransmision), DS 48 (troncal), Jornada Tecnica Transmision 2026, BESS, costo de falla |
 | [marco-pmgd-y-distribuida.md](./marco-pmgd-y-distribuida.md) | Regimen PMGD (<= 9 MW) y la NTCO-PMGD 2026 con almacenamiento | NTCO-PMGD-2026, DS 229 sistemas medianos, estabilizacion tarifaria |
 | [ciberseguridad-sen.md](./ciberseguridad-sen.md) | Obligaciones de Coordinados: CIP-002 a CIP-011, niveles de impacto, protocolo de notificacion | Estandar Ciberseguridad CEN oct-2022, Protocolo Ciberincidentes dic-2021 |
+| [referencias/](./referencias/RESUMEN.md) | Subcarpeta de notas de referencia tecnica (literatura externa) para la mision de prediccion de costos SEN | `ia-en-sistemas-electricos.md`: IA aplicada al forecasting de costos, PPT CEN 2026-04-21 |
+| [decisiones.md](./decisiones.md) | Registro append-only de decisiones de la mision de prediccion de costos (D-001..D-009) | mision costos SEN |
+| [features.md](./features.md) | Cada feature de la tabla maestra: definicion, fuente, lag y verificacion anti-fuga 20:00 | tabla maestra + catalogo de fuentes |
+| [resultados_baselines.md](./resultados_baselines.md) | MAPE/MAE/RMSE/sesgo walk-forward de los 3 baselines + analisis de errores | protocolo canonico models/evaluacion.py |
+| [calidad_datos.md](./calidad_datos.md) | Reporte auto-generado de validadores: completitud, outliers, consistencia | tools/etl/validadores.py |
+| [plan_operacion.md](./plan_operacion.md) | Fase 5: prediccion diaria nocturna, monitoreo de error vs KPI del CEN, reentrenamiento, drift | diseno, no implementado |
 
 ## Como agregar una pagina
 1. Identifica un tema cross-fuente.
