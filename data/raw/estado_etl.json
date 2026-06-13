@@ -1,10 +1,10 @@
 {
   "calendario": {
     "fallos_consecutivos": 0,
-    "ultima_corrida": "2026-06-12T18:17:21.297517Z",
+    "ultima_corrida": "2026-06-13T14:53:53.686275Z",
     "ultimo_error": null,
     "estado": "ok",
-    "particiones": 1
+    "particiones": 90
   },
   "clima_pronostico": {
     "fallos_consecutivos": 0,
@@ -19,5 +19,12 @@
     "ultimo_error": null,
     "estado": "ok",
     "particiones": 1
+  }
+} "cen_po": {
+    "fallos_consecutivos": 0,
+    "ultima_corrida": "2026-06-13T14:53:53.579060Z",
+    "ultimo_error": null,
+    "estado": "ok",
+    "particiones": 0
   }
 }

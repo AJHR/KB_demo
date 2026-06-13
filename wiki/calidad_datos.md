@@ -25,5 +25,5 @@ _(ninguna fuente con columnas numericas conocidas todavia)_
 
 ## Consistencia cruzada: generacion vs demanda (diario)
 
-_No evaluable: faltan `cen_demanda` y/o `cen_generacion`._
+Sin violaciones (tolerancia 12%: perdidas + autoconsumo).
 
