@@ -23,8 +23,8 @@ todos los candidatos fallen, para no disparar el issue automatico de fallos.
 
 from __future__ import annotations
 
-import io
 import json
+import re
 from datetime import date, timedelta
 from pathlib import Path
 
@@ -34,6 +34,15 @@ from comun import (DIR_RAW, escribir_parquet_atomico, log,
                    registrar_manifiesto)
 
 FUENTE = "cen_web"
+
+# Un candidato keyless solo cuenta como FUENTE USABLE si entrega datos
+# tabulares Y recientes Y con cobertura de mas de un dia. La primera corrida
+# (run #27454055998) mostro por que: el endpoint wp-json devolvio datos pero
+# de UN solo dia (2024-12-05), congelado 555 dias atras -> es un snapshot demo,
+# inutil para backfill o D+1. "Respondio con datos" != "sirve".
+MIN_DIAS_COBERTURA = 2
+MAX_ANTIGUEDAD_DIAS = 30
+_RE_FECHA = re.compile(r"\b(20\d{2}-\d{2}-\d{2})\b")
 
 # Headers de navegador: varios endpoints WP/Highcharts validan UA y Referer.
 HEADERS_NAVEGADOR = {
@@ -105,6 +114,19 @@ def _clasificar(texto: str, content_type: str) -> tuple[str, int]:
     return "no_tabular", 0
 
 
+def _frescura(texto: str) -> tuple[int, int | None]:
+    """(n_dias_distintos, antiguedad_dias del dato mas reciente) buscando
+    fechas ISO en el payload. antiguedad None si no se hallan fechas."""
+    fechas = sorted(set(_RE_FECHA.findall(texto)))
+    if not fechas:
+        return 0, None
+    try:
+        mas_reciente = date.fromisoformat(fechas[-1])
+        return len(fechas), (date.today() - mas_reciente).days
+    except ValueError:
+        return len(fechas), None
+
+
 def _probar(s, cand: dict) -> dict:
     headers = dict(HEADERS_NAVEGADOR)
     if cand["referer"]:
@@ -116,17 +138,30 @@ def _probar(s, cand: dict) -> dict:
                   allow_redirects=True)
         ct = r.headers.get("Content-Type", "")
         clase, nfilas = _clasificar(r.text, ct)
+        n_dias, antiguedad = _frescura(r.text)
+        # "sirve" exige: datos tabulares + cobertura multi-dia + reciente.
+        usable = bool(
+            r.ok and clase in ("datos_csv", "datos_json")
+            and n_dias >= MIN_DIAS_COBERTURA
+            and antiguedad is not None and antiguedad <= MAX_ANTIGUEDAD_DIAS)
         res.update(status=r.status_code, content_type=ct[:80],
                    bytes=len(r.content), url_final=r.url.split("?")[0],
                    clase=clase, filas_estimadas=nfilas,
-                   keyless_ok=bool(r.ok and clase in ("datos_csv", "datos_json")),
+                   dias_cobertura=n_dias, antiguedad_dias=antiguedad,
+                   keyless_ok=usable,
                    muestra=r.text[:300].replace("\n", " ⏎ "))
     except Exception as e:  # noqa: BLE001 - sonda: registrar, no morir
         res.update(status=None, content_type=None, bytes=0,
                    url_final=None, clase="error", filas_estimadas=0,
+                   dias_cobertura=0, antiguedad_dias=None,
                    keyless_ok=False, muestra=f"{type(e).__name__}: {e}"[:300])
-    estado = "OK-DATOS" if res["keyless_ok"] else (
-        f"{res.get('clase')}/{res.get('status')}")
+    if res["keyless_ok"]:
+        estado = "OK-DATOS-USABLE"
+    elif res.get("clase") in ("datos_csv", "datos_json"):
+        estado = (f"datos-pero-no-usable ({res.get('dias_cobertura')} dia(s), "
+                  f"{res.get('antiguedad_dias')}d de antiguedad)")
+    else:
+        estado = f"{res.get('clase')}/{res.get('status')}"
     log.info("sonda keyless [%s] %s -> %s", cand["serie"], cand["nombre"], estado)
     return res
 

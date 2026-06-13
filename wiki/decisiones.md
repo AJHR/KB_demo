@@ -61,3 +61,14 @@ Cada decisión: contexto, alternativas, decisión, justificación.
 
 - **Contexto:** sin red en el sandbox, las fases 3-4 no podían validarse de extremo a extremo con datos reales en esta sesión.
 - **Decisión:** `tools/etl/generar_sintetico.py` (seed=42, física plausible: duck curve, años secos/húmedos, spike de combustibles 2022, quiebre 2024-07-15) puebla `data/raw_sintetico/` con los mismos esquemas del pipeline real; la tabla maestra y todos los reportes marcan `origen_datos=sintetico` de forma prominente. **Ningún MAPE sobre datos sintéticos es una métrica del problema real** y los reportes lo declaran. El workflow `backfill.yml` reemplaza esto con datos reales al correr con `COORDINADOR_USER_KEY` configurada; las fuentes sin credenciales (clima, combustibles, calendario) se llenan con datos reales desde la primera corrida.
+
+## D-010 — Descarga keyless del CEN: descartada por prueba empírica en el runner
+
+- **Contexto:** a pedido del usuario se evaluó si la data del Coordinador (CMg real, demanda) se puede bajar sin `user_key`, en vez de asumirlo. Se construyó `tools/etl/extractor_cen_web.py` (sonda) y se ejecutó **en vivo en GitHub Actions** (run #27454055998), donde sí hay red.
+- **Resultado (evidencia dura, no inferencia):**
+  - Los patrones `export.csv?from=&to=` de las páginas de gráficos → **404** (no existen; eran inferidos).
+  - La API SIP v4 sin `user_key` → **403** (confirma que la key es obligatoria).
+  - El subdominio `cmgreal.coordinador.cl` → 200 pero es la SPA (HTML), no datos.
+  - El endpoint `https://www.coordinador.cl/wp-json/costo-marginal/v1/data` → **sí devuelve JSON de CMg por barra**, pero es un **snapshot demo congelado**: un solo día (2024-12-05), 192 registros, 555 días de antigüedad, sin parámetros de fecha. Inútil para backfill o D+1.
+- **Decisión:** la descarga keyless **no es una fuente usable** para la variable objetivo. El camino robusto es la **API SIP v4 con `user_key`** gratuito (los 6 extractores `cen_*` ya lo soportan y se auto-omiten con gracia sin él, ver D-002/fix). La sonda `cen_web` queda como **monitor**: corregida para exigir cobertura multi-día y frescura (≤30 días) antes de declarar un endpoint "usable", de modo que detecte automáticamente si el CEN llegara a exponer un keyless real. No se construye extractor keyless de producción.
+- **Recomendación al usuario:** registrar el `user_key` gratuito en portal.api.coordinador.cl (~2 min, no es login) y cargarlo como secret `COORDINADOR_USER_KEY` en GitHub (Settings → Secrets → Actions; nunca pegarlo en el chat).
