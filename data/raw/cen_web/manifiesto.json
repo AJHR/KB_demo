@@ -1,0 +1,10 @@
+[
+  {
+    "descargado_en": "2026-06-13T02:37:04Z",
+    "particiones": [
+      "cen_web/sonda_keyless.parquet"
+    ],
+    "candidatos": 7,
+    "keyless_ok": 1
+  }
+]

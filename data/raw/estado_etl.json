@@ -12,5 +12,12 @@
     "ultimo_error": null,
     "estado": "ok",
     "particiones": 90
+  },
+  "cen_web": {
+    "fallos_consecutivos": 0,
+    "ultima_corrida": "2026-06-13T02:36:56.584006Z",
+    "ultimo_error": null,
+    "estado": "ok",
+    "particiones": 1
   }
 }
