@@ -1,28 +1,35 @@
-"""Extractor del Costo Marginal REAL por barra via API SIP del Coordinador.
+"""Extractor del Costo Marginal Real del SEN via API SIP (endpoint
+costo-marginal-real, regimen "nuevo"), a resolucion horaria.
 
-Endpoint (evidencia en sources/costos_sen/anexos/coordinador.md, seccion 2):
+Decision de fuente (D-012, usuario 2026-06-14), tomada tras medir en vivo la
+cobertura real de la API SIP v4 (no asumida):
+
+  - `costo-marginal-real/v4/findByDate` SOLO entrega el regimen "nuevo"
+    (>=2024-07-15): agosto 2024 trajo datos; enero 2024 -> 0 filas.
+  - `costo-marginal-online/v4/findByDate` resulto ser SOLO-RECIENTE (ventana
+    movil): mayo 2026 trajo datos; febrero 2024 -> 0 filas. NO sirve para
+    historia profunda.
+  - El CMg real anterior al 2024-07-15 ("antiguo") NO esta en la API v4; vive
+    en open data de la CNE (datos.energiaabierta.cl) o en CSV legacy del CEN.
+
+El usuario opto por usar SOLO el SIP "nuevo" (>=2024-07-15): historia mas corta
+(~2 anos) pero una sola fuente que ya funciona, sin credenciales nuevas. La
+historia multi-ano queda como extension futura (extractor de Energia Abierta).
 
     https://sipub.api.coordinador.cl/costo-marginal-real/v4/findByDate
-        ?startDate=YYYY-MM-DD&endDate=YYYY-MM-DD&user_key=...
+        ?startDate=YYYY-MM-DD&endDate=YYYY-MM-DD&limit=&user_key=...
 
-- Maximo ~31 dias por request -> se descarga en tramos mensuales
-  (meses_entre garantiza tramos <= 31 dias).
-- Requiere COORDINADOR_USER_KEY en el entorno (portal.api.coordinador.cl).
-- QUIEBRE DE SERIE documentado (coordinador.md seccion 1.1): desde el
-  2024-07-15 rige el "Costo Marginal Real (nuevo)"; lo anterior queda como
-  historico "antiguo". La columna `regimen` deja el quiebre explicito para
-  que el modelado no mezcle ambos tramos a ciegas.
-- NO PROBADO contra el endpoint real (red del sandbox bloqueada): el parser
-  es defensivo y se prueba offline con fixtures en tests_offline.py.
+- Hasta ~31 dias por request -> tramos mensuales (meses_entre).
+- Se ignoran los meses anteriores a FECHA_INICIO_DATOS (no estan en este
+  endpoint): evita pagar requests vacios en un backfill largo.
+- Requiere COORDINADOR_USER_KEY (portal.api.coordinador.cl).
 
-Anti-fuga: el CMg real se publica con rezago de dias/semanas (proceso de
-transferencias economicas); la tabla maestra solo puede exponerlo como
-feature retrospectiva, nunca como informacion disponible el dia D.
+Anti-fuga: el CMg real se publica con rezago (proceso de transferencias); la
+tabla maestra lo incorpora con LAG_CMG, nunca como dato del propio dia D+1.
 """
 
 from __future__ import annotations
 
-import re
 from datetime import date
 from pathlib import Path
 
@@ -37,42 +44,50 @@ FUENTE = "cen_cmg_real"
 
 URL = "https://sipub.api.coordinador.cl/costo-marginal-real/v4/findByDate"
 
-# Desde esta fecha rige el "Costo Marginal Real (nuevo)" (coordinador.md 1.1).
-FECHA_QUIEBRE = date(2024, 7, 15)
+# El endpoint solo sirve el regimen "nuevo" (verificado en runner): antes de
+# esta fecha devuelve 0 filas. Se evita iterar esos meses en un backfill largo.
+FECHA_INICIO_DATOS = date(2024, 7, 1)
 
-COLUMNAS = ["barra", "fecha", "hora", "cmg_usd_mwh", "regimen"]
+# La API respeta `limit` (medido: 1000/pagina exactas); 4000 cuartea paginas.
+LIMIT = 4000
 
-
-def _regimen(fecha_iso) -> object:
-    """'antiguo' si fecha < 2024-07-15, 'nuevo' desde entonces; NA si invalida."""
-    f = str(fecha_iso)
-    if not re.match(r"^\d{4}-\d{2}-\d{2}", f):
-        return pd.NA
-    return "antiguo" if f < FECHA_QUIEBRE.isoformat() else "nuevo"
+COLUMNAS = ["barra", "fecha", "hora", "cmg_usd_mwh"]
 
 
 def parsear_respuesta(json_obj) -> pd.DataFrame:
-    """Respuesta JSON -> DataFrame [barra, fecha, hora, cmg_usd_mwh, regimen].
+    """Respuesta JSON -> DataFrame horario [barra, fecha, hora, cmg_usd_mwh].
 
-    Mapeo defensivo de campos (variantes 'barra_info'/'nmb_barra_info'/...,
-    'cmg_usd_mwh_'/'cmg'/'costo_en_dolares', 'fecha_hora' o 'fecha'+'hora')
-    y filtrado a las barras de referencia: ver cen_api.parsear_cmg."""
+    Mapeo defensivo via cen_api.parsear_cmg (filtra a barras de referencia) y
+    consolidacion a horario: media por (barra, fecha, hora). Es no-op si la
+    serie ya viene horaria (un registro por hora) y correcta si trajera
+    sub-horario."""
     df = parsear_cmg(json_obj)
-    df["regimen"] = df["fecha"].map(_regimen)
-    return df[COLUMNAS]
+    if df.empty:
+        return df[COLUMNAS] if set(COLUMNAS).issubset(df.columns) else \
+            pd.DataFrame(columns=COLUMNAS)
+    horario = (df.groupby(["barra", "fecha", "hora"], as_index=False)
+                 .agg(cmg_usd_mwh=("cmg_usd_mwh", "mean")))
+    horario = horario.sort_values(["fecha", "hora", "barra"]).reset_index(drop=True)
+    return horario[COLUMNAS]
 
 
 def _descargar_tramo(s, ini: date, fin: date) -> list:
     params = {"startDate": ini.isoformat(), "endDate": fin.isoformat(),
-              "user_key": user_key(), "limit": 1000}
+              "user_key": user_key(), "limit": LIMIT}
     return get_paginado(s, URL, params)
 
 
 def extract(fecha_inicio: date, fecha_fin: date, dir_datos: Path | None = None,
             forzar: bool = False) -> list[Path]:
+    inicio = max(fecha_inicio, FECHA_INICIO_DATOS)
+    if inicio > fecha_fin:
+        log.info("%s: rango %s..%s anterior al inicio de datos (%s); nada que "
+                 "descargar", FUENTE, fecha_inicio, fecha_fin, FECHA_INICIO_DATOS)
+        registrar_manifiesto(FUENTE, [], dir_datos)
+        return []
     s = sesion_http()
     rutas = []
-    for ini, fin in meses_entre(fecha_inicio, fecha_fin):
+    for ini, fin in meses_entre(inicio, fecha_fin):
         destino = ruta_particion(FUENTE, ini, dir_datos)
         if not forzar and particion_completa(destino, fin):
             rutas.append(destino)
@@ -81,14 +96,14 @@ def extract(fecha_inicio: date, fecha_fin: date, dir_datos: Path | None = None,
         filas = con_reintentos(lambda i=ini, f=fin: _descargar_tramo(s, i, f))
         df = parsear_respuesta(filas)
         if df.empty:
-            # No se escribe particion vacia: asi la proxima corrida reintenta
-            # en vez de dar el mes por cerrado con cero datos.
+            # No se escribe particion vacia: la proxima corrida reintenta en
+            # vez de dar el mes por cerrado con cero datos.
             log.warning("%s: 0 filas utiles en %s..%s (%d filas crudas); "
                         "particion no escrita", FUENTE, ini, fin, len(filas))
             continue
         escribir_parquet_atomico(df, destino)
         rutas.append(destino)
-        log.info("%s: particion %s (%d filas, %d barras)",
+        log.info("%s: particion %s (%d filas horarias, %d barras)",
                  FUENTE, destino.name, len(df), df.barra.nunique())
     registrar_manifiesto(FUENTE, rutas, dir_datos)
     return rutas

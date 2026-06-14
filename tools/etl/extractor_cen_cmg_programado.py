@@ -65,8 +65,11 @@ def parsear_respuesta(json_obj) -> pd.DataFrame:
 
 
 def _descargar_tramo(s, ini: date, fin: date) -> list:
+    # limit=4000: el diagnostico (run #27484278704) midio 271.138 filas crudas
+    # en un mes (todas las barras) -> 273 paginas a limit=1000; con 4000 baja a
+    # ~68 paginas/mes (la API respeta el limit), ~4x menos costo de paginacion.
     params = {"startDate": ini.isoformat(), "endDate": fin.isoformat(),
-              "user_key": user_key(), "limit": 1000}
+              "user_key": user_key(), "limit": 4000}
     return get_paginado(s, URL, params)
 
 

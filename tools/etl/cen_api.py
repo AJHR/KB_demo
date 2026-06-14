@@ -43,8 +43,12 @@ from comun import ErrorCredencial, log
 # ---------------------------------------------------------------------------
 PAUSA_SEG_DEFAULT = 1.2
 
-# Tope de seguridad para no quedar en un loop infinito de paginacion.
-MAX_PAGINAS = 500
+# Tope de seguridad para no quedar en un loop infinito de paginacion. Es solo
+# un backstop: get_paginado ya corta por pagina vacia, pagina repetida o total
+# alcanzado. Con 500 un mes pesado de CMg (todas las barras x 24h x ~30d, ~700
+# paginas a limit=1000) se TRUNCABA en silencio; 5000 cubre el mes completo y
+# deja que la instrumentacion muestre el conteo real de paginas.
+MAX_PAGINAS = 5000
 
 
 def pausa_seg() -> float:
@@ -150,18 +154,33 @@ def get_paginado(session, url: str, params: dict | None = None) -> list:
     """
     params = dict(params or {})
     pausa = pausa_seg()
+    t0 = time.monotonic()
+    estado = {"paginas": 1, "tope": False}
+
+    def _fin(filas: list) -> list:
+        # Instrumentacion de diagnostico: cuanto costo y si paginó hasta el
+        # tope (señal de truncacion o de filtro de fecha ignorado por la API).
+        dt = time.monotonic() - t0
+        etiqueta = url.rstrip("/").rsplit("/", 1)[-1] or url
+        log.info("get_paginado [%s]: %d filas en %d pagina(s), %.1fs "
+                 "(%.2fs/pag)%s", etiqueta, len(filas), estado["paginas"], dt,
+                 dt / max(estado["paginas"], 1),
+                 " [TOPE MAX_PAGINAS — datos posiblemente truncados]"
+                 if estado["tope"] else "")
+        return filas
 
     j = _get_json(session, url, params)
     filas, siguiente = extraer_filas(j)
 
     # Caso 1: lista cruda, sin envoltorio de paginacion.
     if isinstance(j, list):
-        return filas
+        return _fin(filas)
 
     # Caso 2: paginacion por URL 'next'.
     if isinstance(siguiente, str) and siguiente.strip():
         for _ in range(2, MAX_PAGINAS + 1):
             time.sleep(pausa)
+            estado["paginas"] += 1
             url_sig = siguiente if siguiente.startswith("http") else urljoin(url, siguiente)
             extra = ({"user_key": params["user_key"]}
                      if "user_key" in params and "user_key=" not in url_sig else None)
@@ -173,17 +192,18 @@ def get_paginado(session, url: str, params: dict | None = None) -> list:
             if not (isinstance(siguiente, str) and siguiente.strip()):
                 break
         else:
+            estado["tope"] = True
             log.warning("get_paginado: tope de %d paginas alcanzado en %s",
                         MAX_PAGINAS, url)
-        return filas
+        return _fin(filas)
 
     # Caso 3: dict sin ningun indicio de paginacion -> respuesta completa.
     if not isinstance(j, dict) or not (_CLAVES_PAGINACION & set(j.keys())):
-        return filas
+        return _fin(filas)
 
     total = _total_declarado(j)
     if not filas or (total is not None and len(filas) >= total):
-        return filas
+        return _fin(filas)
 
     # Caso 4: paginacion por parametro page incremental.
     pagina = int(params.get("page", 1) or 1)
@@ -191,6 +211,7 @@ def get_paginado(session, url: str, params: dict | None = None) -> list:
     for _ in range(2, MAX_PAGINAS + 1):
         pagina += 1
         time.sleep(pausa)
+        estado["paginas"] += 1
         j = _get_json(session, url, dict(params, page=pagina))
         nuevas, _ = extraer_filas(j)
         if not nuevas:
@@ -206,9 +227,10 @@ def get_paginado(session, url: str, params: dict | None = None) -> list:
         if total is not None and len(filas) >= total:
             break
     else:
+        estado["tope"] = True
         log.warning("get_paginado: tope de %d paginas alcanzado en %s",
                     MAX_PAGINAS, url)
-    return filas
+    return _fin(filas)
 
 
 # ---------------------------------------------------------------------------
@@ -339,7 +361,9 @@ def filtrar_barras(df: pd.DataFrame, col: str) -> pd.DataFrame:
 # ---------------------------------------------------------------------------
 
 CANDIDATOS_BARRA = ["barra_info", "nmb_barra_info", "barra", "nombre_barra",
-                    "barra_mnemotecnico", "nemotecnico_barra"]
+                    "barra_mnemotecnico", "nemotecnico_barra",
+                    "barra_referencia", "nombre_barra_referencia",
+                    "barra_transferencia"]
 CANDIDATOS_CMG = ["cmg_usd_mwh_", "cmg_usd_mwh", "cmg", "costo_en_dolares",
                   "cmg_usd", "costo_marginal"]
 
