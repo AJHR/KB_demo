@@ -26,5 +26,12 @@
     "ultimo_error": null,
     "estado": "ok",
     "particiones": 1
+  },
+  "cen_cmg_real": {
+    "fallos_consecutivos": 0,
+    "ultima_corrida": "2026-06-14T02:35:38.067041Z",
+    "ultimo_error": null,
+    "estado": "ok",
+    "particiones": 0
   }
 }
