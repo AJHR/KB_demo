@@ -1,27 +1,31 @@
-"""Extractor del Costo Marginal del SEN via API SIP (endpoint costo-marginal-online),
-agregado a resolucion horaria.
+"""Extractor del Costo Marginal Real del SEN via API SIP (endpoint
+costo-marginal-real, regimen "nuevo"), a resolucion horaria.
 
-Decision de fuente (D-012, usuario 2026-06-14), verificada empiricamente en el
-runner: el endpoint `costo-marginal-real/v4/findByDate` SOLO entrega el regimen
-"nuevo" (>=2024-07-15) — enero 2024 devolvio 0 filas en 1.3s; agosto 2024 si
-trajo datos. Para cubrir TODO el historico con UNA fuente continua (sin la
-costura del quiebre 2024-07-15) se usa:
+Decision de fuente (D-012, usuario 2026-06-14), tomada tras medir en vivo la
+cobertura real de la API SIP v4 (no asumida):
 
-    https://sipub.api.coordinador.cl/costo-marginal-online/v4/findByDate
+  - `costo-marginal-real/v4/findByDate` SOLO entrega el regimen "nuevo"
+    (>=2024-07-15): agosto 2024 trajo datos; enero 2024 -> 0 filas.
+  - `costo-marginal-online/v4/findByDate` resulto ser SOLO-RECIENTE (ventana
+    movil): mayo 2026 trajo datos; febrero 2024 -> 0 filas. NO sirve para
+    historia profunda.
+  - El CMg real anterior al 2024-07-15 ("antiguo") NO esta en la API v4; vive
+    en open data de la CNE (datos.energiaabierta.cl) o en CSV legacy del CEN.
+
+El usuario opto por usar SOLO el SIP "nuevo" (>=2024-07-15): historia mas corta
+(~2 anos) pero una sola fuente que ya funciona, sin credenciales nuevas. La
+historia multi-ano queda como extension futura (extractor de Energia Abierta).
+
+    https://sipub.api.coordinador.cl/costo-marginal-real/v4/findByDate
         ?startDate=YYYY-MM-DD&endDate=YYYY-MM-DD&limit=&user_key=...
 
-Es el mismo endpoint que consumen los pipelines productivos de terceros
-(TM3-Corp/pudidi_cmg_prediction, bess-solutions/open-bess-edge), con profundidad
-historica >=2018 segun la documentacion oficial de la API SIP. El CMg "en linea"
-se determina a mas tardar 15 min despues de cada intervalo de 15 min; aca se
-**agrega a horario** (media de los 4 intervalos por barra) para alinearse con la
-granularidad horaria de la demanda y del resto de la tabla maestra.
-
 - Hasta ~31 dias por request -> tramos mensuales (meses_entre).
+- Se ignoran los meses anteriores a FECHA_INICIO_DATOS (no estan en este
+  endpoint): evita pagar requests vacios en un backfill largo.
 - Requiere COORDINADOR_USER_KEY (portal.api.coordinador.cl).
 
-Anti-fuga: el CMg se incorpora a la tabla maestra con rezago (LAG_CMG en
-construir_tabla_maestra.py); nunca como informacion del propio dia D+1.
+Anti-fuga: el CMg real se publica con rezago (proceso de transferencias); la
+tabla maestra lo incorpora con LAG_CMG, nunca como dato del propio dia D+1.
 """
 
 from __future__ import annotations
@@ -38,23 +42,25 @@ from comun import (con_reintentos, escribir_parquet_atomico, log, meses_entre,
 
 FUENTE = "cen_cmg_real"
 
-URL = "https://sipub.api.coordinador.cl/costo-marginal-online/v4/findByDate"
+URL = "https://sipub.api.coordinador.cl/costo-marginal-real/v4/findByDate"
 
-# Tamano de pagina: el diagnostico (run #27484278704) confirmo que la API
-# respeta `limit` (devolvio exactamente 1000/pagina). Con 4000 se cuartean las
-# paginas y baja ~4x el costo de paginacion del backfill.
+# El endpoint solo sirve el regimen "nuevo" (verificado en runner): antes de
+# esta fecha devuelve 0 filas. Se evita iterar esos meses en un backfill largo.
+FECHA_INICIO_DATOS = date(2024, 7, 1)
+
+# La API respeta `limit` (medido: 1000/pagina exactas); 4000 cuartea paginas.
 LIMIT = 4000
 
 COLUMNAS = ["barra", "fecha", "hora", "cmg_usd_mwh"]
 
 
 def parsear_respuesta(json_obj) -> pd.DataFrame:
-    """Respuesta JSON (intervalos de 15 min) -> DataFrame horario
-    [barra, fecha, hora, cmg_usd_mwh].
+    """Respuesta JSON -> DataFrame horario [barra, fecha, hora, cmg_usd_mwh].
 
-    Mapeo defensivo de campos via cen_api.parsear_cmg (filtra a las barras de
-    referencia) y luego **agregacion a horario**: media de los (hasta 4)
-    intervalos de 15 min de cada (barra, fecha, hora)."""
+    Mapeo defensivo via cen_api.parsear_cmg (filtra a barras de referencia) y
+    consolidacion a horario: media por (barra, fecha, hora). Es no-op si la
+    serie ya viene horaria (un registro por hora) y correcta si trajera
+    sub-horario."""
     df = parsear_cmg(json_obj)
     if df.empty:
         return df[COLUMNAS] if set(COLUMNAS).issubset(df.columns) else \
@@ -73,9 +79,15 @@ def _descargar_tramo(s, ini: date, fin: date) -> list:
 
 def extract(fecha_inicio: date, fecha_fin: date, dir_datos: Path | None = None,
             forzar: bool = False) -> list[Path]:
+    inicio = max(fecha_inicio, FECHA_INICIO_DATOS)
+    if inicio > fecha_fin:
+        log.info("%s: rango %s..%s anterior al inicio de datos (%s); nada que "
+                 "descargar", FUENTE, fecha_inicio, fecha_fin, FECHA_INICIO_DATOS)
+        registrar_manifiesto(FUENTE, [], dir_datos)
+        return []
     s = sesion_http()
     rutas = []
-    for ini, fin in meses_entre(fecha_inicio, fecha_fin):
+    for ini, fin in meses_entre(inicio, fecha_fin):
         destino = ruta_particion(FUENTE, ini, dir_datos)
         if not forzar and particion_completa(destino, fin):
             rutas.append(destino)
@@ -84,8 +96,8 @@ def extract(fecha_inicio: date, fecha_fin: date, dir_datos: Path | None = None,
         filas = con_reintentos(lambda i=ini, f=fin: _descargar_tramo(s, i, f))
         df = parsear_respuesta(filas)
         if df.empty:
-            # No se escribe particion vacia: asi la proxima corrida reintenta
-            # en vez de dar el mes por cerrado con cero datos.
+            # No se escribe particion vacia: la proxima corrida reintenta en
+            # vez de dar el mes por cerrado con cero datos.
             log.warning("%s: 0 filas utiles en %s..%s (%d filas crudas); "
                         "particion no escrita", FUENTE, ini, fin, len(filas))
             continue
