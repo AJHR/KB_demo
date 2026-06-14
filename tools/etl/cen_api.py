@@ -361,7 +361,9 @@ def filtrar_barras(df: pd.DataFrame, col: str) -> pd.DataFrame:
 # ---------------------------------------------------------------------------
 
 CANDIDATOS_BARRA = ["barra_info", "nmb_barra_info", "barra", "nombre_barra",
-                    "barra_mnemotecnico", "nemotecnico_barra"]
+                    "barra_mnemotecnico", "nemotecnico_barra",
+                    "barra_referencia", "nombre_barra_referencia",
+                    "barra_transferencia"]
 CANDIDATOS_CMG = ["cmg_usd_mwh_", "cmg_usd_mwh", "cmg", "costo_en_dolares",
                   "cmg_usd", "costo_marginal"]
 

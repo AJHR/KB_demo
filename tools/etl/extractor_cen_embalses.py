@@ -79,7 +79,10 @@ def _descargar_dia(s, dia: date, urls: list[str]) -> list:
 
     `urls` se reordena in-place para recordar la variante que funciono y no
     pagar un 404 extra por cada dia siguiente."""
-    params = {"user_key": user_key(), "fecha": dia.isoformat()}
+    # limit=1000: sin el, la API pagina de a ~19 filas (el diagnostico midio 15
+    # paginas y 24s para 288 filas de un dia); con un limit holgado cabe en 1
+    # pagina -> ~15x menos requests por dia.
+    params = {"user_key": user_key(), "fecha": dia.isoformat(), "limit": 1000}
     for url in list(urls):
         try:
             filas = get_paginado(s, url, params)

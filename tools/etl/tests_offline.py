@@ -203,7 +203,7 @@ FIXTURE_CMG_REAL = {
 
 def test_parser_cmg_real():
     df = cmg_real.parsear_respuesta(FIXTURE_CMG_REAL)
-    assert list(df.columns) == ["barra", "fecha", "hora", "cmg_usd_mwh", "regimen"]
+    assert list(df.columns) == ["barra", "fecha", "hora", "cmg_usd_mwh"]
     assert len(df) == 3, df  # PUERTO MONTT filtrado
     assert pd.api.types.is_float_dtype(df["cmg_usd_mwh"]), df.dtypes
     assert pd.api.types.is_integer_dtype(df["hora"]), df.dtypes
@@ -215,15 +215,34 @@ def test_parser_cmg_real():
     assert vacio.empty and list(vacio.columns) == list(df.columns)
 
 
-def test_regimen_cambia_el_2024_07_15():
-    df = cmg_real.parsear_respuesta(FIXTURE_CMG_REAL)
-    por_fecha = df.set_index("fecha")["regimen"]
-    assert por_fecha["2024-07-14"] == "antiguo"
-    assert (por_fecha["2024-07-15"] == "nuevo").all()
-    assert cmg_real._regimen("2020-01-01") == "antiguo"
-    assert cmg_real._regimen("2026-06-12") == "nuevo"
-    assert cmg_real._regimen("2024-07-15") == "nuevo"  # el dia del quiebre es 'nuevo'
-    assert pd.isna(cmg_real._regimen("NaT"))
+FIXTURE_CMG_ONLINE_15MIN = {
+    "data": [
+        # 4 intervalos de 15 min de la misma barra/hora -> deben colapsar a 1
+        {"barra": "BA S/E QUILLOTA 220KV",
+         "fecha_hora": "2024-01-10 05:00:00", "cmg_usd_mwh_": 60.0},
+        {"barra": "BA S/E QUILLOTA 220KV",
+         "fecha_hora": "2024-01-10 05:15:00", "cmg_usd_mwh_": 62.0},
+        {"barra": "BA S/E QUILLOTA 220KV",
+         "fecha_hora": "2024-01-10 05:30:00", "cmg_usd_mwh_": 64.0},
+        {"barra": "BA S/E QUILLOTA 220KV",
+         "fecha_hora": "2024-01-10 05:45:00", "cmg_usd_mwh_": 66.0},
+        # otra hora de la misma barra -> fila aparte
+        {"barra": "BA S/E QUILLOTA 220KV",
+         "fecha_hora": "2024-01-10 06:00:00", "cmg_usd_mwh_": 70.0},
+    ],
+    "next": None,
+}
+
+
+def test_cmg_real_online_agrega_a_horario():
+    """El CMg online es de 15 min; parsear_respuesta lo agrega a horario
+    (media de los 4 intervalos por barra/fecha/hora)."""
+    df = cmg_real.parsear_respuesta(FIXTURE_CMG_ONLINE_15MIN)
+    assert list(df.columns) == ["barra", "fecha", "hora", "cmg_usd_mwh"]
+    assert len(df) == 2  # hora 5 (4 intervalos) + hora 6 (1 intervalo)
+    assert df["hora"].tolist() == [5, 6]
+    # hora 5 = media(60,62,64,66) = 63.0 ; hora 6 = 70.0
+    assert df["cmg_usd_mwh"].round(2).tolist() == [63.0, 70.0]
 
 
 FIXTURE_CMG_PROG = {

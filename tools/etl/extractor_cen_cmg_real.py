@@ -1,28 +1,31 @@
-"""Extractor del Costo Marginal REAL por barra via API SIP del Coordinador.
+"""Extractor del Costo Marginal del SEN via API SIP (endpoint costo-marginal-online),
+agregado a resolucion horaria.
 
-Endpoint (evidencia en sources/costos_sen/anexos/coordinador.md, seccion 2):
+Decision de fuente (D-012, usuario 2026-06-14), verificada empiricamente en el
+runner: el endpoint `costo-marginal-real/v4/findByDate` SOLO entrega el regimen
+"nuevo" (>=2024-07-15) — enero 2024 devolvio 0 filas en 1.3s; agosto 2024 si
+trajo datos. Para cubrir TODO el historico con UNA fuente continua (sin la
+costura del quiebre 2024-07-15) se usa:
 
-    https://sipub.api.coordinador.cl/costo-marginal-real/v4/findByDate
-        ?startDate=YYYY-MM-DD&endDate=YYYY-MM-DD&user_key=...
+    https://sipub.api.coordinador.cl/costo-marginal-online/v4/findByDate
+        ?startDate=YYYY-MM-DD&endDate=YYYY-MM-DD&limit=&user_key=...
 
-- Maximo ~31 dias por request -> se descarga en tramos mensuales
-  (meses_entre garantiza tramos <= 31 dias).
-- Requiere COORDINADOR_USER_KEY en el entorno (portal.api.coordinador.cl).
-- QUIEBRE DE SERIE documentado (coordinador.md seccion 1.1): desde el
-  2024-07-15 rige el "Costo Marginal Real (nuevo)"; lo anterior queda como
-  historico "antiguo". La columna `regimen` deja el quiebre explicito para
-  que el modelado no mezcle ambos tramos a ciegas.
-- NO PROBADO contra el endpoint real (red del sandbox bloqueada): el parser
-  es defensivo y se prueba offline con fixtures en tests_offline.py.
+Es el mismo endpoint que consumen los pipelines productivos de terceros
+(TM3-Corp/pudidi_cmg_prediction, bess-solutions/open-bess-edge), con profundidad
+historica >=2018 segun la documentacion oficial de la API SIP. El CMg "en linea"
+se determina a mas tardar 15 min despues de cada intervalo de 15 min; aca se
+**agrega a horario** (media de los 4 intervalos por barra) para alinearse con la
+granularidad horaria de la demanda y del resto de la tabla maestra.
 
-Anti-fuga: el CMg real se publica con rezago de dias/semanas (proceso de
-transferencias economicas); la tabla maestra solo puede exponerlo como
-feature retrospectiva, nunca como informacion disponible el dia D.
+- Hasta ~31 dias por request -> tramos mensuales (meses_entre).
+- Requiere COORDINADOR_USER_KEY (portal.api.coordinador.cl).
+
+Anti-fuga: el CMg se incorpora a la tabla maestra con rezago (LAG_CMG en
+construir_tabla_maestra.py); nunca como informacion del propio dia D+1.
 """
 
 from __future__ import annotations
 
-import re
 from datetime import date
 from pathlib import Path
 
@@ -35,36 +38,36 @@ from comun import (con_reintentos, escribir_parquet_atomico, log, meses_entre,
 
 FUENTE = "cen_cmg_real"
 
-URL = "https://sipub.api.coordinador.cl/costo-marginal-real/v4/findByDate"
+URL = "https://sipub.api.coordinador.cl/costo-marginal-online/v4/findByDate"
 
-# Desde esta fecha rige el "Costo Marginal Real (nuevo)" (coordinador.md 1.1).
-FECHA_QUIEBRE = date(2024, 7, 15)
+# Tamano de pagina: el diagnostico (run #27484278704) confirmo que la API
+# respeta `limit` (devolvio exactamente 1000/pagina). Con 4000 se cuartean las
+# paginas y baja ~4x el costo de paginacion del backfill.
+LIMIT = 4000
 
-COLUMNAS = ["barra", "fecha", "hora", "cmg_usd_mwh", "regimen"]
-
-
-def _regimen(fecha_iso) -> object:
-    """'antiguo' si fecha < 2024-07-15, 'nuevo' desde entonces; NA si invalida."""
-    f = str(fecha_iso)
-    if not re.match(r"^\d{4}-\d{2}-\d{2}", f):
-        return pd.NA
-    return "antiguo" if f < FECHA_QUIEBRE.isoformat() else "nuevo"
+COLUMNAS = ["barra", "fecha", "hora", "cmg_usd_mwh"]
 
 
 def parsear_respuesta(json_obj) -> pd.DataFrame:
-    """Respuesta JSON -> DataFrame [barra, fecha, hora, cmg_usd_mwh, regimen].
+    """Respuesta JSON (intervalos de 15 min) -> DataFrame horario
+    [barra, fecha, hora, cmg_usd_mwh].
 
-    Mapeo defensivo de campos (variantes 'barra_info'/'nmb_barra_info'/...,
-    'cmg_usd_mwh_'/'cmg'/'costo_en_dolares', 'fecha_hora' o 'fecha'+'hora')
-    y filtrado a las barras de referencia: ver cen_api.parsear_cmg."""
+    Mapeo defensivo de campos via cen_api.parsear_cmg (filtra a las barras de
+    referencia) y luego **agregacion a horario**: media de los (hasta 4)
+    intervalos de 15 min de cada (barra, fecha, hora)."""
     df = parsear_cmg(json_obj)
-    df["regimen"] = df["fecha"].map(_regimen)
-    return df[COLUMNAS]
+    if df.empty:
+        return df[COLUMNAS] if set(COLUMNAS).issubset(df.columns) else \
+            pd.DataFrame(columns=COLUMNAS)
+    horario = (df.groupby(["barra", "fecha", "hora"], as_index=False)
+                 .agg(cmg_usd_mwh=("cmg_usd_mwh", "mean")))
+    horario = horario.sort_values(["fecha", "hora", "barra"]).reset_index(drop=True)
+    return horario[COLUMNAS]
 
 
 def _descargar_tramo(s, ini: date, fin: date) -> list:
     params = {"startDate": ini.isoformat(), "endDate": fin.isoformat(),
-              "user_key": user_key(), "limit": 1000}
+              "user_key": user_key(), "limit": LIMIT}
     return get_paginado(s, URL, params)
 
 
@@ -88,7 +91,7 @@ def extract(fecha_inicio: date, fecha_fin: date, dir_datos: Path | None = None,
             continue
         escribir_parquet_atomico(df, destino)
         rutas.append(destino)
-        log.info("%s: particion %s (%d filas, %d barras)",
+        log.info("%s: particion %s (%d filas horarias, %d barras)",
                  FUENTE, destino.name, len(df), df.barra.nunique())
     registrar_manifiesto(FUENTE, rutas, dir_datos)
     return rutas
