@@ -35,7 +35,7 @@ from pathlib import Path
 
 import pandas as pd
 
-from cen_api import get_paginado, parsear_cmg, pausar, user_key
+from cen_api import dias_entre, get_paginado, parsear_cmg, pausar, user_key
 from comun import (con_reintentos, escribir_parquet_atomico, log, meses_entre,
                    particion_completa, registrar_manifiesto, ruta_particion,
                    sesion_http)
@@ -71,10 +71,23 @@ def parsear_respuesta(json_obj) -> pd.DataFrame:
     return horario[COLUMNAS]
 
 
-def _descargar_tramo(s, ini: date, fin: date) -> list:
-    params = {"startDate": ini.isoformat(), "endDate": fin.isoformat(),
+def _descargar_dia(s, dia: date) -> list:
+    params = {"startDate": dia.isoformat(), "endDate": dia.isoformat(),
               "user_key": user_key(), "limit": LIMIT}
     return get_paginado(s, URL, params)
+
+
+def _descargar_mes(s, ini: date, fin: date) -> list:
+    """Descarga el mes DIA POR DIA. El CMg real-nuevo trae todas las barras en
+    15-min (~2-4 millones de filas/mes); paginar un mes completo llega a
+    offsets profundos (page 500+) donde el gateway devuelve 502 masivos. Pedir
+    dia por dia mantiene la paginacion somera (~decenas de paginas) -> estable
+    y mas rapido en neto. La pausa de rate-limit va por dia."""
+    filas: list = []
+    for dia in dias_entre(ini, fin):
+        pausar()
+        filas.extend(con_reintentos(lambda d=dia: _descargar_dia(s, d)))
+    return filas
 
 
 def extract(fecha_inicio: date, fecha_fin: date, dir_datos: Path | None = None,
@@ -92,8 +105,7 @@ def extract(fecha_inicio: date, fecha_fin: date, dir_datos: Path | None = None,
         if not forzar and particion_completa(destino, fin):
             rutas.append(destino)
             continue
-        pausar()
-        filas = con_reintentos(lambda i=ini, f=fin: _descargar_tramo(s, i, f))
+        filas = _descargar_mes(s, ini, fin)
         df = parsear_respuesta(filas)
         if df.empty:
             # No se escribe particion vacia: la proxima corrida reintenta en

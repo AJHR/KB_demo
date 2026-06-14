@@ -24,7 +24,7 @@ on:
         description: "Fecha fin (YYYY-MM-DD; vacio = hoy)"
         default: ""
       fuentes:
-        description: "Fuentes (separadas por coma) o 'todas'"
+        description: "Fuentes (coma) | 'todas' | 'cmg_real_mensual' (shard mensual de cmg_real)"
         default: "todas"
 
 permissions:
@@ -89,8 +89,55 @@ jobs:
           if-no-files-found: warn
           retention-days: 7
 
+  # cen_cmg_real es enorme (todas las barras en 15-min: ~2-4 millones de
+  # filas/mes; un mes completo no cabe junto a los demas en 6h). Se shardea por
+  # mes: un job por mes corre en paralelo y cada uno cabe holgado. El extractor
+  # ademas baja dia por dia (paginacion somera) para evitar los 502 del gateway.
+  cmg_real_mensual:
+    if: ${{ github.event.inputs.fuentes == 'cmg_real_mensual' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 350
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { ini: "2025-07-01", fin: "2025-07-31" }
+          - { ini: "2025-08-01", fin: "2025-08-31" }
+          - { ini: "2025-09-01", fin: "2025-09-30" }
+          - { ini: "2025-10-01", fin: "2025-10-31" }
+          - { ini: "2025-11-01", fin: "2025-11-30" }
+          - { ini: "2025-12-01", fin: "2025-12-31" }
+          - { ini: "2026-01-01", fin: "2026-01-31" }
+          - { ini: "2026-02-01", fin: "2026-02-28" }
+          - { ini: "2026-03-01", fin: "2026-03-31" }
+          - { ini: "2026-04-01", fin: "2026-04-30" }
+          - { ini: "2026-05-01", fin: "2026-05-31" }
+          - { ini: "2026-06-01", fin: "2026-06-30" }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Instalar dependencias
+        run: pip install --quiet pandas pyarrow requests holidays
+      - name: Backfill cen_cmg_real ${{ matrix.ini }}
+        working-directory: tools/etl
+        env:
+          COORDINADOR_USER_KEY: ${{ secrets.COORDINADOR_USER_KEY }}
+        run: |
+          python3 run_etl.py --modo backfill \
+            --fuentes cen_cmg_real \
+            --inicio "${{ matrix.ini }}" --fin "${{ matrix.fin }}"
+      - name: Subir datos como artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: raw-cmg_real-${{ matrix.ini }}
+          path: data/raw/
+          if-no-files-found: warn
+          retention-days: 7
+
   consolidar:
-    needs: extraer
+    needs: [extraer, cmg_real_mensual]
     if: always()
     runs-on: ubuntu-latest
     steps:
