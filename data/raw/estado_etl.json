@@ -22,10 +22,10 @@
   },
   "cen_cmg_programado": {
     "fallos_consecutivos": 0,
-    "ultima_corrida": "2026-06-14T01:06:43.379847Z",
+    "ultima_corrida": "2026-06-14T03:03:46.741943Z",
     "ultimo_error": null,
     "estado": "ok",
-    "particiones": 1
+    "particiones": 25
   },
   "cen_cmg_real": {
     "fallos_consecutivos": 0,
