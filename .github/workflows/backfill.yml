@@ -99,6 +99,10 @@ jobs:
     timeout-minutes: 350
     strategy:
       fail-fast: false
+      # Concurrencia limitada: los 12 jobs comparten un solo user_key; correrlos
+      # todos a la vez satura el gateway SIP (502 sostenidos -> fallos). De a 3
+      # el key no se sobrecarga y los reintentos absorben rachas puntuales.
+      max-parallel: 3
       matrix:
         include:
           - { ini: "2025-07-01", fin: "2025-07-31" }

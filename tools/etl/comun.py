@@ -58,8 +58,11 @@ class ErrorCredencial(RuntimeError):
     como 'omitida_sin_credencial')."""
 
 
-def con_reintentos(fn: Callable, intentos: int = 4, base_seg: float = 2.0):
-    """Ejecuta fn() con reintentos y backoff exponencial (2s, 4s, 8s, 16s).
+def con_reintentos(fn: Callable, intentos: int = 6, base_seg: float = 2.0):
+    """Ejecuta fn() con reintentos y backoff exponencial (2,4,8,16,32,64s).
+
+    6 intentos (~2min de backoff acumulado) para aguantar rachas de 502 del
+    gateway SIP cuando varios jobs comparten el user_key.
 
     Una ErrorCredencial se propaga de inmediato (sin reintentos ni envoltura)
     para que el orquestador la reconozca: de lo contrario el marcador se
