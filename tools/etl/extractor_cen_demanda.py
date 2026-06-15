@@ -32,14 +32,40 @@ from comun import (con_reintentos, escribir_parquet_atomico, log, meses_entre,
 
 FUENTE = "cen_demanda"
 
+HOST = "https://sipub.api.coordinador.cl"
+
+# Las rutas v2/v1 documentadas (sipub/api/...) hoy dan 404. Los endpoints que
+# SI funcionan (CMg) usan el patron {recurso}/v4/findByDate SIN prefijo
+# /sipub/api. Se prueban varios candidatos en orden; el primero que entregue
+# filas se cachea y se reusa. Cada candidato: (nombre, url, estilo_param) donde
+# estilo es 'range' (startDate/endDate) o 'fecha' (un dia).
 URL_V2 = "https://sipub.api.coordinador.cl/sipub/api/v2/demanda_sistema_real/"
 URL_V1 = "https://sipub.api.coordinador.cl/sipub/api/v1/recursos/demandasistemareal"
+
+CANDIDATOS_ENDPOINT = [
+    ("demanda-real/v4", f"{HOST}/demanda-real/v4/findByDate", "range"),
+    ("demanda-sistema-real/v4", f"{HOST}/demanda-sistema-real/v4/findByDate", "range"),
+    ("demanda-comprometida/v4", f"{HOST}/demanda-comprometida/v4/findByDate", "range"),
+    ("demanda/v4", f"{HOST}/demanda/v4/findByDate", "range"),
+    ("v2_demanda_sistema_real", URL_V2, "fecha"),
+    ("v1_demandasistemareal", URL_V1, "fecha"),
+]
+
+# Candidato que resulto vivo (se descubre en el primer dia y se reusa).
+_endpoint_vivo: tuple | None = None
 
 COLUMNAS = ["fecha", "hora", "demanda_mwh"]
 
 # Variantes plausibles del campo de demanda en la API SIP.
 CANDIDATOS_DEMANDA = ["demanda_mwh", "demanda_real_mwh", "demanda",
                       "demanda_real", "demanda_sistema", "dda", "mwh", "valor"]
+
+
+def _params(estilo: str, dia: date) -> dict:
+    if estilo == "range":
+        return {"startDate": dia.isoformat(), "endDate": dia.isoformat(),
+                "user_key": user_key(), "limit": 1000}
+    return {"user_key": user_key(), "fecha": dia.isoformat()}
 
 
 def parsear_respuesta(json_obj) -> pd.DataFrame:
@@ -69,24 +95,38 @@ def _codigo_http(e: requests.HTTPError) -> int | None:
 
 
 def _descargar_dia(s, dia: date) -> list:
-    """Un dia de demanda: v2 primero; si da vacio o 404, fallback a v1."""
-    params = {"user_key": user_key(), "fecha": dia.isoformat()}
-    filas = []
-    try:
-        filas = get_paginado(s, URL_V2, params)
-    except requests.HTTPError as e:
-        if _codigo_http(e) != 404:
-            raise
-        log.info("%s: v2 devolvio 404 para %s; pruebo v1", FUENTE, dia)
-    if filas:
-        return filas
-    try:
-        return get_paginado(s, URL_V1, params)
-    except requests.HTTPError as e:
-        if _codigo_http(e) == 404:
-            log.warning("%s: ni v2 ni v1 tienen datos para %s (404)", FUENTE, dia)
-            return []
-        raise
+    """Un dia de demanda probando los CANDIDATOS_ENDPOINT en orden.
+
+    El primero que entregue filas se cachea en _endpoint_vivo y se reusa para
+    los dias siguientes. Mientras no haya vivo, se loguea el resultado de cada
+    candidato (HTTP status / 0 filas) para diagnosticar cual sirve."""
+    global _endpoint_vivo
+    orden = ([_endpoint_vivo] if _endpoint_vivo else []) + \
+            [c for c in CANDIDATOS_ENDPOINT if c != _endpoint_vivo]
+    for cand in orden:
+        nombre, url, estilo = cand
+        try:
+            filas = get_paginado(s, url, _params(estilo, dia))
+        except requests.HTTPError as e:
+            if _endpoint_vivo is None:
+                log.info("%s: candidato %s -> HTTP %s", FUENTE, nombre,
+                         _codigo_http(e))
+            continue
+        except Exception as e:  # noqa: BLE001 - sonda: no-JSON u otro -> seguir
+            if _endpoint_vivo is None:
+                log.info("%s: candidato %s -> %s", FUENTE, nombre,
+                         type(e).__name__)
+            continue
+        if filas:
+            if _endpoint_vivo != cand:
+                log.info("%s: ENDPOINT VIVO = %s (%d filas en %s)",
+                         FUENTE, nombre, len(filas), dia)
+                _endpoint_vivo = cand
+            return filas
+        if _endpoint_vivo is None:
+            log.info("%s: candidato %s -> 200 pero 0 filas", FUENTE, nombre)
+    log.warning("%s: ningun candidato entrego datos para %s", FUENTE, dia)
+    return []
 
 
 def extract(fecha_inicio: date, fecha_fin: date, dir_datos: Path | None = None,
