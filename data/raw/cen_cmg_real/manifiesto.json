@@ -6,5 +6,11 @@
   {
     "descargado_en": "2026-06-14T02:35:41Z",
     "particiones": []
+  },
+  {
+    "descargado_en": "2026-06-15T02:59:59Z",
+    "particiones": [
+      "cen_cmg_real/2026/cen_cmg_real_2026-05.parquet"
+    ]
   }
 ]
