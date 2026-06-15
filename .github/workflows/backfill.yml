@@ -105,6 +105,22 @@ jobs:
       max-parallel: 3
       matrix:
         include:
+          # El CMg "nuevo" arranca el 2024-07-15 (D-012); se baja todo el
+          # historico disponible. Con el pivot a CMg como objetivo (D-013) el
+          # walk-forward exige >365 dias de train inicial: 12 meses no alcanzan,
+          # 24 si. Los meses ya commiteados se saltan (particion_completa).
+          - { ini: "2024-07-01", fin: "2024-07-31" }
+          - { ini: "2024-08-01", fin: "2024-08-31" }
+          - { ini: "2024-09-01", fin: "2024-09-30" }
+          - { ini: "2024-10-01", fin: "2024-10-31" }
+          - { ini: "2024-11-01", fin: "2024-11-30" }
+          - { ini: "2024-12-01", fin: "2024-12-31" }
+          - { ini: "2025-01-01", fin: "2025-01-31" }
+          - { ini: "2025-02-01", fin: "2025-02-28" }
+          - { ini: "2025-03-01", fin: "2025-03-31" }
+          - { ini: "2025-04-01", fin: "2025-04-30" }
+          - { ini: "2025-05-01", fin: "2025-05-31" }
+          - { ini: "2025-06-01", fin: "2025-06-30" }
           - { ini: "2025-07-01", fin: "2025-07-31" }
           - { ini: "2025-08-01", fin: "2025-08-31" }
           - { ini: "2025-09-01", fin: "2025-09-30" }
