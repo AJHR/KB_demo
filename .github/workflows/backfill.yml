@@ -99,28 +99,33 @@ jobs:
     timeout-minutes: 350
     strategy:
       fail-fast: false
-      # Concurrencia limitada: los 12 jobs comparten un solo user_key; correrlos
-      # todos a la vez satura el gateway SIP (502 sostenidos -> fallos). De a 3
-      # el key no se sobrecarga y los reintentos absorben rachas puntuales.
-      max-parallel: 3
+      # Concurrencia limitada: los jobs comparten un solo user_key y el gateway
+      # SIP limita REQUESTS por key. A 3 en paralelo se gatillaban 429 sostenidos
+      # (run #27549680772: 2 de cada 3 meses fallaban). De a 2, sumado al limit
+      # mas alto del extractor (~5x menos paginas/dia), la tasa queda holgada.
+      max-parallel: 2
       matrix:
         include:
           # El CMg "nuevo" arranca el 2024-07-15 (D-012); se baja todo el
           # historico disponible. Con el pivot a CMg como objetivo (D-013) el
-          # walk-forward exige >365 dias de train inicial: 12 meses no alcanzan,
-          # 24 si. Los meses ya commiteados se saltan (particion_completa).
-          - { ini: "2024-07-01", fin: "2024-07-31" }
-          - { ini: "2024-08-01", fin: "2024-08-31" }
-          - { ini: "2024-09-01", fin: "2024-09-30" }
-          - { ini: "2024-10-01", fin: "2024-10-31" }
-          - { ini: "2024-11-01", fin: "2024-11-30" }
-          - { ini: "2024-12-01", fin: "2024-12-31" }
-          - { ini: "2025-01-01", fin: "2025-01-31" }
-          - { ini: "2025-02-01", fin: "2025-02-28" }
-          - { ini: "2025-03-01", fin: "2025-03-31" }
-          - { ini: "2025-04-01", fin: "2025-04-30" }
-          - { ini: "2025-05-01", fin: "2025-05-31" }
+          # walk-forward exige >365 dias de train inicial: 12 meses (341 dias)
+          # no alcanzan, 24 si. Orden DESCENDENTE a proposito: los meses nuevos
+          # (2025-06 .. 2024-07) bajan primero y extienden hacia atras el bloque
+          # contiguo ya commiteado (2025-07 .. 2026-06), de modo que la historia
+          # util crece desde el primer mes que entra. Los 12 meses ya
+          # commiteados (al final) se saltan al instante (particion_completa).
           - { ini: "2025-06-01", fin: "2025-06-30" }
+          - { ini: "2025-05-01", fin: "2025-05-31" }
+          - { ini: "2025-04-01", fin: "2025-04-30" }
+          - { ini: "2025-03-01", fin: "2025-03-31" }
+          - { ini: "2025-02-01", fin: "2025-02-28" }
+          - { ini: "2025-01-01", fin: "2025-01-31" }
+          - { ini: "2024-12-01", fin: "2024-12-31" }
+          - { ini: "2024-11-01", fin: "2024-11-30" }
+          - { ini: "2024-10-01", fin: "2024-10-31" }
+          - { ini: "2024-09-01", fin: "2024-09-30" }
+          - { ini: "2024-08-01", fin: "2024-08-31" }
+          - { ini: "2024-07-01", fin: "2024-07-31" }
           - { ini: "2025-07-01", fin: "2025-07-31" }
           - { ini: "2025-08-01", fin: "2025-08-31" }
           - { ini: "2025-09-01", fin: "2025-09-30" }
