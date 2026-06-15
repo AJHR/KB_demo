@@ -42,11 +42,20 @@ HOST = "https://sipub.api.coordinador.cl"
 URL_V2 = "https://sipub.api.coordinador.cl/sipub/api/v2/demanda_sistema_real/"
 URL_V1 = "https://sipub.api.coordinador.cl/sipub/api/v1/recursos/demandasistemareal"
 
+HOST_OP = "https://operacion.api.coordinador.cl"
+
 CANDIDATOS_ENDPOINT = [
     ("demanda-real/v4", f"{HOST}/demanda-real/v4/findByDate", "range"),
     ("demanda-sistema-real/v4", f"{HOST}/demanda-sistema-real/v4/findByDate", "range"),
     ("demanda-comprometida/v4", f"{HOST}/demanda-comprometida/v4/findByDate", "range"),
     ("demanda/v4", f"{HOST}/demanda/v4/findByDate", "range"),
+    # Host operacion.api.coordinador.cl (un repo de terceros lo mapea para
+    # datos de operacion real como demanda). Rutas probables.
+    ("op_demanda-real/v4", f"{HOST_OP}/demanda-real/v4/findByDate", "range"),
+    ("op_demanda-sistema-real/v4", f"{HOST_OP}/demanda-sistema-real/v4/findByDate", "range"),
+    ("op_operaciones_v2_demanda", f"{HOST_OP}/operaciones/api/v2/demanda_sistema_real/", "fecha"),
+    ("op_api_v2_demanda", f"{HOST_OP}/api/v2/demanda_sistema_real/", "fecha"),
+    ("op_demanda_real_v1", f"{HOST_OP}/operaciones/api/v1/recursos/demandasistemareal", "fecha"),
     ("v2_demanda_sistema_real", URL_V2, "fecha"),
     ("v1_demandasistemareal", URL_V1, "fecha"),
 ]
