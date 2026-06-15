@@ -43,7 +43,7 @@
   },
   "cen_demanda": {
     "fallos_consecutivos": 0,
-    "ultima_corrida": "2026-06-15T03:43:03.712734Z",
+    "ultima_corrida": "2026-06-15T03:55:56.749359Z",
     "ultimo_error": null,
     "estado": "ok",
     "particiones": 0
