@@ -14,8 +14,7 @@ Lags por fuente (justificacion en sources/costos_sen/catalogo_fuentes.md):
   clima_observado     lag 5  (rezago de consolidacion ERA5: 2-5 dias)
   combustibles        lag 1  (cierres ~17:00 ET = 18-19h Chile del dia T-1,
                               antes del corte 20:00; series EIA: lag 7)
-  cen_demanda         lag 2  (el dia T-1 no esta completo a las 20:00 de T-1)
-  cen_generacion      lag 2  (idem)
+  cen_generacion      lag 2  (dato de T-2, disponible manana de T)
   cen_embalses        lag 2  (cota publicada diaria; conservador)
   cen_cmg_real        lag 3  (CMg preliminar se publica con dias de rezago)
   cen_cmg_programado  EXCLUIDO de features (cumple_regla_2000=false) hasta
@@ -23,10 +22,16 @@ Lags por fuente (justificacion en sources/costos_sen/catalogo_fuentes.md):
                       (riesgo nº1 del catalogo). El mecanismo anti-fuga lo
                       bloquea en evaluacion.py.
 
-Objetivo (columna `costo_op_usd`):
-  Proxy provisional = sum_h demanda_h(T) * CMg_h(T, promedio barras de
-  referencia), en USD (decision D-004). Es el LABEL del dia T: se conoce
-  ex-post y solo se usa para entrenar/evaluar, nunca como feature sin lag.
+Objetivo (columna `cmg_medio_diario`, decision D-013):
+  Media del CMg real horario en USD/MWh sobre todas las barras de referencia
+  del dia T. Es el LABEL del dia T: se conoce ex-post y solo se usa para
+  entrenar/evaluar, nunca como feature sin lag.
+
+  Nota: el objetivo original (demanda*CMg proxy, D-004) requeria cen_demanda,
+  cuyo endpoint SIP resulto inhallable (11 rutas 404 en 2 hosts sin acceso
+  a documentacion autenticada). Se pivoto al CMg diario directo (D-013):
+  elimina la dependencia y precisa lo que el modelo predice (precio de
+  mercado spot por barra de referencia).
 
 Uso:
   python3 construir_tabla_maestra.py [--dir-raw data/raw] [--salida data/processed]
@@ -38,7 +43,6 @@ import json
 from datetime import date, datetime
 from pathlib import Path
 
-import numpy as np
 import pandas as pd
 
 from comun import DIR_PROCESSED, DIR_RAW, log
@@ -57,23 +61,6 @@ def _leer_fuente(dir_raw: Path, fuente: str) -> pd.DataFrame | None:
     df = pd.concat([pd.read_parquet(r) for r in rutas], ignore_index=True)
     df["fecha"] = pd.to_datetime(df["fecha"]).dt.date
     return df
-
-
-def _objetivo_proxy(demanda: pd.DataFrame, cmg: pd.DataFrame) -> pd.DataFrame:
-    """costo_op_usd(T) = sum_h demanda_h * CMg_h promedio de barras de referencia."""
-    cmg_h = (cmg.groupby(["fecha", "hora"], as_index=False)
-                .agg(cmg_usd_mwh=("cmg_usd_mwh", "mean")))
-    m = demanda.merge(cmg_h, on=["fecha", "hora"], how="inner")
-    m["costo_h"] = m.demanda_mwh * m.cmg_usd_mwh
-    diario = (m.groupby("fecha", as_index=False)
-               .agg(costo_op_usd=("costo_h", "sum"),
-                    horas_validas=("costo_h", "size")))
-    # dias incompletos (cambio de hora chileno: 23/25 horas son legitimas)
-    completos = diario.horas_validas >= 23
-    if (~completos).any():
-        log.warning("tabla maestra: %d dias con <23 horas descartados del objetivo",
-                    int((~completos).sum()))
-    return diario.loc[completos, ["fecha", "costo_op_usd"]]
 
 
 def _pivot_diario(df: pd.DataFrame, col_grupo: str, col_valor: str,
@@ -111,14 +98,16 @@ def construir(dir_raw: Path | None = None, dir_salida: Path | None = None,
                        "disponible_a_las": disponible,
                        "cumple_regla_2000": cumple, "nota": nota}
 
-    # ---- objetivo -------------------------------------------------------
-    demanda = _leer_fuente(dir_raw, "cen_demanda")
+    # ---- objetivo (CMg real diario, D-013) ------------------------------
     cmg = _leer_fuente(dir_raw, "cen_cmg_real")
-    if demanda is None or cmg is None:
+    if cmg is None:
         raise SystemExit(
-            "faltan cen_demanda o cen_cmg_real: sin objetivo no hay tabla "
-            "maestra. Ejecutar el backfill (o generar_sintetico.py).")
-    base = _objetivo_proxy(demanda, cmg).sort_values("fecha")
+            "falta cen_cmg_real: sin objetivo no hay tabla maestra. "
+            "Ejecutar el backfill (o generar_sintetico.py).")
+    cmg_d_obj = (cmg.groupby("fecha", as_index=False)
+                    .agg(cmg_medio_diario=("cmg_usd_mwh", "mean"),
+                         cmg_max_diario=("cmg_usd_mwh", "max")))
+    base = cmg_d_obj.sort_values("fecha").copy()
     idx = pd.DataFrame({"fecha": pd.date_range(base.fecha.min(), base.fecha.max(),
                                                freq="D").date})
     base = idx.merge(base, on="fecha", how="left")
@@ -135,38 +124,26 @@ def construir(dir_raw: Path | None = None, dir_salida: Path | None = None,
         declarar(cols, "calendario", 0, "siempre",
                  nota="determinista, conocido con anticipacion")
 
-    # ---- lags y rolling del objetivo (feature autoregresiva) ------------
-    # costo del dia T-2 es lo mas reciente plenamente conocido a las 20:00
-    # de T-1 con el proxy (demanda y CMg de T-1 estan incompletos).
+    # ---- lags y rolling del objetivo (features autoregresivas) ----------
+    # CMg real: rezago minimo 3 dias (proceso de transferencias; CMg con
+    # menos de 3 dias de rezago no esta publicado a las 20:00 de T-1).
     for lag in (1, 2, 3, 7, 14, 21, 28):
-        base[f"costo_lag{lag}"] = base.costo_op_usd.shift(lag)
-    base["costo_ma7"] = base.costo_op_usd.shift(2).rolling(7).mean()
-    base["costo_ma28"] = base.costo_op_usd.shift(2).rolling(28).mean()
-    for lag in (2, 3, 7, 14, 21, 28):
-        declarar([f"costo_lag{lag}"], "derivada_objetivo", lag,
-                 "20:00 de T-1 (lag>=2)",
-                 nota="proxy de costo usa demanda+CMg que cierran el dia previo")
-    declarar(["costo_ma7", "costo_ma28"], "derivada_objetivo", 2,
-             "20:00 de T-1 (lag>=2)",
-             nota="rolling sobre shift(2): solo usa <= T-2")
-    # lag1 = "costo de hoy" al predecir manana: el dia T-1 NO esta cerrado a
-    # las 20:00 de T-1 -> NO conforme. Existe solo para el baseline teorico
-    # de persistencia de la mision; evaluacion.py lo rechaza para modelos.
-    declarar(["costo_lag1"], "derivada_objetivo", 1,
-             "ex-post (el dia no cierra hasta las 24:00)", cumple=False,
-             nota="solo baseline teorico de persistencia (saltar_antifuga)")
+        base[f"cmg_lag{lag}"] = base.cmg_medio_diario.shift(lag)
+    base["cmg_ma7"] = base.cmg_medio_diario.shift(LAG_CMG).rolling(7).mean()
+    base["cmg_ma28"] = base.cmg_medio_diario.shift(LAG_CMG).rolling(28).mean()
+    for lag in (3, 7, 14, 21, 28):
+        declarar([f"cmg_lag{lag}"], "cen_cmg_real", lag,
+                 "rezago publicacion CMg preliminar")
+    declarar(["cmg_ma7", "cmg_ma28"], "cen_cmg_real", LAG_CMG,
+             "rezago publicacion CMg preliminar",
+             nota="rolling sobre shift(3): solo usa CMg de <= T-3")
+    # lag1 y lag2: CMg con rezago insuficiente -> NO conformes.
+    # Existen solo para el baseline teorico de persistencia (saltar_antifuga).
+    declarar(["cmg_lag1", "cmg_lag2"], "cen_cmg_real", 1,
+             "ex-post (CMg < 3 dias de rezago: no publicado)", cumple=False,
+             nota="solo baseline teorico (saltar_antifuga)")
 
-    # ---- demanda y generacion (lag 2) ------------------------------------
-    dem_d = demanda.groupby("fecha", as_index=False).agg(
-        demanda_total_mwh=("demanda_mwh", "sum"),
-        demanda_max_mwh=("demanda_mwh", "max"))
-    dem_d = _a_calendario(dem_d)
-    dem_d[["demanda_total_mwh", "demanda_max_mwh"]] = \
-        dem_d[["demanda_total_mwh", "demanda_max_mwh"]].shift(LAG_CEN)
-    base = base.merge(dem_d, on="fecha", how="left")
-    declarar(["demanda_total_mwh", "demanda_max_mwh"], "cen_demanda", LAG_CEN,
-             "manana de T (dato de T-2)")
-
+    # ---- generacion (lag 2) ----------------------------------------------
     gen = _leer_fuente(dir_raw, "cen_generacion")
     if gen is not None:
         gen_d = _a_calendario(
@@ -189,16 +166,6 @@ def construir(dir_raw: Path | None = None, dir_salida: Path | None = None,
         emb_d[cols_e] = emb_d[cols_e].shift(LAG_CEN)
         base = base.merge(emb_d, on="fecha", how="left")
         declarar(cols_e, "cen_embalses", LAG_CEN, "manana de T (dato de T-2)")
-
-    # ---- CMg real reciente (lag 3) ---------------------------------------
-    cmg_d = (cmg.groupby("fecha", as_index=False)
-                .agg(cmg_medio=("cmg_usd_mwh", "mean"),
-                     cmg_max=("cmg_usd_mwh", "max")))
-    cmg_d = _a_calendario(cmg_d)
-    cmg_d[["cmg_medio", "cmg_max"]] = cmg_d[["cmg_medio", "cmg_max"]].shift(LAG_CMG)
-    base = base.merge(cmg_d, on="fecha", how="left")
-    declarar(["cmg_medio", "cmg_max"], "cen_cmg_real", LAG_CMG,
-             "rezago publicacion CMg preliminar")
 
     # ---- combustibles (lag 1 futuros; lag 7 spot EIA) --------------------
     comb = _leer_fuente(dir_raw, "combustibles")
@@ -236,7 +203,6 @@ def construir(dir_raw: Path | None = None, dir_salida: Path | None = None,
     # ---- clima observado (lag 5) -----------------------------------------
     obs = _leer_fuente(dir_raw, "clima_observado")
     if obs is not None:
-        # precipitacion acumulada en cuencas hidro: driver de mediano plazo
         hidro = obs[obs.punto.str.startswith("hidro")]
         pr = (hidro.groupby("fecha", as_index=False)
                    .agg(precip_hidro=("precipitation_sum", "mean"),

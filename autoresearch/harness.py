@@ -30,7 +30,7 @@ RUTA_TABLA = RAIZ / "data" / "processed" / "tabla_maestra.parquet"
 RUTA_LOG = Path(__file__).parent / "log_experimentos.md"
 
 
-COL_OBJETIVO = "costo_op_usd"
+COL_OBJETIVO = "cmg_medio_diario"
 DIAS_TRUNCAMIENTO = 60
 
 
@@ -41,7 +41,7 @@ def _features_del_modelo(df: pd.DataFrame, conformes: list[str]):
     - el modelo recibe una COPIA sin la columna objetivo: no puede leer el
       label ni mutar la tabla de evaluacion;
     - las columnas conformes preexistentes deben volver INTACTAS (un
-      experimento que sobrescribe costo_lag2 con el label queda rechazado);
+      experimento que sobrescribe cmg_lag3 con el label queda rechazado);
     - toda columna NUEVA pasa un test de invarianza a truncamiento: se
       recalcula la seleccion sobre la tabla sin los ultimos N dias y los
       valores del tramo comun deben coincidir; una feature que mira el

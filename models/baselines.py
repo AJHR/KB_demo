@@ -1,15 +1,14 @@
 """Baselines obligatorios de la fase 3 — evaluados SOLO via evaluacion.py.
 
-1. Persistencia: costo de manana = costo de hoy (definicion de la mision).
-   Matiz operacional: a las 20:00 del dia D el costo de D aun no cierra, asi
-   que la persistencia "de hoy" (lag 1) tiene fuga operacional leve. Se
-   reportan ambas variantes:
+1. Persistencia: CMg de manana = CMg de hoy (definicion de la mision).
+   Con CMg real, el rezago de publicacion es 3 dias; a las 20:00 del dia D
+   el CMg de D aun no esta publicado. Se reportan dos variantes:
      - persistencia_lag1 (definicion literal; usa saltar_antifuga, referencia)
-     - persistencia_lag2 (implementable en produccion)
+     - persistencia_lag3 (primer lag implementable en produccion)
 2. Estacional: promedio del mismo dia de semana de las ultimas 4 semanas
    (lags 7/14/21/28 — conforme regla 20:00).
 3. LightGBM: features de calendario, clima, hidrologia, combustibles y
-   lags/rolling del costo — solo columnas declaradas conformes en
+   lags/rolling del CMg — solo columnas declaradas conformes en
    metadatos_features.json (verificacion anti-fuga automatica).
 
 Uso: python3 baselines.py [--tabla ../data/processed/tabla_maestra.parquet]
@@ -50,7 +49,7 @@ class ModeloColumna:
 class ModeloEstacional:
     """Promedio del mismo dia de semana de las ultimas 4 semanas."""
 
-    COLS = ["costo_lag7", "costo_lag14", "costo_lag21", "costo_lag28"]
+    COLS = ["cmg_lag7", "cmg_lag14", "cmg_lag21", "cmg_lag28"]
 
     def fit(self, X, y):
         self._mediana = float(np.nanmedian(y))
@@ -95,11 +94,11 @@ def correr_baselines(ruta_tabla: Path) -> list[ResultadoEvaluacion]:
     df["fecha"] = pd.to_datetime(df["fecha"])
 
     resultados = [
-        evaluar_walk_forward(df, ["costo_lag1"], lambda: ModeloColumna("costo_lag1"),
+        evaluar_walk_forward(df, ["cmg_lag1"], lambda: ModeloColumna("cmg_lag1"),
                              "persistencia_lag1 (teorica, fuga operacional)",
                              saltar_antifuga=True),
-        evaluar_walk_forward(df, ["costo_lag2"], lambda: ModeloColumna("costo_lag2"),
-                             "persistencia_lag2 (implementable)"),
+        evaluar_walk_forward(df, ["cmg_lag3"], lambda: ModeloColumna("cmg_lag3"),
+                             "persistencia_lag3 (implementable, primer lag publicado)"),
         evaluar_walk_forward(df, ModeloEstacional.COLS, ModeloEstacional,
                              "estacional_dow_4sem"),
     ]
@@ -134,7 +133,7 @@ def escribir_reporte(resultados, df, feats, ruta_salida: Path,
     mejor = min(resultados, key=lambda r: r.mape)
     lineas = [
         "---",
-        "title: Resultados de baselines — costo de operacion D+1",
+        "title: Resultados de baselines — CMg real diario D+1",
         "sources:",
         "  - data/processed/tabla_maestra.parquet",
         "  - models/evaluacion.py",
@@ -158,20 +157,20 @@ def escribir_reporte(resultados, df, feats, ruta_salida: Path,
         "mínimo 365 días de entrenamiento inicial — única vía:",
         "`models/evaluacion.py`. Métrica principal: MAPE.",
         "",
-        "| Modelo | MAPE % | MAE USD | RMSE USD | Sesgo USD | Folds | N |",
-        "|--------|-------:|--------:|---------:|----------:|------:|--:|",
+        "| Modelo | MAPE % | MAE USD/MWh | RMSE USD/MWh | Sesgo USD/MWh | Folds | N |",
+        "|--------|-------:|------------:|-------------:|--------------:|------:|--:|",
     ]
     for r in resultados:
         lineas.append(
-            f"| {r.nombre_modelo} | {r.mape:.2f} | {r.mae:,.0f} "
-            f"| {r.rmse:,.0f} | {r.sesgo:+,.0f} | {r.n_folds} "
+            f"| {r.nombre_modelo} | {r.mape:.2f} | {r.mae:,.2f} "
+            f"| {r.rmse:,.2f} | {r.sesgo:+,.2f} | {r.n_folds} "
             f"| {r.n_predicciones} |")
     lineas += [
         "",
         f"**Mejor baseline: `{mejor.nombre_modelo}` (MAPE {mejor.mape:.2f} %).**",
         f"Evaluado {mejor.fecha_inicio_eval} → {mejor.fecha_fin_eval}.",
         f"LightGBM usa {len(feats)} features conformes a la regla 20:00",
-        "(verificación automática `verificar_antifuga`; `costo_lag1` y",
+        "(verificación automática `verificar_antifuga`; `cmg_lag1`, `cmg_lag2` y",
         "`cmg_programado_d1` rechazadas por declaración de no conformidad).",
         "",
         "## Análisis de errores (mejor modelo)",
@@ -212,8 +211,8 @@ def main():
     resultados, df, feats = correr_baselines(a.tabla)
     origen = df.origen_datos.iloc[0] if "origen_datos" in df.columns else "real"
     for r in resultados:
-        print(f"{r.nombre_modelo:48s} MAPE={r.mape:6.2f}%  MAE={r.mae:12,.0f}  "
-              f"RMSE={r.rmse:12,.0f}  sesgo={r.sesgo:+12,.0f}")
+        print(f"{r.nombre_modelo:48s} MAPE={r.mape:6.2f}%  MAE={r.mae:12,.2f}  "
+              f"RMSE={r.rmse:12,.2f}  sesgo={r.sesgo:+12,.2f}")
     escribir_reporte(resultados, df, feats, a.reporte, origen)
     print(f"\nreporte: {a.reporte} (origen datos: {origen})")
 

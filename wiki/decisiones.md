@@ -92,3 +92,19 @@ Cada decisión: contexto, alternativas, decisión, justificación.
 - **Decisión del usuario:** usar **solo el SIP "nuevo"** (`costo-marginal-real/v4`, ≥2024-07-15) como CMg real. Historia más corta (~2 años) pero una sola fuente que ya funciona, sin credenciales nuevas; la tabla maestra real se construye de inmediato. El extractor se auto-limita a `FECHA_INICIO_DATOS=2024-07-01` para no pagar requests vacíos; la agregación a horario (media por barra/fecha/hora) queda como salvaguarda (no-op si el real es horario).
 - **Extensión futura (no implementada):** para historia multi-año del CMg real, construir un extractor contra Energía Abierta (CNE), que requiere un `auth_key` gratuito y da el histórico ≥2018. Queda registrado como opción, no como trabajo hecho.
 - **Sharding del workflow:** con `limit=4000` / `limit=1000` y un rango acotado (≥2024-06), las 5 fuentes CEN caben holgadas bajo las 6 h en un solo job; **no se necesitó shardear** la matriz por año (sí haría falta para un backfill de 4,5 años, fuera del alcance "nuevo").
+
+## D-013 — Pivot de variable objetivo: de `costo_op_usd` (proxy demanda×CMg) a `cmg_medio_diario` (2026-06-15)
+
+- **Contexto:** el objetivo original (D-004) era el proxy `Σₕ demanda_h × CMg_h` (demanda horaria multiplicada por CMg de barras de referencia). Este proxy requería `cen_demanda` como dependencia. Tras 11 intentos de endpoint en 2 hosts (`sipub.api.coordinador.cl` y `operacion.api.coordinador.cl`, rutas v4/v2/v1 documentadas y probables) todos resultaron **404**: el endpoint de demanda del SIP no es accesible sin documentación autenticada (login) y no figura entre los recursos que responden con la `user_key` pública.
+- **Alternativas evaluadas:**
+  1. Buscar documentación autenticada del SIP (requiere acceso institucional; fuera del alcance de la sesión).
+  2. Scraping del portal web del CEN (probado en D-010; devuelve snapshot congelado, inútil para backfill).
+  3. **Pivotar el objetivo a CMg real diario** — `cmg_medio_diario` = media del CMg real USD/MWh sobre todas las barras de referencia del día T. Ya disponible: 12 meses de datos reales (Jul 2025 – Jun 2026, 57.456 filas horarias, 7 barras).
+- **Decisión del usuario:** opción 3. Eliminar la dependencia en `cen_demanda` y redefinir el objetivo como precio de mercado spot (CMg) en vez de costo de operación total.
+- **Cambios implementados:**
+  - `construir_tabla_maestra.py`: objetivo = `cmg_medio_diario` (media del CMg entre barras y horas del día T); `cmg_max_diario` almacenado como columna secundaria. Lags autoregresivos renombrados `cmg_lag{k}` (k∈{1,2,3,7,14,21,28}) con `cmg_lag1/2` declarados no conformes (rezago de publicación < 3 días). Bloque de features de demanda eliminado.
+  - `models/baselines.py`: baseline implementable cambiado de `persistencia_lag2` a `persistencia_lag3` (primer lag conforme con CMg); `ModeloEstacional.COLS` actualizado a `cmg_lag{7,14,21,28}`.
+  - `models/evaluacion.py`: `col_objetivo` por defecto cambiado a `cmg_medio_diario`; `saltar_antifuga` ahora permite `cmg_lag{k}` (no `costo_lag{k}`).
+  - `autoresearch/harness.py`: `COL_OBJETIVO` actualizado.
+  - `backfill.yml`: condición para construir tabla maestra simplificada (solo comprueba `cen_cmg_real`; ya no requiere `cen_demanda`).
+- **Consecuencia honesta:** el modelo ahora predice el **precio spot de referencia** (CMg en USD/MWh), no el costo de operación total (USD/día). Esto es un problema distinto pero igualmente relevante: el CMg es la señal de precio que reciben los generadores y define las decisiones de despacho. La reconexión al costo de operación total queda como extensión futura (requiere demanda real o el extractor de Energía Abierta).

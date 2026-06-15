@@ -122,7 +122,7 @@ def evaluar_walk_forward(
     columnas_features: list[str],
     constructor_modelo: Callable[[], Modelo],
     nombre_modelo: str,
-    col_objetivo: str = "costo_op_usd",
+    col_objetivo: str = "cmg_medio_diario",
     col_fecha: str = "fecha",
     min_train_dias: int = MIN_TRAIN_DIAS,
     paso_refit_dias: int = PASO_REFIT_DIAS,
@@ -140,7 +140,7 @@ def evaluar_walk_forward(
     if not saltar_antifuga:
         verificar_antifuga(columnas_features, ruta_metadatos)
     else:
-        permitidas = {f"costo_lag{k}" for k in (1, 2, 3, 7, 14, 21, 28)}
+        permitidas = {f"cmg_lag{k}" for k in (1, 2, 3, 7, 14, 21, 28)}
         fuera = set(columnas_features) - permitidas
         if fuera:
             raise ValueError(

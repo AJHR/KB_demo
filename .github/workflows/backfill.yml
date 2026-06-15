@@ -166,11 +166,10 @@ jobs:
       - name: Construir tabla maestra (si hay datos CEN reales)
         working-directory: tools/etl
         run: |
-          if ls ../../data/raw/cen_demanda/*/*.parquet >/dev/null 2>&1 \
-             && ls ../../data/raw/cen_cmg_real/*/*.parquet >/dev/null 2>&1; then
+          if ls ../../data/raw/cen_cmg_real/*/*.parquet >/dev/null 2>&1; then
             python3 construir_tabla_maestra.py --origen real
           else
-            echo "::warning::sin datos CEN (falta COORDINADOR_USER_KEY?); tabla maestra no reconstruida"
+            echo "::warning::sin datos CMg real (falta COORDINADOR_USER_KEY?); tabla maestra no reconstruida"
           fi
       - name: Validadores de calidad
         working-directory: tools/etl
