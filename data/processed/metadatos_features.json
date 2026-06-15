@@ -763,7 +763,7 @@
     "nota": "columna AUN NO MATERIALIZADA (pre-registro). riesgo nº1 del catalogo: no usar hasta verificar empiricamente que el PO de D+1 se publica antes de las 20:00; evaluacion.py lo rechaza automaticamente"
   },
   "_meta": {
-    "generado": "2026-06-15T13:27:41.645125Z",
+    "generado": "2026-06-15T17:15:19.694128Z",
     "origen_datos": "real",
     "filas": 342,
     "rango": [
