@@ -99,45 +99,28 @@ jobs:
     timeout-minutes: 350
     strategy:
       fail-fast: false
-      # Concurrencia limitada: los jobs comparten un solo user_key y el gateway
-      # SIP limita REQUESTS por key. A 3 en paralelo se gatillaban 429 sostenidos
-      # (run #27549680772: 2 de cada 3 meses fallaban). De a 2, sumado al limit
-      # mas alto del extractor (~5x menos paginas/dia), la tasa queda holgada.
-      max-parallel: 2
+      # max-parallel=1 OBLIGATORIO: el gateway SIP limita requests por user_key
+      # (~530 req/h medido). Varios jobs en paralelo comparten ese techo y se
+      # gatillan 429 sostenidos (run #27549680772 a 3, #27561362926 a 2: casi
+      # todos los meses fallaban). La concurrencia NO ayuda cuando el cuello de
+      # botella es el limite por key; un solo job a la vez completa cada mes.
+      max-parallel: 1
       matrix:
         include:
-          # El CMg "nuevo" arranca el 2024-07-15 (D-012); se baja todo el
-          # historico disponible. Con el pivot a CMg como objetivo (D-013) el
-          # walk-forward exige >365 dias de train inicial: 12 meses (341 dias)
-          # no alcanzan, 24 si. Orden DESCENDENTE a proposito: los meses nuevos
-          # (2025-06 .. 2024-07) bajan primero y extienden hacia atras el bloque
-          # contiguo ya commiteado (2025-07 .. 2026-06), de modo que la historia
-          # util crece desde el primer mes que entra. Los 12 meses ya
-          # commiteados (al final) se saltan al instante (particion_completa).
+          # El CMg "nuevo" arranca el 2024-07-15 (D-012). Con el pivot a CMg
+          # como objetivo (D-013) el walk-forward exige >365 dias de train: los
+          # 12 meses ya commiteados (2025-07..2026-06, 341 dias) no alcanzan.
+          # Se extienden 6 meses hacia atras (2025-06..2025-01) -> ~523 dias
+          # contiguos -> ~5 folds. Orden DESCENDENTE: cada mes que entra pega
+          # con el bloque ya commiteado y agranda la historia util. A ~530 req/h
+          # y ~744 req/mes, son ~1,4 h/mes => ~8-9 h en serie. Ampliar a 2024-*
+          # queda como extension posterior (re-disparar con esos meses).
           - { ini: "2025-06-01", fin: "2025-06-30" }
           - { ini: "2025-05-01", fin: "2025-05-31" }
           - { ini: "2025-04-01", fin: "2025-04-30" }
           - { ini: "2025-03-01", fin: "2025-03-31" }
           - { ini: "2025-02-01", fin: "2025-02-28" }
           - { ini: "2025-01-01", fin: "2025-01-31" }
-          - { ini: "2024-12-01", fin: "2024-12-31" }
-          - { ini: "2024-11-01", fin: "2024-11-30" }
-          - { ini: "2024-10-01", fin: "2024-10-31" }
-          - { ini: "2024-09-01", fin: "2024-09-30" }
-          - { ini: "2024-08-01", fin: "2024-08-31" }
-          - { ini: "2024-07-01", fin: "2024-07-31" }
-          - { ini: "2025-07-01", fin: "2025-07-31" }
-          - { ini: "2025-08-01", fin: "2025-08-31" }
-          - { ini: "2025-09-01", fin: "2025-09-30" }
-          - { ini: "2025-10-01", fin: "2025-10-31" }
-          - { ini: "2025-11-01", fin: "2025-11-30" }
-          - { ini: "2025-12-01", fin: "2025-12-31" }
-          - { ini: "2026-01-01", fin: "2026-01-31" }
-          - { ini: "2026-02-01", fin: "2026-02-28" }
-          - { ini: "2026-03-01", fin: "2026-03-31" }
-          - { ini: "2026-04-01", fin: "2026-04-30" }
-          - { ini: "2026-05-01", fin: "2026-05-31" }
-          - { ini: "2026-06-01", fin: "2026-06-30" }
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5

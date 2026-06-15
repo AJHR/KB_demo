@@ -48,14 +48,17 @@ URL = "https://sipub.api.coordinador.cl/costo-marginal-real/v4/findByDate"
 # esta fecha devuelve 0 filas. Se evita iterar esos meses en un backfill largo.
 FECHA_INICIO_DATOS = date(2024, 7, 1)
 
-# La API respeta `limit` (D-012: medido 1000/pagina exactas; 4000 cuartea
-# paginas). Un dia trae ~96k filas (todas las barras x 96 intervalos de 15min),
-# que a limit=4000 son ~24 paginas/dia => ~24 requests/dia. El gateway SIP
-# limita REQUESTS por user_key (no bytes): con 3 jobs en paralelo a 24 req/dia
-# se gatillan 429 sostenidos (run #27549680772: 2 de cada 3 meses fallaban).
-# Subir el limit baja las paginas/dia ~5x (=> ~5 req/dia) y con eso la presion
-# de rate. Si la API lo capa, se pagina mas: nunca rompe, solo rinde menos.
-LIMIT = 20000
+# La API respeta `limit` PERO con un techo: 4000/pagina funciona (D-012);
+# limit=20000 hace que el gateway devuelva 502 en la PRIMERA pagina del dia
+# (run #27561362926: los 6 meses que corrieron fallaron con "too many 502").
+# 4000 es el maximo probado-seguro. Un dia trae ~96k filas (todas las barras x
+# 96 intervalos de 15min) => ~24 paginas/dia a limit=4000.
+#
+# El gateway ademas limita REQUESTS por user_key (~530 req/h medido en el unico
+# mes que completo): con varios jobs en paralelo se gatillan 429 sostenidos.
+# Por eso el workflow corre cen_cmg_real con max-parallel=1: el cuello de
+# botella es el limite por key, que la concurrencia no puede superar.
+LIMIT = 4000
 
 COLUMNAS = ["barra", "fecha", "hora", "cmg_usd_mwh"]
 
