@@ -91,11 +91,28 @@ def _descargar_mes(s, ini: date, fin: date) -> list:
     15-min (~2-4 millones de filas/mes); paginar un mes completo llega a
     offsets profundos (page 500+) donde el gateway devuelve 502 masivos. Pedir
     dia por dia mantiene la paginacion somera (~decenas de paginas) -> estable
-    y mas rapido en neto. La pausa de rate-limit va por dia."""
+    y mas rapido en neto. La pausa de rate-limit va por dia.
+
+    Tolerancia a dias irrecuperables: si un dia agota los reintentos (racha
+    sostenida de 429/502 del gateway), se SALTA con aviso en vez de tumbar el
+    mes entero. Antes, un solo dia malo hacia fallar todo el mes -> 0 datos
+    (run #27563427333: 2025-01/02 cayeron asi). Un mes con 1-2 dias faltantes
+    sigue siendo util: la tabla maestra reindexa a calendario y esos dias
+    quedan NaN (se excluyen del walk-forward). Si fallan demasiados dias, el
+    mes queda escaso pero no se pierde lo descargado."""
     filas: list = []
+    saltados: list = []
     for dia in dias_entre(ini, fin):
         pausar()
-        filas.extend(con_reintentos(lambda d=dia: _descargar_dia(s, d)))
+        try:
+            filas.extend(con_reintentos(lambda d=dia: _descargar_dia(s, d)))
+        except Exception as e:  # noqa: BLE001 - dia irrecuperable: saltar, no abortar el mes
+            saltados.append(dia)
+            log.warning("%s: dia %s irrecuperable (%s); se salta", FUENTE, dia, e)
+    if saltados:
+        log.warning("%s: %d/%d dias saltados en %s..%s: %s", FUENTE,
+                    len(saltados), (fin - ini).days + 1, ini, fin,
+                    ", ".join(d.isoformat() for d in saltados))
     return filas
 
 

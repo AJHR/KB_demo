@@ -107,20 +107,18 @@ jobs:
       max-parallel: 1
       matrix:
         include:
-          # El CMg "nuevo" arranca el 2024-07-15 (D-012). Con el pivot a CMg
-          # como objetivo (D-013) el walk-forward exige >365 dias de train: los
-          # 12 meses ya commiteados (2025-07..2026-06, 341 dias) no alcanzan.
-          # Se extienden 6 meses hacia atras (2025-06..2025-01) -> ~523 dias
-          # contiguos -> ~5 folds. Orden DESCENDENTE: cada mes que entra pega
-          # con el bloque ya commiteado y agranda la historia util. A ~530 req/h
-          # y ~744 req/mes, son ~1,4 h/mes => ~8-9 h en serie. Ampliar a 2024-*
-          # queda como extension posterior (re-disparar con esos meses).
+          # Reintento acotado (run #27563427333 falló 2025-01/02 por agotar
+          # reintentos y el consolidar perdió todo por conflicto de rebase;
+          # ambos arreglados). Se re-bajan SOLO los 4 meses que sí completaron
+          # antes (2025-06..2025-03): extienden el bloque commiteado
+          # (2025-07..2026-06) hacia atras hasta 2025-03 => ~461 dias contiguos
+          # => ~3 folds con el min_train canonico de 365 dias, sin tocar el
+          # protocolo. Orden DESCENDENTE. 2025-02/01 se omiten (los que
+          # fallaban); ampliar queda como extension posterior.
           - { ini: "2025-06-01", fin: "2025-06-30" }
           - { ini: "2025-05-01", fin: "2025-05-31" }
           - { ini: "2025-04-01", fin: "2025-04-30" }
           - { ini: "2025-03-01", fin: "2025-03-31" }
-          - { ini: "2025-02-01", fin: "2025-02-28" }
-          - { ini: "2025-01-01", fin: "2025-01-31" }
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -187,6 +185,18 @@ jobs:
             echo "sin cambios que commitear"
           else
             git commit -m "backfill: datos historicos ${{ github.event.inputs.inicio }}..${{ github.event.inputs.fin || 'hoy' }} (run ${{ github.run_id }})"
-            git pull --rebase origin "${GITHUB_REF_NAME}"
-            git push origin "HEAD:${GITHUB_REF_NAME}"
+            # data/processed (tabla_maestra.parquet, metadatos) es REGENERADO:
+            # si otro commit del remoto ya lo tocó, el rebase normal entra en
+            # conflicto y el push se pierde (run #27563427333: se rebuildeó la
+            # tabla pero el rebase chocó y NO se commiteó ni un mes). Con
+            # `-X theirs` el commit recién reconstruido gana el conflicto (es el
+            # autoritativo). Reintentos por si otro push entra en la carrera.
+            for intento in 1 2 3 4 5; do
+              git fetch origin "${GITHUB_REF_NAME}"
+              git rebase -X theirs "origin/${GITHUB_REF_NAME}" || { git rebase --abort || true; }
+              if git push origin "HEAD:${GITHUB_REF_NAME}"; then
+                echo "push ok (intento $intento)"; break
+              fi
+              echo "push falló (intento $intento); reintento"; sleep 5
+            done
           fi
