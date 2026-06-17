@@ -18,5 +18,11 @@
     "particiones": [
       "cen_cmg_real/2025/cen_cmg_real_2025-04.parquet"
     ]
+  },
+  {
+    "descargado_en": "2026-06-17T10:09:59Z",
+    "particiones": [
+      "cen_cmg_real/2024/cen_cmg_real_2024-12.parquet"
+    ]
   }
 ]
