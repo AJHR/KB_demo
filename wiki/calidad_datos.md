@@ -2,12 +2,12 @@
 title: Calidad de datos del pipeline de costos SEN
 sources:
   - data/processed/tabla_maestra.parquet
-last_synthesized: 2026-06-15
+last_synthesized: 2026-06-17
 ---
 
 # Calidad de datos — pipeline de costos SEN
 
-> Generado automaticamente por `tools/etl/validadores.py --reporte` el 2026-06-15.
+> Generado automaticamente por `tools/etl/validadores.py --reporte` el 2026-06-17.
 > Directorio analizado: `/home/runner/work/KB_demo/KB_demo/data/raw`.
 
 ## Completitud por fuente
@@ -16,7 +16,7 @@ last_synthesized: 2026-06-15
 |---|---|---|---|---|---|---|---|
 | calendario | 2019-01-01 | 2026-12-31 | 2904 | 2922 | 99.4 | 1 | 2026-06-13..2026-06-30 |
 | cen_cmg_programado | 2024-01-01 | 2026-06-14 | 772 | 896 | 86.2 | 21 | 2024-02-06..2024-02-06; 2024-02-12..2024-02-14; 2024-03-01..2024-05-31; 2024-07-04..2024-07-04; 2024-07-25..2024-07-25; 2024-08-14..2024-08-14; 2024-09-01..2024-09-03; 2024-09-11..2024-09-12; 2024-09-16..2024-09-17; 2024-09-21..2024-09-21; 2024-09-26..2024-09-26; 2024-09-30..2024-09-30; 2024-10-27..2024-10-27; 2024-11-11..2024-11-11; 2024-11-16..2024-11-17; 2024-12-15..2024-12-20; 2025-01-14..2025-01-14; 2025-02-27..2025-02-27; 2025-03-03..2025-03-03; 2025-03-06..2025-03-06 ... |
-| cen_cmg_real | 2025-07-01 | 2026-06-07 | 342 | 342 | 100.0 | 0 |  |
+| cen_cmg_real | 2025-03-01 | 2026-06-07 | 462 | 464 | 99.6 | 1 | 2025-06-01..2025-06-02 |
 | cen_embalses | 2024-01-01 | 2026-05-08 | 761 | 859 | 88.6 | 5 | 2024-03-01..2024-05-31; 2025-11-28..2025-11-30; 2025-12-02..2025-12-02; 2026-02-09..2026-02-09; 2026-03-02..2026-03-02 |
 | clima_observado | 2019-01-01 | 2026-06-13 | 2721 | 2721 | 100.0 | 0 |  |
 | clima_pronostico | 2019-01-01 | 2026-06-13 | 2721 | 2721 | 100.0 | 0 |  |
@@ -24,15 +24,15 @@ last_synthesized: 2026-06-15
 
 ## Outliers (|x - mediana| > 4 · MAD escalado)
 
-- `cen_cmg_real.cmg_usd_mwh`: 1071 filas sospechosas de 57456 (1.86%)
+- `cen_cmg_real.cmg_usd_mwh`: 2145 filas sospechosas de 75408 (2.84%)
 
 | fecha | barra | cmg_usd_mwh | _desviacion_robusta |
 |---|---|---|---|
-| 2025-07-01 | BA S/E ALTO JAHUEL 220KV BP1 | 172.762775 | 4.1 |
-| 2025-07-01 | BA S/E ALTO JAHUEL 220KV BP2 | 170.46288 | 4.1 |
-| 2025-07-01 | BA S/E CHARRUA 220KV BP1-1 | 168.93863 | 4.0 |
-| 2025-07-01 | BA S/E CRUCERO 220KV BP1 | 169.91609333333335 | 4.0 |
-| 2025-07-01 | BA S/E POLPAICO (TRANSELEC) 220KV BP1 | 171.316885 | 4.1 |
+| 2025-03-13 | BA S/E CRUCERO 220KV BP1 | 188.16851 | 4.2 |
+| 2025-03-14 | BA S/E ALTO JAHUEL 220KV BP1 | 216.4691975 | 5.1 |
+| 2025-03-14 | BA S/E ALTO JAHUEL 220KV BP2 | 212.123015 | 5.0 |
+| 2025-03-14 | BA S/E CHARRUA 220KV BP1-1 | 207.62363249999999 | 4.9 |
+| 2025-03-14 | BA S/E CRUCERO 220KV BP1 | 229.2619775 | 5.6 |
 
 - `cen_cmg_programado.cmg_usd_mwh`: 3574 filas sospechosas de 249955 (1.43%)
 
