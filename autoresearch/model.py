@@ -11,9 +11,10 @@ Interfaz exigida por el harness (autoresearch/harness.py):
       columnas conformes (transformaciones sin mirar el futuro).
   crear_modelo(columnas) -> objeto con .fit(X, y) y .predict(X)
 
-Base vigente: exp002_features_fisicas (LightGBM L1 + 3 derivadas fisicas).
-Este experimento cambia SOLO el predictor: mediana de 3 LightGBM L1 con
-seeds distintos, sin tocar features ni hiperparametros.
+Base vigente: exp005_ensamble_seeds (mediana de 3 LightGBM L1 + 2 derivadas
+fisicas). Este experimento cambia SOLO el objetivo del predictor: de L1
+(mediana condicional) a cuantil 0.60, para corregir la sub-proyeccion
+sistematica observada en datos reales.
 """
 
 from __future__ import annotations
@@ -26,21 +27,23 @@ import pandas as pd
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "models"))
 from baselines import ModeloLightGBM  # noqa: E402
 
-NOMBRE_EXPERIMENTO = "exp005_ensamble_seeds"
-HIPOTESIS = ("Parte del error del LightGBM L1 es varianza del muestreo "
-             "interno (subsample/colsample por seed). La mediana de 3 "
-             "modelos identicos con seeds 42/43/44 promedia esa varianza "
-             "sin tocar el sesgo del modelo, y deberia bajar el MAPE de la "
-             "base vigente a costo 3x de entrenamiento (cabe en "
-             "presupuesto).")
+NOMBRE_EXPERIMENTO = "exp006_objetivo_cuantil_p60"
+HIPOTESIS = ("El objetivo L1 predice la mediana condicional; como el CMg "
+             "diario real es asimetrico a la derecha (spikes de escasez), la "
+             "mediana queda sistematicamente bajo la media y el modelo "
+             "sub-proyecta (sesgo -4.96 en exp005, peor que el baseline). "
+             "Cambiar el objetivo a cuantil 0.60 desplaza la prediccion hacia "
+             "arriba: deberia reducir el sesgo negativo y capturar mejor los "
+             "dias de precio alto, bajando el MAPE. Una sola variable cambia "
+             "sobre la base vigente (el objetivo del LightGBM del ensemble).")
 
 
-class ModeloLGBM_L1(ModeloLightGBM):
-    PARAMS = {**ModeloLightGBM.PARAMS, "objective": "regression_l1"}
+class ModeloLGBM_Q60(ModeloLightGBM):
+    PARAMS = {**ModeloLightGBM.PARAMS, "objective": "quantile", "alpha": 0.60}
 
 
 class EnsambleMedianaSeeds:
-    """Mediana de 3 LightGBM L1 identicos salvo random_state (42/43/44)."""
+    """Mediana de 3 LightGBM cuantil-0.60 identicos salvo random_state."""
 
     SEEDS = (42, 43, 44)
 
@@ -53,7 +56,7 @@ class EnsambleMedianaSeeds:
 
         self._modelos = []
         for seed in self.SEEDS:
-            params = {**ModeloLGBM_L1.PARAMS, "random_state": seed}
+            params = {**ModeloLGBM_Q60.PARAMS, "random_state": seed}
             m = lgb.LGBMRegressor(**params)
             m.fit(X[self.columnas].astype(float), y)
             self._modelos.append(m)
