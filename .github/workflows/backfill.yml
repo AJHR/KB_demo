@@ -107,18 +107,28 @@ jobs:
       max-parallel: 1
       matrix:
         include:
-          # Reintento acotado (run #27563427333 falló 2025-01/02 por agotar
-          # reintentos y el consolidar perdió todo por conflicto de rebase;
-          # ambos arreglados). Se re-bajan SOLO los 4 meses que sí completaron
-          # antes (2025-06..2025-03): extienden el bloque commiteado
-          # (2025-07..2026-06) hacia atras hasta 2025-03 => ~461 dias contiguos
-          # => ~3 folds con el min_train canonico de 365 dias, sin tocar el
-          # protocolo. Orden DESCENDENTE. 2025-02/01 se omiten (los que
-          # fallaban); ampliar queda como extension posterior.
-          - { ini: "2025-06-01", fin: "2025-06-30" }
-          - { ini: "2025-05-01", fin: "2025-05-31" }
-          - { ini: "2025-04-01", fin: "2025-04-30" }
-          - { ini: "2025-03-01", fin: "2025-03-31" }
+          # Extension de historia (sesion 2026-06-17): el bloque commiteado
+          # va 2025-03..2026-06 (~461 dias, 4 folds). Se baja TODO el resto
+          # del regimen "nuevo" hacia atras hasta su inicio (2024-07-15;
+          # antes de esa fecha el endpoint devuelve 0 filas — ver
+          # extractor_cen_cmg_real.FECHA_INICIO_DATOS). Son 8 meses
+          # (2024-07..2025-02) => bloque contiguo 2024-07-15..2026-06-07
+          # (~693 dias) => ~11 folds con min_train=365, sin tocar el
+          # protocolo. Las demas fuentes (calendario, clima, combustibles)
+          # ya cubren ese rango en disco; solo falta el objetivo (CMg real).
+          # Orden DESCENDENTE: cada mes que completa extiende el bloque
+          # contiguo un paso mas atras. Con max-parallel=1 son ~20-32h.
+          # La tolerancia a dias irrecuperables (skip-day) ya esta en el
+          # extractor, asi que 2025-01/02 (que antes tumbaban el mes) ya no
+          # abortan. 2024-07 trae solo ~17 dias (regimen arranca el 15).
+          - { ini: "2025-02-01", fin: "2025-02-28" }
+          - { ini: "2025-01-01", fin: "2025-01-31" }
+          - { ini: "2024-12-01", fin: "2024-12-31" }
+          - { ini: "2024-11-01", fin: "2024-11-30" }
+          - { ini: "2024-10-01", fin: "2024-10-31" }
+          - { ini: "2024-09-01", fin: "2024-09-30" }
+          - { ini: "2024-08-01", fin: "2024-08-31" }
+          - { ini: "2024-07-01", fin: "2024-07-31" }
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
