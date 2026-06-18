@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Predicción D+1 del Costo Marginal — SEN Chile</title>
+<style>
+  :root{
+    --bg:#0b1220; --bg2:#0f1b30; --card:#13233f; --ink:#eaf0fb; --muted:#9fb1cd;
+    --accent:#ffc24b; --accent2:#3ea6ff; --good:#39d98a; --bad:#ff6b6b; --line:#24395f;
+    --mono:'SF Mono','JetBrains Mono',Consolas,monospace;
+    --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{background:var(--bg);color:var(--ink);font-family:var(--sans);overflow:hidden}
+  #deck{height:100vh;width:100vw;position:relative}
+  .slide{position:absolute;inset:0;display:none;flex-direction:column;
+    padding:6vh 7vw;animation:fade .35s ease}
+  .slide.active{display:flex}
+  @keyframes fade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+  .kicker{color:var(--accent);font-weight:700;letter-spacing:.16em;text-transform:uppercase;
+    font-size:.78rem;margin-bottom:1.1rem}
+  h1{font-size:3.3rem;line-height:1.05;font-weight:800;letter-spacing:-.02em}
+  h2{font-size:2.3rem;line-height:1.1;font-weight:800;letter-spacing:-.01em;margin-bottom:1.6rem}
+  h2 .em{color:var(--accent)}
+  p{color:var(--muted);font-size:1.18rem;line-height:1.6;max-width:60ch}
+  .lead{font-size:1.45rem;color:var(--ink);max-width:62ch}
+  ul{list-style:none;display:flex;flex-direction:column;gap:.85rem;margin-top:.5rem}
+  li{position:relative;padding-left:1.8rem;font-size:1.16rem;line-height:1.5;color:var(--ink);max-width:64ch}
+  li::before{content:'';position:absolute;left:0;top:.55em;width:.7rem;height:.7rem;
+    background:var(--accent);border-radius:2px;transform:rotate(45deg)}
+  li b{color:#fff} li .mut{color:var(--muted)}
+  .grid{display:grid;gap:1.1rem;margin-top:.4rem}
+  .g2{grid-template-columns:1fr 1fr} .g3{grid-template-columns:repeat(3,1fr)} .g4{grid-template-columns:repeat(4,1fr)}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:1.3rem 1.4rem}
+  .card h3{font-size:1.02rem;color:var(--accent2);margin-bottom:.5rem;font-weight:700}
+  .card p{font-size:1rem;color:var(--muted)}
+  .stat{font-size:2.5rem;font-weight:800;color:#fff;font-family:var(--mono);line-height:1}
+  .stat small{font-size:1rem;color:var(--muted);font-weight:500}
+  .stat-label{color:var(--muted);font-size:.95rem;margin-top:.45rem}
+  table{border-collapse:collapse;width:100%;margin-top:.6rem;font-size:1.02rem}
+  th,td{text-align:left;padding:.6rem .8rem;border-bottom:1px solid var(--line)}
+  th{color:var(--muted);font-weight:600;font-size:.82rem;text-transform:uppercase;letter-spacing:.05em}
+  td{font-family:var(--mono);color:var(--ink)}
+  td.name{font-family:var(--sans)}
+  tr.base td{background:rgba(255,194,75,.10)}
+  tr.base td.name{color:var(--accent);font-weight:700}
+  .tag{display:inline-block;font-size:.72rem;font-family:var(--sans);padding:.12rem .5rem;border-radius:6px;font-weight:700;vertical-align:middle}
+  .tag.ok{background:rgba(57,217,138,.16);color:var(--good)}
+  .tag.no{background:rgba(255,107,107,.16);color:var(--bad)}
+  .tag.mid{background:rgba(62,166,255,.16);color:var(--accent2)}
+  /* bar chart */
+  .bars{margin-top:.6rem;display:flex;flex-direction:column;gap:.6rem}
+  .bar-row{display:grid;grid-template-columns:230px 1fr 78px;align-items:center;gap:1rem}
+  .bar-row .bl{font-size:.98rem;color:var(--ink)}
+  .bar-row .bl small{color:var(--muted)}
+  .track{background:#0a1426;border-radius:8px;height:26px;overflow:hidden;border:1px solid var(--line)}
+  .fill{height:100%;border-radius:7px 0 0 7px;display:flex;align-items:center}
+  .bar-row .bv{font-family:var(--mono);text-align:right;font-size:1.02rem;color:#fff}
+  .note{margin-top:1.4rem;font-size:.95rem;color:var(--muted);border-left:3px solid var(--accent);
+    padding:.5rem 0 .5rem 1rem;background:rgba(255,194,75,.05);max-width:70ch}
+  .note b{color:var(--ink)}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:2.4rem;align-items:start}
+  .flip{display:grid;grid-template-columns:1fr auto 1fr;gap:1.2rem;align-items:center;margin-top:1rem}
+  .flip .box{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:1.2rem 1.3rem}
+  .flip .arrow{font-size:2rem;color:var(--accent);text-align:center}
+  .flip h4{font-size:.85rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.7rem}
+  .flip .v{font-size:1.05rem;color:var(--ink);margin:.3rem 0;font-family:var(--mono)}
+  .pos{color:var(--bad)} .neg{color:var(--accent2)} .zero{color:var(--good)}
+  /* footer / nav */
+  .foot{position:absolute;bottom:2.4vh;left:7vw;right:7vw;display:flex;justify-content:space-between;
+    align-items:center;color:var(--muted);font-size:.82rem}
+  .dots{display:flex;gap:.5rem}
+  .dot{width:9px;height:9px;border-radius:50%;background:#2a3f63;cursor:pointer;transition:.2s}
+  .dot.on{background:var(--accent);transform:scale(1.25)}
+  .brand{font-weight:700;color:var(--ink);letter-spacing:.02em}
+  .brand span{color:var(--accent)}
+  kbd{font-family:var(--mono);background:#0a1426;border:1px solid var(--line);border-radius:5px;
+    padding:.1rem .4rem;font-size:.78rem;color:var(--muted)}
+  .pill{display:inline-flex;gap:.5rem;align-items:center;background:var(--card);border:1px solid var(--line);
+    border-radius:999px;padding:.4rem .9rem;font-size:.9rem;color:var(--muted);margin-top:1.4rem;width:max-content}
+  .pill b{color:var(--accent)}
+  @media print{
+    body{overflow:visible} .slide{display:flex!important;position:relative;height:100vh;page-break-after:always;
+      border-bottom:1px solid #ccc} .foot .dots,.hint{display:none}
+  }
+</style>
+</head>
+<body>
+<div id="deck">
+
+  <!-- 1 PORTADA -->
+  <section class="slide active">
+    <div class="kicker">Coordinador Eléctrico Nacional · Chile</div>
+    <h1>Predicción <span style="color:var(--accent)">D+1</span> del Costo<br>Marginal del SEN</h1>
+    <p class="lead" style="margin-top:1.6rem">Un modelo diario para anticipar el precio spot de energía (CMg, USD/MWh)
+      del Sistema Eléctrico Nacional, con un protocolo de evaluación a prueba de fuga de datos.</p>
+    <div class="pill">Estado: <b>prototipo validado</b> · 24 meses de datos reales · base vigente <b>exp007</b></div>
+    <div class="foot"><div class="brand">CMg<span>·</span>SEN D+1</div><div>18 jun 2026</div></div>
+  </section>
+
+  <!-- 2 OBJETIVO -->
+  <section class="slide">
+    <div class="kicker">El objetivo</div>
+    <h2>Qué queremos <span class="em">predecir</span> y por qué</h2>
+    <div class="two">
+      <div>
+        <ul>
+          <li><b>Meta:</b> predecir el <b>CMg medio diario</b> (USD/MWh) del SEN para el día siguiente (D+1).</li>
+          <li><b>Por qué importa:</b> el CMg es el precio spot de la energía; anticiparlo informa decisiones de despacho, contratos y gestión de riesgo.</li>
+          <li><b>Regla de oro (anti-fuga):</b> toda variable usada para predecir el día <b>T</b> debe estar disponible <b>antes de las 20:00 (hora Chile) del día T−1</b>. Nada del futuro entra al modelo.</li>
+        </ul>
+      </div>
+      <div class="grid">
+        <div class="card"><h3>Variable objetivo</h3><p><code>cmg_medio_diario</code> — media del CMg real horario sobre las barras de referencia del SEN.</p></div>
+        <div class="card"><h3>Horizonte</h3><p>D+1 — se predice hoy el precio medio de mañana.</p></div>
+        <div class="card"><h3>Métrica principal</h3><p><b>MAPE</b> (error porcentual absoluto medio), más MAE, RMSE y <b>sesgo</b> (el CEN no es simétrico ante sub/sobre-proyectar).</p></div>
+      </div>
+    </div>
+    <div class="foot"><div class="brand">CMg<span>·</span>SEN D+1</div><div>Objetivo</div></div>
+  </section>
+
+  <!-- 3 QUÉ SE HA HECHO -->
+  <section class="slide">
+    <div class="kicker">Lo construido</div>
+    <h2>De datos crudos a un <span class="em">loop de investigación</span></h2>
+    <div class="grid g4" style="margin-bottom:1.3rem">
+      <div class="card"><h3>1 · Ingesta</h3><p>ETL desde la API SIP del Coordinador. El sandbox no tiene salida a internet → el backfill corre en <b>GitHub Actions</b>.</p></div>
+      <div class="card"><h3>2 · Tabla maestra</h3><p>Una fila por día con <b>lags por fuente</b> que garantizan la regla de las 20:00. 106 features conformes.</p></div>
+      <div class="card"><h3>3 · Evaluación canónica</h3><p>Walk-forward expansivo (mín. 365 d de train, refit cada 28 d). Chequeo anti-fuga automático.</p></div>
+      <div class="card"><h3>4 · Autoresearch</h3><p>Un loop estilo Karpathy: una hipótesis por experimento, registrada en log append-only.</p></div>
+    </div>
+    <ul>
+      <li><b>Gobernanza del conocimiento:</b> repo con zonas <code>sources/</code> (inmutable), <code>work/</code> (vivo), <code>wiki/</code> (síntesis con citas).</li>
+      <li><b>Robustez del pipeline:</b> tolerancia a días irrecuperables, manejo de rate-limit del gateway, consolidación sin perder datos.</li>
+      <li><b>Rigor estadístico:</b> test de significancia pareado (Wilcoxon / Diebold-Mariano) para no confundir mejora con ruido.</li>
+    </ul>
+    <div class="foot"><div class="brand">CMg<span>·</span>SEN D+1</div><div>Metodología</div></div>
+  </section>
+
+  <!-- 4 DATOS -->
+  <section class="slide">
+    <div class="kicker">Los datos</div>
+    <h2>Qué tenemos <span class="em">hoy</span></h2>
+    <div class="grid g4" style="margin-bottom:1.5rem">
+      <div class="card"><div class="stat">687<small> días</small></div><div class="stat-label">con objetivo (2024-07-15 → 2026-06-07)</div></div>
+      <div class="card"><div class="stat">12<small> folds</small></div><div class="stat-label">walk-forward · N=328 evaluaciones</div></div>
+      <div class="card"><div class="stat">106<small> feats</small></div><div class="stat-label">conformes a la regla 20:00</div></div>
+      <div class="card"><div class="stat">24<small> meses</small></div><div class="stat-label">régimen "nuevo" del SIP, completo</div></div>
+    </div>
+    <div class="two">
+      <ul>
+        <li><b>Objetivo (CMg real):</b> API SIP del Coordinador, resolución horaria → media diaria.</li>
+        <li><b>Predictores:</b> calendario (feriados, día de semana), clima observado y pronosticado, combustibles (Brent, GNL, carbón, diésel, USD/CLP) y lags/medias móviles del propio CMg.</li>
+        <li><b>Cobertura limpia:</b> solo 6 días-hueco en 23 meses, excluidos del walk-forward sin contaminar.</li>
+      </ul>
+      <div>
+        <div class="note"><b>Límite conocido:</b> el régimen "nuevo" del SIP arranca el 2024-07-15. Para historia anterior (multi-año) hay que ir a Energía Abierta de la CNE — otra fuente, con mezcla de regímenes que exige cuidado.</div>
+        <div class="note"><b>Costo de bajar datos:</b> el gateway limita ~530 req/h por credencial → cada mes tarda 2.5-4 h y los 8 meses nuevos tomaron ~18 h en serie.</div>
+      </div>
+    </div>
+    <div class="foot"><div class="brand">CMg<span>·</span>SEN D+1</div><div>Datos</div></div>
+  </section>
+
+  <!-- 5 RESULTADOS -->
+  <section class="slide">
+    <div class="kicker">Resultados preliminares · 12 folds · N=328</div>
+    <h2>El mejor modelo implementable: <span class="em">24.75% MAPE</span></h2>
+    <div class="bars">
+      <div class="bar-row"><div class="bl">persistencia lag-1 <small>(con fuga)</small></div><div class="track"><div class="fill" style="width:67%;background:repeating-linear-gradient(45deg,#2a3f63,#2a3f63 8px,#33486c 8px,#33486c 16px)"></div></div><div class="bv">22.95</div></div>
+      <div class="bar-row"><div class="bl"><b style="color:var(--accent)">exp007 · L1 mediana</b> <small>(base)</small></div><div class="track"><div class="fill" style="width:72%;background:linear-gradient(90deg,#ffc24b,#ffb01f)"></div></div><div class="bv">24.75</div></div>
+      <div class="bar-row"><div class="bl">exp006 · cuantil 0.60</div><div class="track"><div class="fill" style="width:78%;background:#3ea6ff"></div></div><div class="bv">26.71</div></div>
+      <div class="bar-row"><div class="bl">estacional <small>(promedio día-semana)</small></div><div class="track"><div class="fill" style="width:82%;background:#3ea6ff"></div></div><div class="bv">27.93</div></div>
+      <div class="bar-row"><div class="bl">persistencia lag-3</div><div class="track"><div class="fill" style="width:92%;background:#5a6e90"></div></div><div class="bv">31.31</div></div>
+      <div class="bar-row"><div class="bl">LightGBM baseline <small>(L2)</small></div><div class="track"><div class="fill" style="width:99%;background:linear-gradient(90deg,#ff8a6b,#ff6b6b)"></div></div><div class="bv">33.60</div></div>
+    </div>
+    <div class="note"><b>Lectura:</b> el baseline LightGBM original (L2) es el <b>peor</b> — pierde hasta contra un promedio estacional naive. El trabajo de modelado (objetivo L1 + ensemble + 2 derivadas físicas) lo corrige y deja un modelo con <b>sesgo casi nulo (+0.20)</b>.</div>
+    <div class="foot"><div class="brand">CMg<span>·</span>SEN D+1</div><div>Resultados · MAPE menor = mejor</div></div>
+  </section>
+
+  <!-- 6 SIGNIFICANCIA -->
+  <section class="slide">
+    <div class="kicker">¿Mejora real o ruido?</div>
+    <h2>Test de <span class="em">significancia</span> pareado (Wilcoxon)</h2>
+    <table>
+      <thead><tr><th>Comparación (sobre el error diario)</th><th>Δ MAPE</th><th>p-valor</th><th>Veredicto</th></tr></thead>
+      <tbody>
+        <tr><td class="name">exp007 &nbsp;vs&nbsp; baseline LightGBM L2</td><td>−8.85 pp</td><td>&lt;0.0001</td><td><span class="tag ok">significativo</span></td></tr>
+        <tr><td class="name">exp007 &nbsp;vs&nbsp; exp006 (cuantil 0.60)</td><td>−1.96 pp</td><td>0.0012</td><td><span class="tag ok">significativo</span></td></tr>
+        <tr><td class="name">estacional naive &nbsp;vs&nbsp; baseline L2</td><td>−5.67 pp</td><td>0.0038</td><td><span class="tag ok">significativo</span></td></tr>
+        <tr><td class="name">exp007 &nbsp;vs&nbsp; estacional naive</td><td>−3.18 pp</td><td>0.092</td><td><span class="tag no">no concluyente</span></td></tr>
+        <tr><td class="name">exp007 &nbsp;vs&nbsp; persistencia lag-1 (fuga)</td><td>+1.80 pp</td><td>0.20</td><td><span class="tag mid">empate</span></td></tr>
+      </tbody>
+    </table>
+    <div class="note"><b>Conclusión honesta:</b> el modelo le gana de forma robusta al baseline (p&lt;0.0001) y ya <b>iguala la cota de persistencia con fuga</b> (que "hace trampa" usando el CMg de ayer). Pero solo gana <b>en promedio</b> al estacional naive, no día-a-día (p=0.092). <b>~25% MAPE es el techo realista de la tabla actual.</b></div>
+    <div class="foot"><div class="brand">CMg<span>·</span>SEN D+1</div><div>Significancia</div></div>
+  </section>
+
+  <!-- 7 HALLAZGO CLAVE -->
+  <section class="slide">
+    <div class="kicker">El aprendizaje de la sesión</div>
+    <h2>Más historia <span class="em">cambió la conclusión</span></h2>
+    <p class="lead">Con solo 4 folds (3 meses de evaluación) el "mejor" modelo parecía otro. El sesgo del error <b>cambió de signo</b> al evaluar el año completo — y con él, la decisión óptima.</p>
+    <div class="flip">
+      <div class="box">
+        <h4>Ventana corta · 4 folds · N=99</h4>
+        <div class="v">MAPE aparente: <b style="color:#fff">~19%</b></div>
+        <div class="v">Sesgo: <span class="neg">negativo</span> → sub-proyecta</div>
+        <div class="v">Decisión: cuantil 0.60 (empuja ↑)</div>
+      </div>
+      <div class="arrow">→</div>
+      <div class="box">
+        <h4>Año completo · 12 folds · N=328</h4>
+        <div class="v">MAPE real: <b style="color:#fff">~25%</b></div>
+        <div class="v">Sesgo: <span class="pos">positivo</span> → sobre-proyecta</div>
+        <div class="v">Decisión: <span class="zero">L1 / mediana</span> (sesgo ≈ 0)</div>
+      </div>
+    </div>
+    <div class="note"><b>Por qué pasó:</b> la ventana corta caía en un período de precios bajos; el año completo incluye el invierno con spikes de escasez. Tunear a 99 puntos era sobreajustar a una ventana fácil. <b>Pedir más datos fue la mejor decisión técnica de la sesión.</b></div>
+    <div class="foot"><div class="brand">CMg<span>·</span>SEN D+1</div><div>Hallazgo clave</div></div>
+  </section>
+
+  <!-- 8 PRÓXIMOS PASOS -->
+  <section class="slide">
+    <div class="kicker">Hacia dónde seguir</div>
+    <h2>Próximos pasos <span class="em">sugeridos</span></h2>
+    <div class="grid g2">
+      <div class="card"><h3>① Features de escasez &nbsp;<span class="tag ok">mayor retorno</span></h3><p>El error vive en los <b>días de spike</b>, no en los normales. Cota de embalses con pendiente, déficit hídrico acumulado, señales de margen de reserva. Es donde está la ganancia.</p></div>
+      <div class="card"><h3>② Híbrido físico-ML</h3><p>Descomponer CMg ≈ proxy física (orden de mérito × precio combustible) + residuo ML. Aprovecha la estructura del despacho en vez de aprenderla de cero.</p></div>
+      <div class="card"><h3>③ Pesos por recencia</h3><p>Re-correr el experimento de decaimiento exponencial: ahora el drift de régimen (ERNC creciente) es real y hay 12 folds para medirlo.</p></div>
+      <div class="card"><h3>④ Historia multi-año</h3><p>Extractor de Energía Abierta (CNE) para el régimen "antiguo" pre-2024-07-15. Más folds y robustez, con un flag de régimen para no mezclar reglas de precio.</p></div>
+    </div>
+    <div class="note"><b>Disciplina del loop:</b> una hipótesis por experimento, decisión conservar/descartar con test de significancia, todo en log append-only. Sin nueva señal, no esperamos bajar mucho de ~24-25%.</div>
+    <div class="foot"><div class="brand">CMg<span>·</span>SEN D+1</div><div>Próximos pasos</div></div>
+  </section>
+
+  <!-- 9 CIERRE -->
+  <section class="slide">
+    <div class="kicker">Resumen</div>
+    <h2>Dónde <span class="em">estamos</span></h2>
+    <div class="grid g3" style="margin-bottom:1.4rem">
+      <div class="card"><div class="stat">24<small>m</small></div><div class="stat-label">de datos reales, pipeline reproducible end-to-end</div></div>
+      <div class="card"><div class="stat">24.75<small>%</small></div><div class="stat-label">MAPE del mejor modelo implementable, sesgo ≈ 0</div></div>
+      <div class="card"><div class="stat">0</div><div class="stat-label">fuga de datos — protocolo anti-fuga verificado automáticamente</div></div>
+    </div>
+    <ul>
+      <li><b>Tenemos</b> una base sólida: datos limpios, evaluación honesta y un modelo que le gana al baseline de forma significativa.</li>
+      <li><b>Sabemos</b> el techo realista (~25%) y por qué: el margen está en los días de escasez.</li>
+      <li><b>Sabemos</b> qué probar después, en orden de retorno esperado.</li>
+    </ul>
+    <div class="pill">Todo versionado y reproducible · rama <b>claude/epic-pasteur-wph10y</b> · PR #5</div>
+    <div class="foot"><div class="brand">CMg<span>·</span>SEN D+1</div><div>Gracias</div></div>
+  </section>
+
+</div>
+
+<div class="hint" style="position:absolute;bottom:2.4vh;left:50%;transform:translateX(-50%);color:#5a6e90;font-size:.78rem">
+  <kbd>←</kbd> <kbd>→</kbd> para navegar · <kbd>F</kbd> pantalla completa
+</div>
+
+<script>
+  const slides=[...document.querySelectorAll('.slide')];
+  let i=0;
+  const dotsWrap=document.createElement('div');dotsWrap.className='dots';
+  slides.forEach((_,k)=>{const d=document.createElement('div');d.className='dot'+(k===0?' on':'');
+    d.onclick=()=>go(k);dotsWrap.appendChild(d)});
+  // inject dots into each footer's left-of-center: simpler — fixed bottom-center bar
+  const bar=document.createElement('div');
+  bar.style.cssText='position:absolute;bottom:2.4vh;left:50%;transform:translateX(-50%);z-index:5';
+  bar.appendChild(dotsWrap);document.body.appendChild(bar);
+  const dots=[...dotsWrap.children];
+  function go(n){i=Math.max(0,Math.min(slides.length-1,n));
+    slides.forEach((s,k)=>s.classList.toggle('active',k===i));
+    dots.forEach((d,k)=>d.classList.toggle('on',k===i));}
+  document.addEventListener('keydown',e=>{
+    if(e.key==='ArrowRight'||e.key===' '||e.key==='PageDown')go(i+1);
+    else if(e.key==='ArrowLeft'||e.key==='PageUp')go(i-1);
+    else if(e.key==='Home')go(0);else if(e.key==='End')go(slides.length-1);
+    else if(e.key.toLowerCase()==='f'){if(!document.fullscreenElement)document.documentElement.requestFullscreen();else document.exitFullscreen();}
+  });
+  let sx=0;document.addEventListener('touchstart',e=>sx=e.touches[0].clientX,{passive:true});
+  document.addEventListener('touchend',e=>{const dx=e.changedTouches[0].clientX-sx;
+    if(Math.abs(dx)>50)go(dx<0?i+1:i-1)},{passive:true});
+</script>
+</body>
+</html>
