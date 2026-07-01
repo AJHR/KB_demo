@@ -41,6 +41,7 @@ Paginas escritas para entender el mercado desde la posicion de un generador. Ver
 | [`wiki/mercado-mayorista-chile.md`](./wiki/mercado-mayorista-chile.md) | Estructura institucional + despacho + transferencias + potencia firme | 2026-05-15 |
 | [`wiki/servicios-complementarios-y-transferencias.md`](./wiki/servicios-complementarios-y-transferencias.md) | Como se cobra por mantener el sistema operando (SSCC, transferencias mensuales, fallas) | 2026-05-15 |
 | [`wiki/conexion-y-transmision.md`](./wiki/conexion-y-transmision.md) | Conectar una central nueva, segmentos de transmision, BESS, costo de falla | 2026-05-15 |
+| [`wiki/valorizacion-inversiones-transmision.md`](./wiki/valorizacion-inversiones-transmision.md) | Como se valida/valoriza la inversion de una instalacion nueva (V.I./A.V.I./COMA), licitacion de obras nuevas, estudio cuatrienal y rol del Coordinador | 2026-07-01 |
 | [`wiki/marco-pmgd-y-distribuida.md`](./wiki/marco-pmgd-y-distribuida.md) | PMGD <=9 MW, NTCO-PMGD 2026 con BESS, sistemas medianos, estabilizacion tarifaria | 2026-05-15 |
 | [`wiki/ciberseguridad-sen.md`](./wiki/ciberseguridad-sen.md) | Estandar CIP del CEN + protocolo de notificacion de incidentes (CIP-002 a CIP-011) | 2026-05-18 |
 | [`wiki/referencias/ia-en-sistemas-electricos.md`](./wiki/referencias/ia-en-sistemas-electricos.md) | Nota de referencia: IA en sistemas electricos aplicada al forecasting de costos del SEN (hibridos fisico-ML, drift, arquitecturas; que queda fuera de alcance) | 2026-06-12 |
