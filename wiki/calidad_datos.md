@@ -2,12 +2,12 @@
 title: Calidad de datos del pipeline de costos SEN
 sources:
   - data/processed/tabla_maestra.parquet
-last_synthesized: 2026-08-16
+last_synthesized: 2026-08-17
 ---
 
 # Calidad de datos — pipeline de costos SEN
 
-> Generado automaticamente por `tools/etl/validadores.py --reporte` el 2026-08-16.
+> Generado automaticamente por `tools/etl/validadores.py --reporte` el 2026-08-17.
 > Directorio analizado: `/home/runner/work/KB_demo/KB_demo/data/raw`.
 
 ## Completitud por fuente
